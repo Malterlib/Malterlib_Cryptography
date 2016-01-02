@@ -1,0 +1,59 @@
+// Copyright © 2015 Hansoft AB 
+// Distributed under the MIT license, see license text in LICENSE.Malterlib
+
+Import "../Core/Lib_Malterlib.MTarget"
+
+%Group "{Malterlib}/{Lib_Malterlib_Cryptography}"
+{
+	%Group Cryptography
+	{
+		%Group Include
+		{
+			Compile.Type "C++"
+			{
+				!!DocumentationEnabled true
+			}
+			%File "Include/Mib/Cryptography/^*"
+		}
+		%File "Source/*"
+		%Group Documentation
+		{
+			%File "Documentation/*"
+		}
+	}
+}
+
+
+Property
+{
+	MalterlibLibrary_Cryptography true
+	{
+		&
+		{
+			MalterlibLibrary_Cryptography ""
+			MalterlibLibrary_All true
+		}
+	}
+	MalterlibSubLibraries "Cryptography;@(MalterlibSubLibraries)"
+	{
+		!!MalterlibLibrary_Cryptography true
+	}
+//	MalterlibSubLibrarySeparate_Lib_Malterlib_Cryptography true
+	MalterlibIncludeRoots "@('Include'->MakeAbsolute());@(MalterlibIncludeRoots)"
+	{
+		!!MalterlibLibrary_Cryptography true
+	}
+}
+
+%Group "{Test}/{Malterlib_Cryptography}"
+{
+}
+
+Property
+{
+	!!MalterlibEnableInternalTests true
+	
+	MalterlibTests "Malterlib_Cryptography;@(MalterlibTests)"
+	MalterlibTestFiles_Malterlib_Cryptography "@('Test/*'->MakeAbsolute())"
+	MalterlibTestExtraGroups_Malterlib_Cryptography "{Test}/{Malterlib_Cryptography}"
+}
