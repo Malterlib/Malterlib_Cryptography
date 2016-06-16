@@ -485,3 +485,6 @@ namespace NMib
 	}
 }
 
+#ifndef DMibPNoShortCuts
+using namespace NMib::NDataProcessing;
+#endif

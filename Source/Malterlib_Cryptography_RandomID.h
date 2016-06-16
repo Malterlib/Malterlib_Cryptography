@@ -10,3 +10,7 @@ namespace NMib
 	}
 }
 
+#ifndef DMibPNoShortCuts
+using namespace NMib::NCryptography;
+#endif
+
