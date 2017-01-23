@@ -329,6 +329,15 @@ namespace NMib
 				t_CHashImpl::fs_GetDigest(TempState, _Digest);
 			}
 
+			CMessageDigest f_GetDigest() const
+			{
+				CMessageDigest Digest;
+				// Const copy
+				const TCHashImpl &TempState = *this;
+				t_CHashImpl::fs_GetDigest(TempState, Digest);
+				return Digest;
+			}
+
 			static CMessageDigest fs_DigestFromData(const void *_pData, mint _Len)
 			{
 				CMessageDigest Ret;
