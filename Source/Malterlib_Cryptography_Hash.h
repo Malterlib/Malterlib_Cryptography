@@ -356,6 +356,26 @@ namespace NMib
 				return Ret;
 			}
 
+			static CMessageDigest fs_DigestFromStream(NStream::CBinaryStream &_Stream)
+			{
+				CMessageDigest Ret;
+				TCHashImpl Hash;
+
+				CMibFilePos Length = _Stream.f_GetLength();
+				const int Size = 32768;
+				uint8 Temp[Size];
+				while (Length)
+				{
+					mint ThisTime = mint(fg_Min(Length, CMibFilePos(Size)));
+					_Stream.f_ConsumeBytes(Temp, ThisTime);
+					Hash.f_AddData(Temp, ThisTime);
+
+					Length -= ThisTime;
+				}
+				NMem::fg_MemClear(Temp);
+				Ret = Hash;
+				return Ret;
+			}
 
 		};
 
