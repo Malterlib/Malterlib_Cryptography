@@ -47,6 +47,7 @@ Property
 
 %Group "{Test}/{Malterlib_Cryptography}"
 {
+	Property.MalterlibLinkWithOpenSSL true
 }
 
 Property

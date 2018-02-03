@@ -42,7 +42,7 @@ namespace NMib
 			void f_SetCacheSize(mint _CacheSize);
 			NStream::CFilePos f_GetLength() const;
 			void f_SetLength(NStream::CFilePos _Length);
-			void f_SetBufferSize(NStream::CFilePos _BufferSize); // For testing only
+			void f_SetBufferSize(mint _BufferSize); // For testing only
 
 			DMibStreamImplementOperators(TCBinaryStream_Encrypted);
 
@@ -51,7 +51,7 @@ namespace NMib
 
 		private:
 			void fp_WriteDirty(bool _bFinalize);
-			aint fp_PrepareBlock(NStream::CFilePos _Pos, bint _bWrite);
+			mint fp_PrepareBlock(NStream::CFilePos _Pos, bint _bWrite);
 			decltype(auto) fp_GetParentStream() const;
 
 			enum
@@ -73,7 +73,7 @@ namespace NMib
 			NStream::CFilePos mp_LastLoaded = 0;
 			NStream::CFilePos mp_FileLen = 0;
 			NStream::CFilePos mp_EncryptedFileLen = 0;
-			NStream::CFilePos mp_BufferSize = EDefaultBufferSize;
+			mint mp_BufferSize = EDefaultBufferSize;
 			mint mp_BlockSize;
 
 			NNet::ESSLDigest mp_HMAC = NNet::ESSLDigest_None;
