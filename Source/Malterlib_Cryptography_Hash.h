@@ -1,4 +1,4 @@
-﻿// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB 
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #pragma once
@@ -130,6 +130,16 @@ namespace NMib
 				TCMessageDigest Ret;
 
 				Ret.f_ParseString(_pString);
+				return Ret;
+			}
+
+			static TCMessageDigest fs_FromBytes(uint8 const *_pData, mint _Len)
+			{
+				if (_Len != t_Size)
+					DMibError("Invalid hash length when converting from bytes");
+
+				TCMessageDigest Ret;
+				NMem::fg_MemCopy(Ret.mp_Data, _pData, t_Size);
 				return Ret;
 			}
 
