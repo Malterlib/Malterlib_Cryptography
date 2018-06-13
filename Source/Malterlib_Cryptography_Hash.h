@@ -147,11 +147,17 @@ namespace NMib
 			{
 				NStr::CStr ReturnStr;
 				for (mint i = 0; i < t_Size; ++i)
-				{
-					ReturnStr += (NStr::CStr::CFormat("{nfh,sf0,sj2}") << mp_Data[i]).f_GetStr();
-				}
+					ReturnStr += NStr::CStr::CFormat("{nfh,sf0,sj2}") << mp_Data[i];
 				return ReturnStr;
 			}
+
+			template <typename tf_CStr>
+			void f_Format(tf_CStr &o_String) const
+			{
+				for (mint i = 0; i < t_Size; ++i)
+					o_String += typename tf_CStr::CFormat("{nfh,sf0,sj2}") << mp_Data[i];
+			}
+
 			void f_ParseString(const ch8 *_pStr)
 			{
 				NMem::fg_MemClear(mp_Data);
