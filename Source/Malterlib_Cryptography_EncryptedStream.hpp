@@ -55,7 +55,7 @@ namespace NMib
 			fp_WriteDirty(true);
 			ParentStream.f_Flush(false);
 			mp_OpenFlags = NFile::EFileOpen_None;
-			NMem::fg_MemClear(mp_DecryptedBlock);
+			NMem::fg_MemClear(mp_DecryptedBlock.f_GetArray(), mp_DecryptedBlock.f_GetLen());
 			mp_pHMACContext.f_Clear();
 			mp_pEncryptContext.f_Clear();
 			if constexpr (!NTraits::TCIsBaseOf<typename NTraits::TCRemoveReference<t_CParentStream>::CType, NStream::CBinaryStream>::mc_Value)
@@ -97,11 +97,11 @@ namespace NMib
 				break;
 			}
 
-
 			if (_OpenFlags == NFile::EFileOpen_Write || _OpenFlags == (NFile::EFileOpen_Read | NFile::EFileOpen_Write))
 			{
 				mp_FilePos = 0;
 				mp_pEncryptContext = fg_Construct(NNet::ESSLCryptoFlags_Encrypt | NNet::ESSLCryptoFlags_UsePadding, mp_KeyIV);
+
 				if (mp_HMAC != NNet::ESSLDigest_None)
 					mp_pHMACContext = fg_Construct<NNet::CIncrementalHMAC>(mp_HMAC, mp_HMACKey);
 				if (mp_BufferSize < mp_BlockSize)
