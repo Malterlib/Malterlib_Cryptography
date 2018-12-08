@@ -1,4 +1,4 @@
-﻿// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB 
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #include <Mib/Cryptography/Hashes/SHA>
@@ -64,7 +64,7 @@ public:
 				int Len = File.f_GetLength();
 				int SaveLen = Len;
 
-				NMib::NContainer::TCVector<uint8> Data;
+				NMib::NContainer::CByteVector Data;
 
 				Data.f_SetLen(65536);
 				uint8 *pData = Data.f_GetArray();
@@ -196,7 +196,7 @@ public:
 			int nTests = 1;
 		
 			NMib::NTime::CTimerMin TimerAlloc;
-			NMib::NDataProcessing::CHashDigest_MD5 Digest2;
+			NMib::NCryptography::CHashDigest_MD5 Digest2;
 			
 			{
 				DMibScopeTimerMin(TimerAlloc);			
@@ -228,7 +228,7 @@ public:
 			int nTests = 128 * 1024;
 		
 			NMib::NTime::CTimerMin TimerAlloc;
-			NMib::NDataProcessing::CHashDigest_MD5 Digest2;
+			NMib::NCryptography::CHashDigest_MD5 Digest2;
 			
 			{
 				DMibScopeTimerMin(TimerAlloc);			
@@ -278,7 +278,7 @@ const ch8 *g_pTestsDigestsMD5[] = {
 };
 mint g_pTestRepeatMD5[] = {1,1,1,1,1,1,1};
 
-typedef TCTestHash<NMib::NDataProcessing::CHash_MD5, g_pNameMD5, g_pTestsMD5, g_pTestsDigestsMD5, g_pTestRepeatMD5, sizeof(g_pTestsMD5) / sizeof(g_pTestsMD5[0]), true> CTestMD5;
+typedef TCTestHash<NMib::NCryptography::CHash_MD5, g_pNameMD5, g_pTestsMD5, g_pTestsDigestsMD5, g_pTestRepeatMD5, sizeof(g_pTestsMD5) / sizeof(g_pTestsMD5[0]), true> CTestMD5;
 DMibRuntimeClass(CMalterlibTest, CTestMD5);
 
 extern const ch8 g_pNameSHA1[];
@@ -299,7 +299,7 @@ const ch8 *g_pTestsDigestsSHA1[] = {
 };
 mint g_pTestRepeatSHA1[] = {1,1,15625};
 
-typedef TCTestHash<NMib::NDataProcessing::CHash_SHA1, g_pNameSHA1, g_pTestsSHA1, g_pTestsDigestsSHA1, g_pTestRepeatSHA1, sizeof(g_pTestsSHA1) / sizeof(g_pTestsSHA1[0]), false> CTestSHA1;
+typedef TCTestHash<NMib::NCryptography::CHash_SHA1, g_pNameSHA1, g_pTestsSHA1, g_pTestsDigestsSHA1, g_pTestRepeatSHA1, sizeof(g_pTestsSHA1) / sizeof(g_pTestsSHA1[0]), false> CTestSHA1;
 DMibRuntimeClass(CMalterlibTest, CTestSHA1);
 
 extern const ch8 g_pNameSHA256[];
@@ -318,7 +318,7 @@ const ch8 *g_pTestsDigestsSHA256[] = {
 };
 mint g_pTestRepeatSHA256[] = {1,1};
 
-typedef TCTestHash<NMib::NDataProcessing::CHash_SHA256, g_pNameSHA256, g_pTestsSHA256, g_pTestsDigestsSHA256, g_pTestRepeatSHA256, sizeof(g_pTestsSHA256) / sizeof(g_pTestsSHA256[0]), false> CTestSHA256;
+typedef TCTestHash<NMib::NCryptography::CHash_SHA256, g_pNameSHA256, g_pTestsSHA256, g_pTestsDigestsSHA256, g_pTestRepeatSHA256, sizeof(g_pTestsSHA256) / sizeof(g_pTestsSHA256[0]), false> CTestSHA256;
 DMibRuntimeClass(CMalterlibTest, CTestSHA256);
 
 extern const ch8 g_pNameSHA384[];
@@ -337,7 +337,7 @@ const ch8 *g_pTestsDigestsSHA384[] = {
 };
 mint g_pTestRepeatSHA384[] = {1,1};
 
-typedef TCTestHash<NMib::NDataProcessing::CHash_SHA384, g_pNameSHA384, g_pTestsSHA384, g_pTestsDigestsSHA384, g_pTestRepeatSHA384, sizeof(g_pTestsSHA384) / sizeof(g_pTestsSHA384[0]), false> CTestSHA384;
+typedef TCTestHash<NMib::NCryptography::CHash_SHA384, g_pNameSHA384, g_pTestsSHA384, g_pTestsDigestsSHA384, g_pTestRepeatSHA384, sizeof(g_pTestsSHA384) / sizeof(g_pTestsSHA384[0]), false> CTestSHA384;
 DMibRuntimeClass(CMalterlibTest, CTestSHA384);
 
 extern const ch8 g_pNameSHA512[];
@@ -356,7 +356,7 @@ const ch8 *g_pTestsDigestsSHA512[] = {
 };
 mint g_pTestRepeatSHA512[] = {1,1};
 
-typedef TCTestHash<NMib::NDataProcessing::CHash_SHA512, g_pNameSHA512, g_pTestsSHA512, g_pTestsDigestsSHA512, g_pTestRepeatSHA512, sizeof(g_pTestsSHA512) / sizeof(g_pTestsSHA512[0]), false> CTestSHA512;
+typedef TCTestHash<NMib::NCryptography::CHash_SHA512, g_pNameSHA512, g_pTestsSHA512, g_pTestsDigestsSHA512, g_pTestRepeatSHA512, sizeof(g_pTestsSHA512) / sizeof(g_pTestsSHA512[0]), false> CTestSHA512;
 DMibRuntimeClass(CMalterlibTest, CTestSHA512);
 
 #endif

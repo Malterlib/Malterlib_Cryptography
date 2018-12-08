@@ -22,7 +22,7 @@ namespace
 	using namespace NMib::NStr;
 	using namespace NMib::NTest;
 	using namespace NMib::NCryptography;
-	using namespace NMib::NNet;
+	using namespace NMib::NNetwork;
 
 	class CEncryptedStream_Tests : public CTest
 	{
@@ -36,8 +36,8 @@ namespace
 				static uint8 const *KeyBytes = (uint8 const *)"abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
 				mint KeyBytesLen = fg_StrLen(KeyBytes);
 				CStr ClearText = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
-				TCVector<uint8> Buffer;
-				NMib::NNet::CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
+				CByteVector Buffer;
+				NMib::NNetwork::CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
 
 				DMibTestSuite("Secure byte vector Key and IV")
 				{
@@ -171,30 +171,30 @@ namespace
 
 					// First positions matching block boundaries
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(16), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() , 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() , 16), ==, 0);
 					EncryptedStream.f_SetPosition(48);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 48, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 48, 16), ==, 0);
 					EncryptedStream.f_SetPosition(32);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 32, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 32, 16), ==, 0);
 					EncryptedStream.f_SetPosition(16);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 16, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 16, 16), ==, 0);
 
 					// First positions matching block boundaries
 					EncryptedStream.f_SetPosition(5);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 5, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 5, 16), ==, 0);
 					EncryptedStream.f_SetPosition(39);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 39, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 39, 16), ==, 0);
 					EncryptedStream.f_SetPosition(101);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 101, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 101, 16), ==, 0);
 					EncryptedStream.f_SetPosition(55);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 55, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 55, 16), ==, 0);
 
 					EncryptedStream.f_SetPosition(EncryptedStream.f_GetLength() - 8);
 					DMibExpectException(EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 32), DMibCryptographyErrorInstance("Read past end of file"));
@@ -226,30 +226,30 @@ namespace
 					// First positions matching block boundaries
 					EncryptedStream.f_SetPosition(96);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(16), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 96, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 96, 16), ==, 0);
 					EncryptedStream.f_SetPosition(48);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 48, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 48, 16), ==, 0);
 					EncryptedStream.f_SetPosition(32);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 32, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 32, 16), ==, 0);
 					EncryptedStream.f_SetPosition(16);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 16, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 16, 16), ==, 0);
 
 					// First positions matching block boundaries
 					EncryptedStream.f_SetPosition(5);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 5, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 5, 16), ==, 0);
 					EncryptedStream.f_SetPosition(39);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 39, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 39, 16), ==, 0);
 					EncryptedStream.f_SetPosition(101);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 101, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 101, 16), ==, 0);
 					EncryptedStream.f_SetPosition(55);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
-					DMibExpect(NMib::NMem::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 55, 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 55, 16), ==, 0);
 
 					EncryptedStream.f_SetPosition(EncryptedStream.f_GetLength() - 8);
 					DMibExpectException(EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 32), DMibCryptographyErrorInstance("Read past end of file"));
@@ -316,7 +316,7 @@ namespace
 						}
 					;
 
-					TCMap<ESSLCrypto, TCVector<uint8>> Encrypted;
+					TCMap<ESSLCrypto, CByteVector> Encrypted;
 					for (auto const &Cipher : Ciphers)
 					{
 						DMibTestPath(CStr::CFormat("Cipher {}") << Cipher);
@@ -325,7 +325,7 @@ namespace
 
 						bool bCanChangePosition = CipherKey != ESSLCrypto_AES_256_OFB && CipherKey != ESSLCrypto_AES_128_OFB;
 
-						NMib::NNet::CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
+						NMib::NNetwork::CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
 
 						auto HMAC = fGetHMAC(CipherKey);
 						auto HMACKey = KeyExpansion.f_GetHMACKey(HMAC);

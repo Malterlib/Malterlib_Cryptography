@@ -1,14 +1,11 @@
-﻿
+
 #pragma once
 
-namespace NMib
+namespace NMib::NCryptography
 {
-	namespace NCryptography
-	{
-		void fg_GenerateRandomData(uint8 *_pData, mint _nBytes);
-	}
+	void fg_GenerateRandomData(uint8 *_pData, mint _nBytes);
 }
 
 #ifndef DMibPNoShortCuts
-using namespace NMib::NCryptography;
+	using namespace NMib::NCryptography;
 #endif
