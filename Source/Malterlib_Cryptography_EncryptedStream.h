@@ -8,7 +8,7 @@
 
 namespace NMib::NCryptography
 {
-	DMibImpErrorClass(CExceptionCryptography, NMib::NException::CException);
+	DMibImpErrorClassDefine(CExceptionCryptography, NMib::NException::CException);
 
 #		define DMibErrorCryptography(_Description) DMibImpError(NMib::NCryptography::CExceptionCryptography, _Description)
 
