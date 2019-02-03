@@ -39,6 +39,7 @@ namespace NMib::NCryptography
 		void f_Flush(bint _bLocalCacheOnly);
 		void f_SetCacheSize(mint _CacheSize);
 		NStream::CFilePos f_GetLength() const;
+		mint f_ContainerLengthLimit() const;
 		void f_SetLength(NStream::CFilePos _Length);
 		void f_SetBufferSize(mint _BufferSize); // For testing only
 

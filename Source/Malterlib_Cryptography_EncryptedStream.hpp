@@ -475,6 +475,12 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
+	mint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_ContainerLengthLimit() const
+	{
+		return NStream::fg_CapLengthLimit(f_GetLength() - f_GetPosition());
+	}
+
+	template <typename t_CParentStream, typename t_CStreamType>
 	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_SetLength(NStream::CFilePos _Length)
 	{
 		fp_WriteDirty(true);
