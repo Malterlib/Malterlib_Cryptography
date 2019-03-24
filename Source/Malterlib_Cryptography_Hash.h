@@ -369,6 +369,15 @@ namespace NMib::NCryptography
 			return Ret;
 		}
 
+		static CMessageDigest fs_DigestFromData(const NContainer::CSecureByteVector &_Data)
+		{
+			CMessageDigest Ret;
+			TCHashImpl Hash;
+			Hash.f_AddData(_Data.f_GetArray(), _Data.f_GetLen());
+			Ret = Hash;
+			return Ret;
+		}
+
 		static CMessageDigest fs_DigestFromStream(NStream::CBinaryStream &_Stream)
 		{
 			CMessageDigest Ret;
