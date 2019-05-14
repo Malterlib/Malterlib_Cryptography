@@ -22,7 +22,6 @@ namespace
 	using namespace NMib::NStr;
 	using namespace NMib::NTest;
 	using namespace NMib::NCryptography;
-	using namespace NMib::NNetwork;
 
 	class CEncryptedStream_Tests : public CTest
 	{
@@ -37,12 +36,12 @@ namespace
 				mint KeyBytesLen = fg_StrLen(KeyBytes);
 				CStr ClearText = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
 				CByteVector Buffer;
-				NMib::NNetwork::CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
+				CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
 
 				DMibTestSuite("Secure byte vector Key and IV")
 				{
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
 					EncryptedStream << ClearText;
@@ -69,7 +68,7 @@ namespace
 					CKeyExpansion KeyExpansion{KeyBytes, Salt, CKeyDerivationSettings_Scrypt{}, {}};
 
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
 					EncryptedStream << ClearText;
@@ -86,7 +85,7 @@ namespace
 				DMibTestSuite("Detect tampering")
 				{
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
 					EncryptedStream << ClearText;
@@ -109,7 +108,7 @@ namespace
 				DMibTestSuite("Changing buffer size")
 				{
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					// Unfortunately, we cannot give these errors until the stream is opened and we have initialized the cipher.
 					EncryptedStream.f_SetBufferSize(1);
@@ -142,7 +141,7 @@ namespace
 				DMibTestSuite("Pure write")
 				{
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_SetBufferSize(16);
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
@@ -160,7 +159,7 @@ namespace
 				DMibTestSuite("Random access reads")
 				{
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
 					EncryptedStream.f_FeedBytes(ClearText.f_GetStr(), ClearText.f_GetLen());
@@ -215,7 +214,7 @@ namespace
 				DMibTestSuite("First write, then random access reads")
 				{
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_SetBufferSize(16);
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Read | NMib::NFile::EFileOpen_Write);
@@ -270,7 +269,7 @@ namespace
 				DMibTestSuite("Streams shorter than crypto block size")
 				{
 					CBinaryStreamMemory<> Stream;
-					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), ESSLDigest_SHA512, KeyExpansion.f_GetHMACKey(ESSLDigest_SHA512));
+					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_SetBufferSize(16);
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Read | NMib::NFile::EFileOpen_Write);
@@ -284,48 +283,48 @@ namespace
 				};
 				DMibTestSuite("All Ciphers")
 				{
-					TCMap<ESSLCrypto, CStr> Ciphers =
+					TCMap<ECryptoType, CStr> Ciphers =
 						{
-							{ESSLCrypto_AES_256_CBC, "ESSLCrypto_AES_256_CBC"}
-							, {ESSLCrypto_AES_128_CBC, "ESSLCrypto_AES_128_CBC"}
-							, {ESSLCrypto_AES_256_OFB, "ESSLCrypto_AES_256_OFB"}
-							, {ESSLCrypto_AES_128_OFB, "ESSLCrypto_AES_128_OFB"}
-							, {ESSLCrypto_DES_EDE3_CBC, "ESSLCrypto_DES_EDE3_CBC"}
-							, {ESSLCrypto_AES_256_ECB, "ESSLCrypto_AES_256_ECB"}
-							, {ESSLCrypto_AES_128_ECB, "ESSLCrypto_AES_128_ECB"}
+							{ECryptoType_AES_256_CBC, "ECryptoType_AES_256_CBC"}
+							, {ECryptoType_AES_128_CBC, "ECryptoType_AES_128_CBC"}
+							, {ECryptoType_AES_256_OFB, "ECryptoType_AES_256_OFB"}
+							, {ECryptoType_AES_128_OFB, "ECryptoType_AES_128_OFB"}
+							, {ECryptoType_DES_EDE3_CBC, "ECryptoType_DES_EDE3_CBC"}
+							, {ECryptoType_AES_256_ECB, "ECryptoType_AES_256_ECB"}
+							, {ECryptoType_AES_128_ECB, "ECryptoType_AES_128_ECB"}
 						}
 					;
 
-					auto fGetHMAC = [](ESSLCrypto _Crypto)
+					auto fGetHMAC = [](ECryptoType _Crypto)
 						{
 							switch (_Crypto)
 							{
-							case ESSLCrypto_AES_128_CBC:
-							case ESSLCrypto_AES_128_OFB:
-							case ESSLCrypto_AES_128_ECB:
-								return ESSLDigest_SHA1;
-							case ESSLCrypto_AES_256_CBC:
-							case ESSLCrypto_AES_256_OFB:
-							case ESSLCrypto_AES_256_ECB:
-								return ESSLDigest_SHA256;
-							case ESSLCrypto_DES_EDE3_CBC:
-								return ESSLDigest_SHA1;
+							case ECryptoType_AES_128_CBC:
+							case ECryptoType_AES_128_OFB:
+							case ECryptoType_AES_128_ECB:
+								return EDigestType_SHA1;
+							case ECryptoType_AES_256_CBC:
+							case ECryptoType_AES_256_OFB:
+							case ECryptoType_AES_256_ECB:
+								return EDigestType_SHA256;
+							case ECryptoType_DES_EDE3_CBC:
+								return EDigestType_SHA1;
 							}
 							DMibNeverGetHere;
-							return ESSLDigest_SHA256;
+							return EDigestType_SHA256;
 						}
 					;
 
-					TCMap<ESSLCrypto, CByteVector> Encrypted;
+					TCMap<ECryptoType, CByteVector> Encrypted;
 					for (auto const &Cipher : Ciphers)
 					{
 						DMibTestPath(CStr::CFormat("Cipher {}") << Cipher);
 
-						ESSLCrypto const CipherKey = Ciphers.fs_GetKey(Cipher);
+						ECryptoType const CipherKey = Ciphers.fs_GetKey(Cipher);
 
-						bool bCanChangePosition = CipherKey != ESSLCrypto_AES_256_OFB && CipherKey != ESSLCrypto_AES_128_OFB;
+						bool bCanChangePosition = CipherKey != ECryptoType_AES_256_OFB && CipherKey != ECryptoType_AES_128_OFB;
 
-						NMib::NNetwork::CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
+						CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
 
 						auto HMAC = fGetHMAC(CipherKey);
 						auto HMACKey = KeyExpansion.f_GetHMACKey(HMAC);

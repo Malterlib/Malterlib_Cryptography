@@ -11,14 +11,14 @@ namespace NMib::NCryptography
 	template <typename t_CParentStream, typename t_CStreamType>
 	TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::TCBinaryStream_Encrypted
 		(
-			NNetwork::CEncryptKeyIV const &_KeyIV
-			, NNetwork::ESSLDigest _HMAC
+			CEncryptKeyIV const &_KeyIV
+			, EDigestType _HMAC
 			, NContainer::CSecureByteVector const &_HMACKey
 		)
 		: mp_KeyIV(_KeyIV)
 		, mp_HMAC(_HMAC)
 		, mp_HMACKey(_HMACKey)
-		, mp_BlockSize(NNetwork::CEncryptKeyIV::fs_GetBlockSize(_KeyIV.m_Crypto))
+		, mp_BlockSize(CEncryptKeyIV::fs_GetBlockSize(_KeyIV.m_Crypto))
 	{
 
 	}
@@ -82,14 +82,14 @@ namespace NMib::NCryptography
 
 		switch (mp_KeyIV.m_Crypto)
 		{
-		case NNetwork::ESSLCrypto_DES_EDE3_CBC:
-		case NNetwork::ESSLCrypto_AES_128_CBC:
-		case NNetwork::ESSLCrypto_AES_256_CBC:
+		case ECryptoType_DES_EDE3_CBC:
+		case ECryptoType_AES_128_CBC:
+		case ECryptoType_AES_256_CBC:
 			mp_bCanChangePosition = true;
 			mp_bIsCBC = true;
 			break;
-		case NNetwork::ESSLCrypto_AES_128_ECB:
-		case NNetwork::ESSLCrypto_AES_256_ECB:
+		case ECryptoType_AES_128_ECB:
+		case ECryptoType_AES_256_ECB:
 			mp_bCanChangePosition = true;
 			mp_bIsECB = true;
 			break;
@@ -98,10 +98,10 @@ namespace NMib::NCryptography
 		if (_OpenFlags == NFile::EFileOpen_Write || _OpenFlags == (NFile::EFileOpen_Read | NFile::EFileOpen_Write))
 		{
 			mp_FilePos = 0;
-			mp_pEncryptContext = fg_Construct(NNetwork::ESSLCryptoFlags_Encrypt | NNetwork::ESSLCryptoFlags_UsePadding, mp_KeyIV);
+			mp_pEncryptContext = fg_Construct(ECryptoFlags_Encrypt | ECryptoFlags_UsePadding, mp_KeyIV);
 
-			if (mp_HMAC != NNetwork::ESSLDigest_None)
-				mp_pHMACContext = fg_Construct<NNetwork::CIncrementalHMAC>(mp_HMAC, mp_HMACKey);
+			if (mp_HMAC != EDigestType_None)
+				mp_pHMACContext = fg_Construct<CIncrementalHMAC>(mp_HMAC, mp_HMACKey);
 			if (mp_BufferSize < mp_BlockSize)
 				DMibErrorCryptography(NStr::fg_Format("Buffer size cannot be smaller than cipher block size: {}", mp_BlockSize));
 			mp_OpenFlags = _OpenFlags;
@@ -112,9 +112,9 @@ namespace NMib::NCryptography
 			mp_EncryptedFileLen = ParentStream.f_GetLength();
 			mp_FileLen = mp_EncryptedFileLen;
 
-			mp_pEncryptContext = fg_Construct(NNetwork::ESSLCryptoFlags_Decrypt | NNetwork::ESSLCryptoFlags_UsePadding, mp_KeyIV);
+			mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, mp_KeyIV);
 			mint HMACSize = 0;
-			if (mp_HMAC != NNetwork::ESSLDigest_None)
+			if (mp_HMAC != EDigestType_None)
 			{
 				mp_pHMACContext = fg_Construct(mp_HMAC, mp_HMACKey);
 				HMACSize = mp_pHMACContext->f_GetHMACSize();
@@ -130,7 +130,7 @@ namespace NMib::NCryptography
 			if (mp_FileLen > 0)
 			{
 				// First, deduct the size of the HMAC
-				if (mp_HMAC != NNetwork::ESSLDigest_None)
+				if (mp_HMAC != EDigestType_None)
 				{
 					mp_FileLen -= HMACSize;
 					mp_EncryptedFileLen -= HMACSize;
@@ -175,9 +175,9 @@ namespace NMib::NCryptography
 								ParentStream.f_ConsumeBytes(IV.f_GetArray(mp_BlockSize), mp_BlockSize);
 							}
 						}
-						NNetwork::CIncrementalEncrypt TempDecryptionContext
+						CIncrementalEncrypt TempDecryptionContext
 							(
-								NNetwork::ESSLCryptoFlags_Decrypt | NNetwork::ESSLCryptoFlags_UsePadding
+								ECryptoFlags_Decrypt | ECryptoFlags_UsePadding
 								, {mp_KeyIV.m_Key, IV, mp_KeyIV.m_Crypto}
 							)
 						;
@@ -217,7 +217,7 @@ namespace NMib::NCryptography
 			// Don't worry, we will get them back when the stream is finalized.
 			mp_TempBlock.f_SetAtLeastLen(Size);
 			auto nBytes = mp_pEncryptContext->f_Encrypt(mp_DecryptedBlock.f_GetArray(), Size, mp_TempBlock.f_GetArray());
-			if (mp_HMAC != NNetwork::ESSLDigest_None)
+			if (mp_HMAC != EDigestType_None)
 				mp_pHMACContext->f_Update(mp_TempBlock.f_GetArray(), nBytes);
 			ParentStream.f_FeedBytes(mp_TempBlock.f_GetArray(), nBytes);
 
@@ -238,14 +238,14 @@ namespace NMib::NCryptography
 				mp_TempBlock.f_SetAtLeastLen(mp_BlockSize * 2);
 				auto nBytes = mp_pEncryptContext->f_FinalizePaddedEncrypt(mp_TempBlock.f_GetArray(), mp_BlockSize * 2);
 				ParentStream.f_FeedBytes(mp_TempBlock.f_GetArray(), nBytes);
-				if (mp_HMAC != NNetwork::ESSLDigest_None)
+				if (mp_HMAC != EDigestType_None)
 				{
 					mp_pHMACContext->f_Update(mp_TempBlock.f_GetArray(), nBytes);
 					mp_EncryptedFileLen += nBytes;
 				}
 			}
 
-			if (mp_HMAC != NNetwork::ESSLDigest_None)
+			if (mp_HMAC != EDigestType_None)
 			{
 				auto HMACSize = mp_pHMACContext->f_GetHMACSize();
 				mp_TempBlock.f_SetAtLeastLen(HMACSize);
@@ -300,20 +300,20 @@ namespace NMib::NCryptography
 						ParentStream.f_SetPosition(mp_CurrentLoaded - mp_BlockSize);
 						NContainer::CSecureByteVector IV;
 						ParentStream.f_ConsumeBytes(IV.f_GetArray(mp_BlockSize), mp_BlockSize);
-						NNetwork::CEncryptKeyIV KeyIV{mp_KeyIV.m_Key, IV, mp_KeyIV.m_Crypto};
-						mp_pEncryptContext = fg_Construct(NNetwork::ESSLCryptoFlags_Decrypt | NNetwork::ESSLCryptoFlags_UsePadding, KeyIV);
+						CEncryptKeyIV KeyIV{mp_KeyIV.m_Key, IV, mp_KeyIV.m_Crypto};
+						mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, KeyIV);
 					}
 					else
 					{
 						ParentStream.f_SetPosition(mp_CurrentLoaded);
-						mp_pEncryptContext = fg_Construct(NNetwork::ESSLCryptoFlags_Decrypt | NNetwork::ESSLCryptoFlags_UsePadding, mp_KeyIV);
+						mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, mp_KeyIV);
 					}
 				}
 				else if (mp_LastLoaded != 0)
 				{
 					// SetPosition must have rewinded the file, restart with original IV
 					ParentStream.f_SetPosition(0);
-					mp_pEncryptContext = fg_Construct(NNetwork::ESSLCryptoFlags_Decrypt | NNetwork::ESSLCryptoFlags_UsePadding, mp_KeyIV);
+					mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, mp_KeyIV);
 				}
 			}
 			mp_TempBlock.f_SetAtLeastLen(ThisTime + mp_BlockSize);

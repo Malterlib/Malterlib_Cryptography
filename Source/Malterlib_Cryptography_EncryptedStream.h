@@ -4,24 +4,18 @@
 #pragma once
 
 #include <Mib/Core/Core>
-#include <Mib/Network/SSL>
+#include <Mib/Cryptography/KeyDerivation>
+#include <Mib/Cryptography/SymmetricCrypto>
+#include "Malterlib_Cryptography_Exception.h"
 
 namespace NMib::NCryptography
 {
-	DMibImpErrorClassDefine(CExceptionCryptography, NMib::NException::CException);
-
-#		define DMibErrorCryptography(_Description) DMibImpError(NMib::NCryptography::CExceptionCryptography, _Description)
-
-#		ifndef DMibPNoShortCuts
-#			define DErrorCryptography(_Description) DMibErrorCryptography(_Description)
-#		endif
-
 	template <typename t_CParentStream, typename t_CStreamType = NStream::CBinaryStreamDefault>
 	class TCBinaryStream_Encrypted : public t_CStreamType
 	{
 	public:
 
-		TCBinaryStream_Encrypted(NNetwork::CEncryptKeyIV const &_KeyIV, NNetwork::ESSLDigest _HMAC, NContainer::CSecureByteVector const &_HMACKey);
+		TCBinaryStream_Encrypted(CEncryptKeyIV const &_KeyIV, EDigestType _HMAC, NContainer::CSecureByteVector const &_HMACKey);
 		~TCBinaryStream_Encrypted();
 
 		template <typename tf_CParentStream>
@@ -59,12 +53,12 @@ namespace NMib::NCryptography
 		};
 
 		t_CParentStream mp_Stream = t_CParentStream();
-		NStorage::TCUniquePointer<NNetwork::CIncrementalEncrypt> mp_pEncryptContext;
-		NStorage::TCUniquePointer<NNetwork::CIncrementalHMAC> mp_pHMACContext;
+		NStorage::TCUniquePointer<CIncrementalEncrypt> mp_pEncryptContext;
+		NStorage::TCUniquePointer<CIncrementalHMAC> mp_pHMACContext;
 
 		NContainer::CSecureByteVector mp_DecryptedBlock;
 		NContainer::CSecureByteVector mp_TempBlock;
-		NNetwork::CEncryptKeyIV const mp_KeyIV;
+		CEncryptKeyIV const mp_KeyIV;
 		NContainer::CSecureByteVector mp_HMACKey;
 
 		NStream::CFilePos mp_FilePos = 0;
@@ -75,7 +69,7 @@ namespace NMib::NCryptography
 		mint mp_BufferSize = EDefaultBufferSize;
 		mint mp_BlockSize;
 
-		NNetwork::ESSLDigest mp_HMAC = NNetwork::ESSLDigest_None;
+		EDigestType mp_HMAC = EDigestType_None;
 		NFile::EFileOpen mp_OpenFlags = NFile::EFileOpen_None;
 
 		bool mp_bCurrentDirty = false;
