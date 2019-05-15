@@ -17,9 +17,14 @@ namespace NMib::NCryptography
 			f_Clear();
 		}
 
+		~TCMessageDigest()
+		{
+			f_Clear();
+		}
+
 		void f_Clear()
 		{
-			NMemory::fg_ObjectSet(mp_Data, 0, t_Size);
+			NMemory::fg_SecureMemClear(mp_Data, t_Size);
 		}
 
 		bint f_IsCleared() const
@@ -317,13 +322,13 @@ namespace NMib::NCryptography
 
 		~TCHashImpl()
 		{
-			NMemory::fg_MemClear(m_BlockAligned);
-			NMemory::fg_MemClear(m_State);
+			NMemory::fg_SecureMemClear(m_BlockAligned);
+			NMemory::fg_SecureMemClear(m_State);
 		}
 
 		void f_Reset()
 		{
-			NMemory::fg_MemClear(m_BlockAligned);
+			NMemory::fg_SecureMemClear(m_BlockAligned);
 			m_iBlockPos = 0;
 			m_nBytes = 0;
 
@@ -394,7 +399,7 @@ namespace NMib::NCryptography
 
 				Length -= ThisTime;
 			}
-			NMemory::fg_MemClear(Temp);
+			NMemory::fg_SecureMemClear(Temp);
 			Ret = Hash;
 			return Ret;
 		}

@@ -1,4 +1,4 @@
-// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #include "Malterlib_Cryptography_UUID.h"
@@ -132,6 +132,10 @@ namespace NMib::NCryptography
 	CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier()
 	{
 		NMemory::fg_MemClear(*this);
+	}
+	CUniversallyUniqueIdentifier::~CUniversallyUniqueIdentifier()
+	{
+		NMemory::fg_SecureMemClear(*this);
 	}
 	void CUniversallyUniqueIdentifier::fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen)
 	{

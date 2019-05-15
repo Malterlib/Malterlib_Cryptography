@@ -25,8 +25,8 @@ namespace NMib::NCryptography
 
 		~CInternal()
 		{
-			NMemory::fg_MemClear(m_Key, EVP_MAX_KEY_LENGTH);
-			NMemory::fg_MemClear(m_IV, EVP_MAX_IV_LENGTH);
+			NMemory::fg_SecureMemClear(m_Key, EVP_MAX_KEY_LENGTH);
+			NMemory::fg_SecureMemClear(m_IV, EVP_MAX_IV_LENGTH);
 		}
 
 		uint32 f_Encrypt(uint8 *_pSource, uint32 _SourceLen, uint8 *_pDest) const

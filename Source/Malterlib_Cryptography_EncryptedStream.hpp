@@ -53,7 +53,7 @@ namespace NMib::NCryptography
 		fp_WriteDirty(true);
 		ParentStream.f_Flush(false);
 		mp_OpenFlags = NFile::EFileOpen_None;
-		NMemory::fg_MemClear(mp_DecryptedBlock.f_GetArray(), mp_DecryptedBlock.f_GetLen());
+		NMemory::fg_SecureMemClear(mp_DecryptedBlock.f_GetArray(), mp_DecryptedBlock.f_GetLen());
 		mp_pHMACContext.f_Clear();
 		mp_pEncryptContext.f_Clear();
 		if constexpr (!NTraits::TCIsBaseOf<typename NTraits::TCRemoveReference<t_CParentStream>::CType, NStream::CBinaryStream>::mc_Value)
@@ -277,7 +277,7 @@ namespace NMib::NCryptography
 			if (_bWrite)
 			{
 				DMibCheck(mp_BufferSize + mp_BlockSize <= mp_DecryptedBlock.f_GetLen());
-				NMemory::fg_MemClear(mp_DecryptedBlock.f_GetArray(), mp_BufferSize + mp_BlockSize);
+				NMemory::fg_SecureMemClear(mp_DecryptedBlock.f_GetArray(), mp_BufferSize + mp_BlockSize);
 			}
 			else
 				DMibErrorCryptography("Read past end of file");

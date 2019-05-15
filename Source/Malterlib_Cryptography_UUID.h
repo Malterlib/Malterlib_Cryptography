@@ -34,6 +34,7 @@ namespace NMib::NCryptography
 			)
 		;
 		CUniversallyUniqueIdentifier(NStr::CStr const &_RegistryFormat, EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
+		~CUniversallyUniqueIdentifier();
 		NStr::CStr f_GetAsString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
 		NStr::CFStr256 f_GetAsStaticString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
 		bool operator == (CUniversallyUniqueIdentifier const &_Right) const;
