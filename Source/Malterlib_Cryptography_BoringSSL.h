@@ -63,7 +63,7 @@ namespace NMib::NCryptography::NBoringSSL
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NNetwork;
+	using namespace NMib::NCryptography;
 #endif
 
 #include "Malterlib_Cryptography_BoringSSL_RegisterProtect.h"
