@@ -2,4 +2,4 @@
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #pragma once
-#include "../../../../Source/Malterlib_Cryptography_SHA.h"
+#include "../../../../Source/Malterlib_Cryptography_Hash_SHA.h"

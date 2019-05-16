@@ -2,10 +2,16 @@
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #include <Mib/Core/Core>
-#include "Malterlib_Cryptography_MD5.h"
+#include "Malterlib_Cryptography_Hash_MD5.h"
+#include "Malterlib_Cryptography_Hash_BoringSSL.hpp"
+#include "Malterlib_Cryptography_Hash_ImplementationPrivate.hpp"
 
 namespace NMib::NCryptography
 {
+	template struct TCHashImpl_BoringSSL<EDigestType_MD5, 16>;
+	template struct TCHashImpl<TCHashImpl_BoringSSL<EDigestType_MD5, 16>>;
+	template struct TCMessageDigest<CHash_MD5::mc_DigestSize, CHash_MD5>;
+
 	namespace NPrivate
 	{
 		NStr::CStr fg_GetConsistentPath(NStr::CStr const &_Path)
@@ -17,6 +23,7 @@ namespace NMib::NCryptography
 #endif
 		}
 	}
+
 	CHashCache::CHashCache(NStr::CStr const &_File, bool _bUpdateHash, bool _bAlwaysCheckHash)
 			: mp_HashFileName(_File)
 			, mp_bUpdateHash(_bUpdateHash)

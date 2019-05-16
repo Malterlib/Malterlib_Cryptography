@@ -1,22 +1,11 @@
 #pragma once
 
 #include "Malterlib_Cryptography_Exception.h"
+#include "Malterlib_Cryptography_Hash.h"
+#include "Malterlib_Cryptography_Hash_SHA.h"
 
 namespace NMib::NCryptography
 {
-	enum EDigestType
-	{
-		EDigestType_None
-		, EDigestType_Automatic
-		, EDigestType_SHA512
-		, EDigestType_SHA384
-		, EDigestType_SHA256
-		, EDigestType_SHA224
-		, EDigestType_SHA1		// Be careful, only to be used for compatibility with legacy systems (borken hash)
-		, EDigestType_MD5		// Be careful, only to be used for compatibility with legacy systems (borken hash)
-		, EDigestType_MD4		// Be careful, only to be used for compatibility with legacy systems (borken hash)
-	};
-
 	class CIncrementalHMAC
 	{
 	public:
