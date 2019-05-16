@@ -1,6 +1,7 @@
 #include "Malterlib_Cryptography_Certificate.h"
 
 #include <Mib/Cryptography/BoringSSL>
+#include <Mib/Encoding/Base64>
 
 #if defined(DPlatformFamily_OSX)
 	#include <Security/Security.h>
