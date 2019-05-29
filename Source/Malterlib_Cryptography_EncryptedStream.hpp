@@ -259,7 +259,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	mint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::fp_PrepareBlock(NStream::CFilePos _Pos, bint _bWrite)
+	mint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite)
 	{
 		if (mp_CurrentLoaded >= 0 && _Pos >=  mp_CurrentLoaded && _Pos < (mp_CurrentLoaded + NStream::CFilePos(mp_BufferSize)))
 		{
@@ -381,14 +381,14 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	bint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_IsValid() const
+	bool TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_IsValid() const
 	{
 		auto &ParentStream = fp_GetParentStream();
 		return ParentStream.f_IsValid();
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	bint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_IsAtEndOfStream() const
+	bool TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_IsAtEndOfStream() const
 	{
 		return mp_FilePos >= mp_FileLen;
 	}
@@ -443,13 +443,13 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	bint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_IsValidReadPosition(NStream::CFilePos _Pos) const
+	bool TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_IsValidReadPosition(NStream::CFilePos _Pos) const
 	{
 		return _Pos >= 0 && _Pos < mp_FilePos;
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_Flush(bint _bLocalCacheOnly)
+	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_Flush(bool _bLocalCacheOnly)
 	{
 		fp_WriteDirty(false);
 

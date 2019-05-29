@@ -23,14 +23,14 @@ namespace NMib::NCryptography
 		void f_Close();
 		void f_FeedBytes(const void *_pMem, mint _nBytes);
 		void f_ConsumeBytes(void *_pMem, mint _nBytes);
-		bint f_IsValid() const;
-		bint f_IsAtEndOfStream() const;
+		bool f_IsValid() const;
+		bool f_IsAtEndOfStream() const;
 		NStream::CFilePos f_GetPosition() const;
 		void f_SetPosition(NStream::CFilePos _Pos);
 		void f_SetPositionFromEnd(NStream::CFilePos _Pos);
 		void f_AddPosition(NStream::CFilePos _Pos);
-		bint f_IsValidReadPosition(NStream::CFilePos _Pos) const;
-		void f_Flush(bint _bLocalCacheOnly);
+		bool f_IsValidReadPosition(NStream::CFilePos _Pos) const;
+		void f_Flush(bool _bLocalCacheOnly);
 		void f_SetCacheSize(mint _CacheSize);
 		NStream::CFilePos f_GetLength() const;
 		mint f_ContainerLengthLimit() const;
@@ -44,7 +44,7 @@ namespace NMib::NCryptography
 
 	private:
 		void fp_WriteDirty(bool _bFinalize);
-		mint fp_PrepareBlock(NStream::CFilePos _Pos, bint _bWrite);
+		mint fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite);
 		decltype(auto) fp_GetParentStream() const;
 
 		enum
