@@ -177,7 +177,7 @@ namespace NMib::NCryptography
 								return false;
 							}
 						}
-						catch (NFile::CExceptionFile const  &_Exception)
+						catch ([[maybe_unused]] NFile::CExceptionFile const &_Exception)
 						{
 							DMibLog(Debug, "Exception trying to check file exists on: {}. The error reported was {}", _File, _Exception.f_GetErrorStr());
 							return false;
