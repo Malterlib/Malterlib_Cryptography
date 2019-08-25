@@ -106,7 +106,6 @@ namespace NMib::NCryptography
 							SecCertificateRef CertRef = reinterpret_cast<SecCertificateRef>(const_cast<void*>(CFArrayGetValueAtIndex(pCerts, i)));
 
 							X509 *pCertificate;
-			#if DPlatformVersionMax >= 1060
 							if (CSystem::ms_PlatformVersion >= 10'06'00)
 							{
 								CFDataRef DERCert = SecCertificateCopyData(CertRef);
@@ -119,7 +118,6 @@ namespace NMib::NCryptography
 								CFRelease(DERCert);
 							}
 							else
-			#endif
 							{
 								DMibDeprecatedSupressStart;
 								// This code is not tested. Is it in the right format?
