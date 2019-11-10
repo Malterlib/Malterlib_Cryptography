@@ -138,6 +138,13 @@ namespace NMib::NCryptography::NBoringSSL
 		case EDigestType_SHA256: return EVP_sha256();
 		case EDigestType_SHA384: return EVP_sha384();
 		case EDigestType_SHA512: return EVP_sha512();
+
+		case EDigestType_SHA224:
+		case EDigestType_SHA1:
+		case EDigestType_MD5:
+		case EDigestType_MD4:
+		case EDigestType_None:
+			break;
 		}
 		DMibNeverGetHere;
 		return EVP_sha384();
@@ -263,7 +270,7 @@ namespace NMib::NCryptography::NBoringSSL
 				ERR_clear_error();
 				EC_KEY *pECKey;
 
-				int CurveName;
+				int CurveName = NID_secp521r1;
 				switch (_Options.m_KeySetting.f_GetTypeID())
 				{
 				case EPublicKeyType_EC_secp256r1:
@@ -277,6 +284,9 @@ namespace NMib::NCryptography::NBoringSSL
 					break;
 				case EPublicKeyType_EC_X25519:
 					CurveName = NID_X25519;
+					break;
+				default:
+					DMibNeverGetHere;
 					break;
 				}
 

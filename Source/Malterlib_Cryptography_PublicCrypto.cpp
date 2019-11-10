@@ -197,6 +197,8 @@ namespace NMib::NCryptography
 						if (!EVP_PKEY_get0_EC_KEY(pKey)) //Did we get one?
 							DMibErrorCryptography(fg_GetExceptionStr("Error getting EC_Key"));
 						break;
+					case EPublicKeyType_RSA:
+						break;
 					}
 
 					o_PrivateKeyData = fg_ConvertPrivateKeyToDER(pKey);

@@ -93,6 +93,9 @@ namespace NMib::NCryptography
 			mp_bCanChangePosition = true;
 			mp_bIsECB = true;
 			break;
+		case ECryptoType_AES_256_OFB:
+		case ECryptoType_AES_128_OFB:
+			break;
 		}
 
 		if (_OpenFlags == NFile::EFileOpen_Write || _OpenFlags == (NFile::EFileOpen_Read | NFile::EFileOpen_Write))
