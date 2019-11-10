@@ -24,7 +24,7 @@ namespace NMib::NCryptography::NBoringSSL
 			}
 		};
 
-		NStorage::TCAggregate<CBoringSSLInit, 129> g_SSLLowLevel = {DAggregateInit};
+		constinit NStorage::TCAggregate<CBoringSSLInit, 129> g_SSLLowLevel = {DAggregateInit};
 	}
 
 	NStr::CStr fg_GetErrors()

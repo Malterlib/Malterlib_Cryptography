@@ -41,7 +41,7 @@ namespace NMib::NCryptography
 			X509_STORE *m_pSystemCertStore = nullptr;
 		};
 
-		NStorage::TCAggregate<CCertificateGlobals, 129> g_CertificateGlobals = {DAggregateInit};
+		constinit NStorage::TCAggregate<CCertificateGlobals, 129> g_CertificateGlobals = {DAggregateInit};
 	}
 
 	namespace
