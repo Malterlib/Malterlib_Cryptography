@@ -898,6 +898,14 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 			{
 				Compile.Type C
 			}
+			%File "../../../../External/boringssl/crypto/evp/p_x25519.c"
+			{
+				Compile.Type C
+			}
+			%File "../../../../External/boringssl/crypto/evp/p_x25519_asn1.c"
+			{
+				Compile.Type C
+			}
 			%File "../../../../External/boringssl/crypto/evp/pbkdf.c"
 			{
 				Compile.Type C
