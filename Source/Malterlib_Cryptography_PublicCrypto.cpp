@@ -7,6 +7,16 @@ namespace NMib::NCryptography
 {
 	using namespace NBoringSSL;
 
+	bool CPublicKeySettings_RSA::operator == (CPublicKeySettings_RSA const &_Right) const
+	{
+		return m_KeyLength == _Right.m_KeyLength;
+	}
+
+	bool CPublicKeySettings_RSA::operator < (CPublicKeySettings_RSA const &_Right) const
+	{
+		return m_KeyLength < _Right.m_KeyLength;
+	}
+
 	NContainer::CSecureByteVector CPublicCrypto::fs_SignMessage(NContainer::CSecureByteVector const &_Message, NContainer::CSecureByteVector const &_KeyData, EDigestType _Digest)
 	{
 		return fg_RunProtectRegisters

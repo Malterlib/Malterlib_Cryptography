@@ -24,6 +24,9 @@ namespace NMib::NCryptography
 		{
 		}
 
+		bool operator == (CPublicKeySettings_RSA const &_Right) const;
+		bool operator < (CPublicKeySettings_RSA const &_Right) const;
+
 		uint32 m_KeyLength = 4096;
 	};
 
