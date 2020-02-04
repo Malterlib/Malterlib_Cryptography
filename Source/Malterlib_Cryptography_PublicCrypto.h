@@ -32,18 +32,26 @@ namespace NMib::NCryptography
 
 	struct CPublicKeySettings_EC_secp256r1
 	{
+		bool operator == (CPublicKeySettings_EC_secp256r1 const &_Right) const;
+		bool operator < (CPublicKeySettings_EC_secp256r1 const &_Right) const;
 	};
 
 	struct CPublicKeySettings_EC_secp384r1
 	{
+		bool operator == (CPublicKeySettings_EC_secp384r1 const &_Right) const;
+		bool operator < (CPublicKeySettings_EC_secp384r1 const &_Right) const;
 	};
 
 	struct CPublicKeySettings_EC_secp521r1
 	{
+		bool operator == (CPublicKeySettings_EC_secp521r1 const &_Right) const;
+		bool operator < (CPublicKeySettings_EC_secp521r1 const &_Right) const;
 	};
 
 	struct CPublicKeySettings_EC_X25519
 	{
+		bool operator == (CPublicKeySettings_EC_X25519 const &_Right) const;
+		bool operator < (CPublicKeySettings_EC_X25519 const &_Right) const;
 	};
 
 	using CPublicKeySetting = NStorage::TCStreamableVariant
@@ -57,9 +65,22 @@ namespace NMib::NCryptography
 		>
 	;
 
-	class CPublicCrypto
+	struct CPublicCrypto
 	{
-	public:
+		struct CPublicKeyParameters_RSA
+		{
+			NContainer::CSecureByteVector m_Modulus;
+			NContainer::CSecureByteVector m_Exponent;
+ 		};
+
+		struct CPublicKeyParameters_EC
+		{
+			NContainer::CSecureByteVector m_CoordinateX;
+			NContainer::CSecureByteVector m_CoordinateY;
+ 		};
+
+		using CPublicKeyParameters = NStorage::TCVariant<CPublicKeyParameters_RSA, CPublicKeyParameters_EC>;
+
 		static NContainer::CSecureByteVector fs_SignMessage
 			(
 				NContainer::CSecureByteVector const &_Message
@@ -67,6 +88,18 @@ namespace NMib::NCryptography
 				, EDigestType _Digest = EDigestType_Automatic
 			)
 		;
+
+		static NContainer::CSecureByteVector fs_SignMessageRawSignature
+			(
+				NContainer::CSecureByteVector const &_Message
+				, NContainer::CSecureByteVector const &_KeyData
+				, EDigestType _Digest = EDigestType_Automatic
+			)
+		;
+
+		static NContainer::CSecureByteVector fs_GetPublicKeyFromPrivateKey(NContainer::CSecureByteVector const &_PrivateKey);
+		static CPublicKeyParameters fs_GetPublicKeyParameters(NContainer::CSecureByteVector const &_Key);
+		static CPublicKeySetting fs_PublicKeySettingsFromPrivateKey(NContainer::CSecureByteVector const &_Key);
 
 		static bool fs_VerifySignature
 			(
