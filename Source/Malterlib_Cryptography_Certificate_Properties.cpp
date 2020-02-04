@@ -403,6 +403,88 @@ namespace NMib::NCryptography
 		;
 	}
 
+	namespace
+	{
+		bool fg_IsValidDateTime(int _Years, int _Months, int _Days, int _Hours, int _Minutes, int _Seconds)
+		{
+			return fg_Clamp(_Months, 1, 12) == _Months
+				&& fg_Clamp(_Days, 1, NTime::CTimeConvert::fs_GetDaysInMonth(_Years, _Months - 1)) == _Days
+				&& fg_Clamp(_Hours, 0, 23) == _Hours
+				&& fg_Clamp(_Minutes, 0, 59) == _Minutes
+				&& fg_Clamp(_Seconds, 0, 59) == _Seconds
+			;
+		}
+
+		NTime::CTime fg_ConvertFromASN1Time(ASN1_TIME const *_pTime)
+		{
+			if (!_pTime)
+				return NTime::CTime::fs_StartOfTime();
+
+			if (_pTime->type == V_ASN1_UTCTIME)
+			{
+				if (_pTime->length < 10)
+					return NTime::CTime::fs_StartOfTime();
+
+				ch8 const *pData = (ch8 const *)_pTime->data;
+
+				for (int i = 0; i < 10; ++i)
+				{
+					if (!NStr::fg_CharIsNumber(pData[i]))
+						return NTime::CTime::fs_StartOfTime();
+				}
+
+				int Years = (pData[0] - '0') * 10 + (pData[1] - '0');
+				if (Years < 50)
+					Years += 100;
+				Years += 1900;
+
+				int Months = (pData[2] - '0') * 10 + (pData[3] - '0');
+				int Days = (pData[4] - '0') * 10 + (pData[5] - '0');
+				int Hours = (pData[6] - '0') * 10 + (pData[7] - '0');
+				int Minutes = (pData[8] - '0') * 10 + (pData[9] - '0');
+				int Seconds = 0;
+
+				if (_pTime->length >= 12 && NStr::fg_CharIsNumber(pData[10]) && NStr::fg_CharIsNumber(pData[11]))
+					Seconds = (pData[10] - '0') * 10 + (pData[11] - '0');
+
+				if (!fg_IsValidDateTime(Years, Months, Days, Hours, Minutes, Seconds))
+					return NTime::CTime::fs_StartOfTime();
+
+				return NTime::CTimeConvert::fs_CreateTime(Years, Months, Days, Hours, Minutes, Seconds);
+			}
+			else if (_pTime->type == V_ASN1_GENERALIZEDTIME)
+			{
+				if (_pTime->length < 12)
+					return NTime::CTime::fs_StartOfTime();
+
+				ch8 const *pData = (ch8 const *)_pTime->data;
+
+				for (int i = 0; i < 12; ++i)
+				{
+					if (!NStr::fg_CharIsNumber(pData[i]))
+						return NTime::CTime::fs_StartOfTime();
+				}
+
+				int Years = (pData[0] - '0') * 1000 + (pData[1] - '0') * 100 + (pData[2] - '0') * 10 + (pData[3] - '0');
+				int Months = (pData[4] - '0') * 10 + (pData[5] - '0');
+				int Days = (pData[6] - '0') * 10 + (pData[7] - '0');
+				int Hours = (pData[8] - '0') * 10 + (pData[9] - '0');
+				int Minutes = (pData[10] - '0') * 10 + (pData[11] - '0');
+				int Seconds = 0;
+
+				if (_pTime->length >= 14 && NStr::fg_CharIsNumber(pData[12]) && NStr::fg_CharIsNumber(pData[13]))
+					Seconds = (pData[12] - '0') * 10 + (pData[13] - '0');
+
+				if (!fg_IsValidDateTime(Years, Months, Days, Hours, Minutes, Seconds))
+					return NTime::CTime::fs_StartOfTime();
+
+				return NTime::CTimeConvert::fs_CreateTime(Years, Months, Days, Hours, Minutes, Seconds);
+			}
+
+			return NTime::CTime::fs_StartOfTime();
+		}
+	}
+
 	NTime::CTime CCertificate::fs_GetCertificateExpirationTime(NContainer::CByteVector const &_CertificateData)
 	{
 		return fg_RunProtectRegisters
@@ -415,86 +497,27 @@ namespace NMib::NCryptography
 							X509_free(pCertificate);
 						}
 					;
-					NTime::CTime Time = NTime::CTime::fs_StartOfTime();
 
-					ASN1_TIME* pTime = X509_get_notAfter(pCertificate);
-					if (!pTime)
-						return Time;
-					if (pTime->type == V_ASN1_UTCTIME)
-					{
-						if (pTime->length < 10)
-							return NTime::CTime::fs_StartOfTime();
+					return fg_ConvertFromASN1Time(X509_get_notAfter(pCertificate));
+				}
+			)
+		;
+	}
 
-						const char* pData = (const char*)pTime->data;
-
-						for (int i = 0; i < 10; ++i)
+	NTime::CTime CCertificate::fs_GetCertificateIssueTime(NContainer::CByteVector const &_CertificateData)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
+					auto Cleanup0 = g_OnScopeExit > [&]
 						{
-							if ((pData[i] > '9') || (pData[i] < '0'))
-								return NTime::CTime::fs_StartOfTime();
+							X509_free(pCertificate);
 						}
+					;
 
-						int Years = (pData[0]-'0')*10+(pData[1]-'0');
-						if (Years < 50) Years += 100;
-						Years += 1900;
-
-						int Months = (pData[2]-'0')*10+(pData[3]-'0');
-						if ((Months > 12) || (Months < 1))
-							return NTime::CTime::fs_StartOfTime();
-
-						int Days = (pData[4]-'0')*10+(pData[5]-'0');
-						int Hours = (pData[6]-'0')*10+(pData[7]-'0');
-						int Minutes =  (pData[8]-'0')*10+(pData[9]-'0');
-						int Seconds = 0;
-
-						if
-							(
-								pTime->length >=12
-								&& (pData[10] >= '0') && (pData[10] <= '9')
-								&& (pData[11] >= '0') && (pData[11] <= '9')
-							)
-						{
-							Seconds = (pData[10]-'0')*10+(pData[11]-'0');
-						}
-
-						Time = NTime::CTimeConvert::fs_CreateTime(Years, Months, Days, Hours, Minutes, Seconds);
-					}
-					else if (pTime->type == V_ASN1_GENERALIZEDTIME)
-					{
-						if (pTime->length < 12)
-							return NTime::CTime::fs_StartOfTime();
-
-						const char* pData = (const char*)pTime->data;
-
-						for (int i = 0; i < 12; ++i)
-						{
-							if ((pData[i] > '9') || (pData[i] < '0'))
-								return NTime::CTime::fs_StartOfTime();
-						}
-
-						int Years = (pData[0]-'0')*1000+(pData[1]-'0')*100 + (pData[2]-'0')*10+(pData[3]-'0');
-						int Months = (pData[4]-'0')*10+(pData[5]-'0');
-						if (Months > 12 || Months < 1)
-							return NTime::CTime::fs_StartOfTime();
-
-						int Days = (pData[6]-'0')*10+(pData[7]-'0');
-						int Hours = (pData[8]-'0')*10+(pData[9]-'0');
-						int Minutes =  (pData[10]-'0')*10+(pData[11]-'0');
-						int Seconds = 0;
-
-						if
-							(
-								pTime->length >= 14
-								&& (pData[12] >= '0') && (pData[12] <= '9')
-								&& (pData[13] >= '0') && (pData[13] <= '9')
-							)
-						{
-							Seconds = (pData[12]-'0')*10+(pData[13]-'0');
-						}
-
-						Time = NTime::CTimeConvert::fs_CreateTime(Years, Months, Days, Hours, Minutes, Seconds);
-					}
-
-					return Time;
+					return fg_ConvertFromASN1Time(X509_get_notBefore(pCertificate));
 				}
 			)
 		;

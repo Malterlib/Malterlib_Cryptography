@@ -63,9 +63,8 @@ namespace NMib::NCryptography
 		NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> m_Extensions;
 	};
 
-	class CCertificate
+	struct CCertificate
 	{
-	public:
 		static NStr::CStr fs_GetCertificateName(NContainer::CByteVector const &_CertificateData);
 		static NStr::CStr fs_GetCertificateDistinguishedName_RFC2253(NContainer::CByteVector const &_CertificateData);
 		static NStr::CStr fs_GetIssuerName(NContainer::CByteVector const &_CertificateData);
@@ -77,6 +76,7 @@ namespace NMib::NCryptography
 
 		static NStr::CStr fs_GetCertificateHostnamesStr(NContainer::CByteVector const &_CertificateData);
 		static NTime::CTime fs_GetCertificateExpirationTime(NContainer::CByteVector const &_CertificateData);
+		static NTime::CTime fs_GetCertificateIssueTime(NContainer::CByteVector const &_CertificateData);
 		static NStr::CStr fs_GetCertificateDescription(NContainer::CByteVector const &_CertificateData);
 		static NStr::CStr fs_GetCertificateInformation(NContainer::CByteVector const &_CertificateData);
 
