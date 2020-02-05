@@ -113,6 +113,9 @@ namespace NMib::NCryptography
 		static void fs_VerifyCertificateRequestSameKeyAsCertificate(NContainer::CByteVector const &_CertRequestData, NContainer::CByteVector const &_CertData);
 
 		static void fs_GetSystemCertificates(X509_STORE *_pCertificateStoreStore);
+
+		static NContainer::CByteVector fs_ConvertToDer_CertificateSigningRequest(NContainer::CByteVector const &_Pem);
+		static NContainer::CByteVector fs_ConvertToDer_Certificate(NContainer::CByteVector const &_Pem);
 	};
 }
 

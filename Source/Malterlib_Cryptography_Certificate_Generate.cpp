@@ -536,4 +536,82 @@ namespace NMib::NCryptography
 			)
 		;
 	}
+
+	NContainer::CByteVector CCertificate::fs_ConvertToDer_CertificateSigningRequest(NContainer::CByteVector const &_Pem)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_Pem);
+					auto Cleanup0 = g_OnScopeExit > [&] ()
+						{
+							X509_REQ_free(pCertificateRequest);
+						}
+					;
+
+					ERR_clear_error();
+					BIO* pMemoryBio = BIO_new(BIO_s_mem());
+					if (!pMemoryBio)
+						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
+					auto Cleanup = g_OnScopeExit > [&]
+						{
+							BIO_free(pMemoryBio);
+						}
+					;
+
+					ERR_clear_error();
+					if (!i2d_X509_REQ_bio(pMemoryBio, pCertificateRequest))
+						DMibErrorCryptography(fg_GetExceptionStr("Error writing certificate signing request to BIO"));
+
+					NContainer::CByteVector Return;
+					Return.f_SetLen(pMemoryBio->num_write);
+					ERR_clear_error();
+					if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
+						DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate signing request from BIO"));
+					return Return;
+
+				}
+			)
+		;
+	}
+
+	NContainer::CByteVector CCertificate::fs_ConvertToDer_Certificate(NContainer::CByteVector const &_Pem)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					X509 *pCertificate = fg_LoadCertificate(_Pem);
+					auto Cleanup0 = g_OnScopeExit > [&] ()
+						{
+							X509_free(pCertificate);
+						}
+					;
+
+					ERR_clear_error();
+					BIO* pMemoryBio = BIO_new(BIO_s_mem());
+					if (!pMemoryBio)
+						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
+					auto Cleanup = g_OnScopeExit > [&]
+						{
+							BIO_free(pMemoryBio);
+						}
+					;
+
+					ERR_clear_error();
+					if (!i2d_X509_bio(pMemoryBio, pCertificate))
+						DMibErrorCryptography(fg_GetExceptionStr("Error writing certificate signing request to BIO"));
+
+					NContainer::CByteVector Return;
+					Return.f_SetLen(pMemoryBio->num_write);
+					ERR_clear_error();
+					if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
+						DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate signing request from BIO"));
+					return Return;
+
+				}
+			)
+		;
+	}
 }
