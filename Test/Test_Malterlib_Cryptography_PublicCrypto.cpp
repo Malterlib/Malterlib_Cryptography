@@ -51,10 +51,7 @@ public:
 
 				// Tamper with signature - outcome differs depending on the key type. RSA fails verification, but EC throws and exception about a broken signature
 				Signature[0] ^= 0x1;
-				if (KeyType == EPublicKeyType_RSA)
-					DMibExpectFalse(CPublicCrypto::fs_VerifySignature(Message, PublicKey, Signature));
-				else
-					DMibExpectExceptionType(CPublicCrypto::fs_VerifySignature(Message, PublicKey, Signature), CExceptionCryptography);
+				DMibExpectFalse(CPublicCrypto::fs_VerifySignature(Message, PublicKey, Signature));
 			}
 			{
 				NContainer::CSecureByteVector PrivateKey;
