@@ -85,13 +85,13 @@ namespace NMib::NCryptography
 			}
 		;
 
-		auto ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
+		mint ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
 
 		auto fConvertBigNum = [&](BIGNUM const *_pBigNum, bool _bPad) -> NContainer::CSecureByteVector
 			{
 				NContainer::CSecureByteVector Output;
 
-				auto nBytes = BN_num_bytes(_pBigNum);
+				mint nBytes = BN_num_bytes(_pBigNum);
 
 				if (_bPad)
 				{
@@ -257,8 +257,8 @@ namespace NMib::NCryptography
 						const BIGNUM *pComponentR, *pComponentS;
 						ECDSA_SIG_get0(pSignature, &pComponentR, &pComponentS);
 
-						auto nBytesComporentR = BN_num_bytes(pComponentR);
-						auto nBytesComporentS = BN_num_bytes(pComponentS);
+						mint nBytesComporentR = BN_num_bytes(pComponentR);
+						mint nBytesComporentS = BN_num_bytes(pComponentS);
 
 						if (nBytesComporentR > ExpectedBytes || nBytesComporentS > ExpectedBytes)
 							DMibErrorCryptography("Invalid number of bytes in EC signature component");
