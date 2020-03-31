@@ -721,6 +721,13 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 		{
 			Compile.Type C
 		}
+		%Group trust_token
+		{
+			%File "../../../../External/boringssl/crypto/trust_token/privacy_pass.c"
+			{
+				Compile.Type C
+			}
+		}
 		%Group x509
 		{
 			%File "../../../../External/boringssl/crypto/x509/a_digest.c"
@@ -1126,7 +1133,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 						{
 							Custom_WorkingDirectory "@('../../../../External/boringssl/crypto/err'->MakeAbsolute())"
 							Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/err_data.c"
-							Custom_Inputs "@('../../../../External/boringssl/crypto/err/err_data_generate.go'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/asn1.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/bio.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/bn.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/cipher.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/conf.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/dh.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/digest.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/dsa.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ecdh.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ecdsa.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ec.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/engine.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/evp.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/hkdf.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/obj.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/pem.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/pkcs7.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/pkcs8.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/rsa.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ssl.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/x509.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/x509v3.errordata'->MakeAbsolute())"
+							Custom_Inputs "@('../../../../External/boringssl/crypto/err/err_data_generate.go'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/asn1.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/bio.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/bn.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/cipher.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/conf.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/dh.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/digest.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/dsa.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ecdh.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ecdsa.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ec.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/engine.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/evp.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/hkdf.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/obj.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/pem.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/pkcs7.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/pkcs8.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/rsa.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/ssl.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/trust_token.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/x509.errordata'->MakeAbsolute());@('../../../../External/boringssl/crypto/err/x509v3.errordata'->MakeAbsolute())"
 							Custom_CommandLine "go.exe run err_data_generate.go > @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/err_data.c"
 						}
 					}
@@ -1689,6 +1696,13 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 		%File "../../../../External/boringssl/crypto/thread_test.cc"
 		{
 			Compile.Type C++
+		}
+		%Group trust_token
+		{
+			%File "../../../../External/boringssl/crypto/trust_token/trust_token_test.cc"
+			{
+				Compile.Type C++
+			}
 		}
 		%Group x509
 		{
