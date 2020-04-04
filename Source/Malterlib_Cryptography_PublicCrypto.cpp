@@ -232,7 +232,7 @@ namespace NMib::NCryptography
 
 					if (EC_KEY *pECKey = EVP_PKEY_get0_EC_KEY(pKey))
 					{
-						auto ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
+						mint ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
 
 						ERR_clear_error();
 						NContainer::CSecureByteVector Digest;
