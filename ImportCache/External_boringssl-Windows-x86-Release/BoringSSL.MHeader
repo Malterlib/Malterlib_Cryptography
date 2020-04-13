@@ -429,6 +429,10 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 			{
 				Compile.Type "C"
 			}
+			%File "../../../../External/boringssl/crypto/ec_extra/hash_to_curve.c"
+			{
+				Compile.Type "C"
+			}
 		}
 		%Group "err"
 		{
