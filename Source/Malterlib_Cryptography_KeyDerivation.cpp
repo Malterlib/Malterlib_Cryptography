@@ -124,7 +124,7 @@ namespace NMib::NCryptography
 							ERR_clear_error();
 							if
 								(
-									!EVP_PBE_scrypt
+									!EVP_PBE_scrypt_with_digest
 									(
 										_Password.f_GetStr()
 										, _Password.f_GetLen()
