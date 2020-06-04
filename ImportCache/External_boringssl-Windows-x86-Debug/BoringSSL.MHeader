@@ -363,6 +363,10 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 		}
 		%Group "curve25519"
 		{
+			%File "../../../../External/boringssl/crypto/curve25519/curve25519.c"
+			{
+				Compile.Type "C"
+			}
 			%File "../../../../External/boringssl/crypto/curve25519/spake25519.c"
 			{
 				Compile.Type "C"
@@ -727,7 +731,11 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 		}
 		%Group "trust_token"
 		{
-			%File "../../../../External/boringssl/crypto/trust_token/privacy_pass.c"
+			%File "../../../../External/boringssl/crypto/trust_token/pmbtoken.c"
+			{
+				Compile.Type "C"
+			}
+			%File "../../../../External/boringssl/crypto/trust_token/trust_token.c"
 			{
 				Compile.Type "C"
 			}
@@ -1313,13 +1321,6 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 			}
 		}
 	}
-	%Group "third_party"
-	{
-		%File "../../../../External/boringssl/third_party/fiat/curve25519.c"
-		{
-			Compile.Type "C"
-		}
-	}
 }
 %Target "Exe_urandom_test"
 {
@@ -1560,6 +1561,10 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 			%Group "rand"
 			{
 				%File "../../../../External/boringssl/crypto/fipsmodule/rand/ctrdrbg_test.cc"
+				{
+					Compile.Type "C++"
+				}
+				%File "../../../../External/boringssl/crypto/fipsmodule/rand/fork_detect_test.cc"
 				{
 					Compile.Type "C++"
 				}
