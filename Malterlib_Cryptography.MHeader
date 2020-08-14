@@ -23,7 +23,7 @@ Property
 
 %Import "../../External/boringssl/CMakeLists.txt"
 {
-	Import.CMake_FullRebuildVersion 15
+	Import.CMake_FullRebuildVersion "@(Import.CMake_FullRebuildVersion).1"
 	Compile
 	{
 		!!MalterlibCompileSupportTabSetings true
@@ -39,6 +39,8 @@ Property
 	{
 		!!CompileDialect "C"
 		PrefixHeader ""
+
+		PreprocessorDefines "OPENSSL_C11_ATOMIC=1;@(Compile.PreprocessorDefines)"
 
 		ExtraCompilerFlags "-wd4100 -wd4127 -wd4200 -wd4204 -wd4221 -wd4242 -wd4244 -wd4245 -wd4267 -wd4371 -wd4388 -wd4296 -wd4350 -wd4365 -wd4389 -wd4464 -wd4510 -wd4512 -wd4514 -wd4548 -wd4610 -wd4623 -wd4625 -wd4626 -wd4706 -wd4710 -wd4711 -wd4800 -wd4820 -wd5027 -w44265 @(Compile.ExtraCompilerFlags)"
 		{

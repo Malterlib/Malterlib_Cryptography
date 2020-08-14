@@ -424,9 +424,9 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 	%Dependency "Lib_test_support_lib"
 	%Dependency "Lib_crypto"
 	%Dependency "Lib_boringssl_gtest"
-	%Group "Linux2.6"
+	%Group "OSX10.7"
 	{
-		%Group "x86"
+		%Group "arm64"
 		{
 			%Group "@(FullConfiguration)"
 			{
@@ -1542,9 +1542,9 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 			}
 		}
 	}
-	%Group "Linux2.6"
+	%Group "OSX10.7"
 	{
-		%Group "x86"
+		%Group "arm64"
 		{
 			%Group "@(FullConfiguration)"
 			{
@@ -1557,37 +1557,37 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 					}
 					%Group "chacha"
 					{
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-x86.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-armv8.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "crypto/chacha/chacha-x86.S.rule"
+						%File "crypto/chacha/chacha-armv8.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-x86.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/chacha/asm/chacha-x86.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory chacha && perl @('../../../../External/boringssl/crypto/chacha/asm/chacha-x86.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-x86.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-armv8.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/chacha/asm/chacha-armv8.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory chacha && perl @('../../../../External/boringssl/crypto/chacha/asm/chacha-armv8.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-armv8.S"
 							}
 						}
 					}
 					%Group "test"
 					{
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-x86.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-armv8.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "crypto/test/trampoline-x86.S.rule"
+						%File "crypto/test/trampoline-armv8.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-x86.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/test/asm/trampoline-x86.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory test && perl @('../../../../External/boringssl/crypto/test/asm/trampoline-x86.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-x86.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-armv8.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/test/asm/trampoline-armv8.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory test && perl @('../../../../External/boringssl/crypto/test/asm/trampoline-armv8.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-armv8.S"
 							}
 						}
 					}
@@ -1603,169 +1603,124 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 					}
 					%Group "fipsmodule"
 					{
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-x86.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesv8-armx.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/bn-586.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/armv8-mont.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/co-586.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-neon-armv8.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-ssse3-x86.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghashv8-armx.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-x86.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-armv8.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/md5-586.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-armv8.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-586.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-armv8.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-586.S"
+						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-armv8.S"
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-586.S"
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-x86.S"
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86-mont.S"
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File "crypto/fipsmodule/aesni-x86.S.rule"
+						%File "crypto/fipsmodule/aesv8-armx.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-x86.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/aes/asm/aesni-x86.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/aesni-x86.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-x86.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesv8-armx.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/aes/asm/aesv8-armx.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/aesv8-armx.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesv8-armx.S"
 							}
 						}
-						%File "crypto/fipsmodule/bn-586.S.rule"
+						%File "crypto/fipsmodule/armv8-mont.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/bn-586.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/bn/asm/bn-586.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/bn-586.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/bn-586.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/armv8-mont.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/bn/asm/armv8-mont.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/armv8-mont.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/armv8-mont.S"
 							}
 						}
-						%File "crypto/fipsmodule/co-586.S.rule"
+						%File "crypto/fipsmodule/ghash-neon-armv8.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/co-586.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/bn/asm/co-586.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/co-586.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/co-586.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-neon-armv8.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-neon-armv8.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-neon-armv8.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-neon-armv8.S"
 							}
 						}
-						%File "crypto/fipsmodule/ghash-ssse3-x86.S.rule"
+						%File "crypto/fipsmodule/ghashv8-armx.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-ssse3-x86.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-ssse3-x86.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-ssse3-x86.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-ssse3-x86.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghashv8-armx.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghashv8-armx.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghashv8-armx.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghashv8-armx.S"
 							}
 						}
-						%File "crypto/fipsmodule/ghash-x86.S.rule"
+						%File "crypto/fipsmodule/sha1-armv8.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-x86.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-x86.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-x86.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-x86.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-armv8.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha1-armv8.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha1-armv8.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-armv8.S"
 							}
 						}
-						%File "crypto/fipsmodule/md5-586.S.rule"
+						%File "crypto/fipsmodule/sha256-armv8.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/md5-586.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/md5/asm/md5-586.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/md5/asm/md5-586.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/md5-586.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-armv8.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-armv8.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-armv8.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-armv8.S"
 							}
 						}
-						%File "crypto/fipsmodule/sha1-586.S.rule"
+						%File "crypto/fipsmodule/sha512-armv8.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-586.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha1-586.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha1-586.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-586.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-armv8.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-armv8.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-armv8.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-armv8.S"
 							}
 						}
-						%File "crypto/fipsmodule/sha256-586.S.rule"
+						%File "crypto/fipsmodule/vpaes-armv8.S.rule"
 						{
 							Compile
 							{
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-586.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha256-586.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha256-586.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-586.S"
-							}
-						}
-						%File "crypto/fipsmodule/sha512-586.S.rule"
-						{
-							Compile
-							{
-								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-586.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-586.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-586.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-586.S"
-							}
-						}
-						%File "crypto/fipsmodule/vpaes-x86.S.rule"
-						{
-							Compile
-							{
-								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-x86.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/aes/asm/vpaes-x86.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/vpaes-x86.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-x86.S"
-							}
-						}
-						%File "crypto/fipsmodule/x86-mont.S.rule"
-						{
-							Compile
-							{
-								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
-								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86-mont.S"
-								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86-mont.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86-mont.pl'->MakeAbsolute()) elf \"-fPIC -DOPENSSL_IA32_SSE2\" @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86-mont.S"
+								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-armv8.S"
+								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/aes/asm/vpaes-armv8.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/vpaes-armv8.pl'->MakeAbsolute()) ios64 @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-armv8.S"
 							}
 						}
 					}
@@ -2030,63 +1985,6 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 	{
 		Dependency.Indirect true
 	}
-}
-%Target "Exe_handshaker"
-{
-	Compile
-	{
-		!!Compile.Type "C++"
-		SearchPath "@('../../../../External/boringssl/third_party/googletest/include'->MakeAbsolute());@('../../../../External/boringssl/include'->MakeAbsolute());@(Compile.SearchPath)"
-		PreprocessorDefines "BORINGSSL_IMPLEMENTATION;NDEBUG;@(Compile.PreprocessorDefines)"
-	}
-	Property.MalterlibTargetNameType "Normal"
-	Target.Group "External/BoringSSL"
-	{
-		!!Target.Group ""
-	}
-	Target.Type "ConsoleExecutable"
-	Target.BaseName "handshaker"
-	%Group "ssl"
-	{
-		%Group "test"
-		{
-			%File "../../../../External/boringssl/ssl/test/async_bio.cc"
-			{
-				Compile.Type "C++"
-			}
-			%File "../../../../External/boringssl/ssl/test/handshake_util.cc"
-			{
-				Compile.Type "C++"
-			}
-			%File "../../../../External/boringssl/ssl/test/handshaker.cc"
-			{
-				Compile.Type "C++"
-			}
-			%File "../../../../External/boringssl/ssl/test/mock_quic_transport.cc"
-			{
-				Compile.Type "C++"
-			}
-			%File "../../../../External/boringssl/ssl/test/packeted_bio.cc"
-			{
-				Compile.Type "C++"
-			}
-			%File "../../../../External/boringssl/ssl/test/settings_writer.cc"
-			{
-				Compile.Type "C++"
-			}
-			%File "../../../../External/boringssl/ssl/test/test_config.cc"
-			{
-				Compile.Type "C++"
-			}
-			%File "../../../../External/boringssl/ssl/test/test_state.cc"
-			{
-				Compile.Type "C++"
-			}
-		}
-	}
-	%Dependency "Lib_ssl"
-	%Dependency "Lib_test_support_lib"
-	%Dependency "Lib_crypto"
 }
 %Target "Exe_bssl_shim"
 {

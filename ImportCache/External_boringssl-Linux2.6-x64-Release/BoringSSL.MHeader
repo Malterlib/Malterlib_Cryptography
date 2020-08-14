@@ -141,9 +141,9 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 				Compile.Type "C++"
 			}
 		}
-		%Group "dh"
+		%Group "dh_extra"
 		{
-			%File "../../../../External/boringssl/crypto/dh/dh_test.cc"
+			%File "../../../../External/boringssl/crypto/dh_extra/dh_test.cc"
 			{
 				Compile.Type "C++"
 			}
@@ -825,21 +825,13 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 				Compile.Type "C"
 			}
 		}
-		%Group "dh"
+		%Group "dh_extra"
 		{
-			%File "../../../../External/boringssl/crypto/dh/dh.c"
+			%File "../../../../External/boringssl/crypto/dh_extra/params.c"
 			{
 				Compile.Type "C"
 			}
-			%File "../../../../External/boringssl/crypto/dh/params.c"
-			{
-				Compile.Type "C"
-			}
-			%File "../../../../External/boringssl/crypto/dh/check.c"
-			{
-				Compile.Type "C"
-			}
-			%File "../../../../External/boringssl/crypto/dh/dh_asn1.c"
+			%File "../../../../External/boringssl/crypto/dh_extra/dh_asn1.c"
 			{
 				Compile.Type "C"
 			}
@@ -1127,6 +1119,10 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 			{
 				Compile.Type "C"
 			}
+			%File "../../../../External/boringssl/crypto/rand_extra/passive.c"
+			{
+				Compile.Type "C"
+			}
 			%File "../../../../External/boringssl/crypto/rand_extra/rand_extra.c"
 			{
 				Compile.Type "C"
@@ -1143,9 +1139,9 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 				Compile.Type "C"
 			}
 		}
-		%File "../../../../External/boringssl/crypto/refcount_c11.c"
+		%File "../../../../External/boringssl/crypto/refcount_c11.cc"
 		{
-			Compile.Type "C"
+			Compile.Type "C++"
 		}
 		%File "../../../../External/boringssl/crypto/refcount_lock.c"
 		{
@@ -1580,7 +1576,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/chacha/asm/chacha-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory chacha && perl @('../../../../External/boringssl/crypto/chacha/asm/chacha-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory chacha && perl @('../../../../External/boringssl/crypto/chacha/asm/chacha-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/chacha/chacha-x86_64.S"
 							}
 						}
 					}
@@ -1603,7 +1599,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/cipher_extra/aes128gcmsiv-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/cipher_extra/asm/aes128gcmsiv-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory cipher_extra && perl @('../../../../External/boringssl/crypto/cipher_extra/asm/aes128gcmsiv-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/cipher_extra/aes128gcmsiv-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory cipher_extra && perl @('../../../../External/boringssl/crypto/cipher_extra/asm/aes128gcmsiv-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/cipher_extra/aes128gcmsiv-x86_64.S"
 							}
 						}
 						%File "crypto/cipher_extra/chacha20_poly1305_x86_64.S.rule"
@@ -1613,7 +1609,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/cipher_extra/chacha20_poly1305_x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/cipher_extra/asm/chacha20_poly1305_x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory cipher_extra && perl @('../../../../External/boringssl/crypto/cipher_extra/asm/chacha20_poly1305_x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/cipher_extra/chacha20_poly1305_x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory cipher_extra && perl @('../../../../External/boringssl/crypto/cipher_extra/asm/chacha20_poly1305_x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/cipher_extra/chacha20_poly1305_x86_64.S"
 							}
 						}
 					}
@@ -1631,7 +1627,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/test/asm/trampoline-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory test && perl @('../../../../External/boringssl/crypto/test/asm/trampoline-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory test && perl @('../../../../External/boringssl/crypto/test/asm/trampoline-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/test/trampoline-x86_64.S"
 							}
 						}
 					}
@@ -1729,7 +1725,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-gcm-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/modes/asm/aesni-gcm-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/aesni-gcm-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-gcm-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/aesni-gcm-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-gcm-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/aesni-x86_64.S.rule"
@@ -1739,7 +1735,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/aes/asm/aesni-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/aesni-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/aesni-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/aesni-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/ghash-ssse3-x86_64.S.rule"
@@ -1749,7 +1745,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-ssse3-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-ssse3-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-ssse3-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-ssse3-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-ssse3-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-ssse3-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/ghash-x86_64.S.rule"
@@ -1759,7 +1755,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/modes/asm/ghash-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/ghash-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/md5-x86_64.S.rule"
@@ -1769,7 +1765,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/md5-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/md5/asm/md5-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/md5/asm/md5-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/md5-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/md5/asm/md5-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/md5-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/p256-x86_64-asm.S.rule"
@@ -1779,7 +1775,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/p256-x86_64-asm.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/ec/asm/p256-x86_64-asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/ec/asm/p256-x86_64-asm.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/p256-x86_64-asm.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/ec/asm/p256-x86_64-asm.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/p256-x86_64-asm.S"
 							}
 						}
 						%File "crypto/fipsmodule/p256_beeu-x86_64-asm.S.rule"
@@ -1789,7 +1785,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/p256_beeu-x86_64-asm.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/ec/asm/p256_beeu-x86_64-asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/ec/asm/p256_beeu-x86_64-asm.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/p256_beeu-x86_64-asm.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/ec/asm/p256_beeu-x86_64-asm.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/p256_beeu-x86_64-asm.S"
 							}
 						}
 						%File "crypto/fipsmodule/rdrand-x86_64.S.rule"
@@ -1799,7 +1795,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/rdrand-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/rand/asm/rdrand-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/rand/asm/rdrand-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/rdrand-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/rand/asm/rdrand-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/rdrand-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/rsaz-avx2.S.rule"
@@ -1809,7 +1805,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/rsaz-avx2.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/bn/asm/rsaz-avx2.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/rsaz-avx2.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/rsaz-avx2.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/rsaz-avx2.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/rsaz-avx2.S"
 							}
 						}
 						%File "crypto/fipsmodule/sha1-x86_64.S.rule"
@@ -1819,7 +1815,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha1-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha1-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha1-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha1-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/sha256-x86_64.S.rule"
@@ -1829,7 +1825,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha256-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/sha512-x86_64.S.rule"
@@ -1839,7 +1835,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/sha/asm/sha512-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/sha512-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/vpaes-x86_64.S.rule"
@@ -1849,7 +1845,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-x86_64.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/aes/asm/vpaes-x86_64.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/vpaes-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-x86_64.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/aes/asm/vpaes-x86_64.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/vpaes-x86_64.S"
 							}
 						}
 						%File "crypto/fipsmodule/x86_64-mont5.S.rule"
@@ -1859,7 +1855,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86_64-mont5.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86_64-mont5.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86_64-mont5.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86_64-mont5.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86_64-mont5.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86_64-mont5.S"
 							}
 						}
 						%File "crypto/fipsmodule/x86_64-mont.S.rule"
@@ -1869,7 +1865,7 @@ Property.CMakeOutputPath_BoringSSL "@('.'->MakeAbsolute())"
 								Custom_WorkingDirectory "@('crypto/fipsmodule'->MakeAbsolute())"
 								Custom_Outputs "@(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86_64-mont.S"
 								Custom_Inputs "@('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86_64-mont.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/arm-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/ppc-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86_64-xlate.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86asm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86gas.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86masm.pl'->MakeAbsolute());@('../../../../External/boringssl/crypto/perlasm/x86nasm.pl'->MakeAbsolute())"
-								Custom_CommandLine "@('../../../../Binaries/Malterlib/OSX/x64/MToolCMake'->MakeAbsolute()) -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86_64-mont.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86_64-mont.S"
+								Custom_CommandLine "MToolCMake -E make_directory . && perl @('../../../../External/boringssl/crypto/fipsmodule/bn/asm/x86_64-mont.pl'->MakeAbsolute()) elf @(Target:Target.IntermediateDirectory->MakeAbsolute())/crypto/fipsmodule/x86_64-mont.S"
 							}
 						}
 					}
