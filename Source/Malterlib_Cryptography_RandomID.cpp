@@ -6,15 +6,19 @@ namespace NMib::NCryptography
 	namespace
 	{
 		ch8 g_UnmistakableChars[] = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
+		static constexpr mint gc_MaxCharacters = 512;
 	}
 
 	NStr::CStr fg_RandomID(mint _nCharacters)
 	{
-		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
-		const mint c_BufferSize = ((_nCharacters + 3) / 4) * 4;
-		uint8 RandomData[c_BufferSize];
+		if (_nCharacters > gc_MaxCharacters)
+			DMibError("Out of range");
 
-		for (mint i = 0; i < sizeof(RandomData) / 4; ++i)
+		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
+		mint const BufferSize = ((_nCharacters + 3) / 4) * 4;
+		uint8 RandomData[gc_MaxCharacters * 4];
+
+		for (mint i = 0; i < BufferSize / 4; ++i)
 			*((uint32 *)(RandomData + i*4)) = NMisc::fg_GetRandomUnsigned();
 
 		NStr::CStr Return;
@@ -27,11 +31,14 @@ namespace NMib::NCryptography
 
 	NStr::CStr fg_HighEntropyRandomID(mint _nCharacters)
 	{
-		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
-		const mint c_BufferSize = ((_nCharacters + 3) / 4) * 4;
-		uint8 RandomData[c_BufferSize];
+		if (_nCharacters > gc_MaxCharacters)
+			DMibError("Out of range");
 
-		NSys::fg_Security_GenerateHighEntropyData(RandomData, c_BufferSize);
+		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
+		mint const BufferSize = ((_nCharacters + 3) / 4) * 4;
+		uint8 RandomData[gc_MaxCharacters * 4];
+
+		NSys::fg_Security_GenerateHighEntropyData(RandomData, BufferSize);
 
 		NStr::CStr Return;
 
