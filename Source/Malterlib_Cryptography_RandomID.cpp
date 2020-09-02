@@ -8,11 +8,10 @@ namespace NMib::NCryptography
 		ch8 g_UnmistakableChars[] = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
 	}
 
-	NStr::CStr fg_RandomID()
+	NStr::CStr fg_RandomID(mint _nCharacters)
 	{
-		const mint c_nCharsInRandomID = 17;
 		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
-		const mint c_BufferSize = ((c_nCharsInRandomID + 3) / 4) * 4;
+		const mint c_BufferSize = ((_nCharacters + 3) / 4) * 4;
 		uint8 RandomData[c_BufferSize];
 
 		for (mint i = 0; i < sizeof(RandomData) / 4; ++i)
@@ -20,24 +19,23 @@ namespace NMib::NCryptography
 
 		NStr::CStr Return;
 
-		for (mint i = 0; i < c_nCharsInRandomID; ++i)
+		for (mint i = 0; i < _nCharacters; ++i)
 			Return.f_AddChar(g_UnmistakableChars[RandomData[i] % c_nChars]);
 
 		return Return;
 	}
 
-	NStr::CStr fg_HighEntropyRandomID()
+	NStr::CStr fg_HighEntropyRandomID(mint _nCharacters)
 	{
-		const mint c_nCharsInRandomID = 17;
 		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
-		const mint c_BufferSize = ((c_nCharsInRandomID + 3) / 4) * 4;
+		const mint c_BufferSize = ((_nCharacters + 3) / 4) * 4;
 		uint8 RandomData[c_BufferSize];
 
 		NSys::fg_Security_GenerateHighEntropyData(RandomData, c_BufferSize);
 
 		NStr::CStr Return;
 
-		for (mint i = 0; i < c_nCharsInRandomID; ++i)
+		for (mint i = 0; i < _nCharacters; ++i)
 			Return.f_AddChar(g_UnmistakableChars[RandomData[i] % c_nChars]);
 
 		return Return;
