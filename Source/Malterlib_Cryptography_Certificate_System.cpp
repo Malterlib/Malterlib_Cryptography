@@ -119,7 +119,7 @@ namespace NMib::NCryptography
 							}
 							else
 							{
-								DMibDeprecatedSupressStart;
+								DMibDeprecatedSuppressStart;
 								// This code is not tested. Is it in the right format?
 								CSSM_DATA certCSSMData;
 								if (SecCertificateGetData(CertRef, &certCSSMData) != 0 || certCSSMData.Length == 0)
@@ -127,7 +127,7 @@ namespace NMib::NCryptography
 								unsigned const char *pDERCert = certCSSMData.Data;
 								mint DataLength = certCSSMData.Length;
 								pCertificate = d2i_X509(nullptr, &pDERCert, DataLength);
-								DMibDeprecatedSupressStop;
+								DMibDeprecatedSuppressStop;
 							}
 
 							if (!pCertificate)
