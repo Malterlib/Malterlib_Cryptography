@@ -7,7 +7,10 @@ namespace NMib::NCryptography
 	{
 		mint nUint32 = _nBytes / 4;
 		for (mint i = 0; i < nUint32; ++i)
-			*((uint32 *)(_pData + i*4)) = NMisc::fg_GetRandomUnsigned();
+		{
+			uint32 Random = NMisc::fg_GetRandomUnsigned();
+			NMemory::fg_MemCopy(_pData + i*4, &Random, sizeof(Random));
+		}
 		for (mint i = nUint32*4; i < _nBytes; ++i)
 			_pData[i] = NMisc::fg_GetRandomUnsigned();
 	}
