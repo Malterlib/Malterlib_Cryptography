@@ -30,6 +30,11 @@ Property
 		IndentWidth 2
 		TabWidth 2
 		UsesTabs false
+
+		PreprocessorDefines "OPENSSL_ALLOW_MALFORMED_X509_VERSION;@(Compile.PreprocessorDefines)"
+		{
+			!!CompileDialect C
+		}
 	}
 	Compile.Type "AssemblerNasm"
 	{
