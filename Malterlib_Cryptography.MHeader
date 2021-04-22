@@ -8,22 +8,13 @@ Import "../Core/Lib_Malterlib.MTarget"
 	Repository
 	{
 		Type "External"
-		Remotes "upstream=https://github.com/google/boringssl.git;@(Repository.Remotes)"
-	}
-}
-
-Property
-{
-	BoringSSLExists "@('../../External/boringssl'->FindFilesIn('CMakeLists.txt'))"
-	BoringSSLExists true
-	{
-		!BoringSSLExists ""
+		Remotes =+ {Name: "upstream", URL: "https://github.com/google/boringssl.git"}
 	}
 }
 
 %Import "../../External/boringssl/CMakeLists.txt"
 {
-	Import.CMake_FullRebuildVersion "@(Import.CMake_FullRebuildVersion).1"
+	Import.CMake_FullRebuildVersion `@(Import.CMake_FullRebuildVersion).15`
 	Compile
 	{
 		!!MalterlibCompileSupportTabSetings true
@@ -31,9 +22,9 @@ Property
 		TabWidth 2
 		UsesTabs false
 
-		PreprocessorDefines "OPENSSL_ALLOW_MALFORMED_X509_VERSION;@(Compile.PreprocessorDefines)"
+		PreprocessorDefines += "OPENSSL_ALLOW_MALFORMED_X509_VERSION"
 		{
-			!!CompileDialect C
+			!!CompileDialect "C"
 		}
 	}
 	Compile.Type "AssemblerNasm"
@@ -43,11 +34,43 @@ Property
 	Compile
 	{
 		!!CompileDialect "C"
-		PrefixHeader ""
+		PrefixHeader undefined
 
-		PreprocessorDefines "OPENSSL_C11_ATOMIC=1;@(Compile.PreprocessorDefines)"
+		PreprocessorDefines =+ "OPENSSL_C11_ATOMIC=1"
 
-		ExtraCompilerFlags "-wd4100 -wd4127 -wd4200 -wd4204 -wd4221 -wd4242 -wd4244 -wd4245 -wd4267 -wd4371 -wd4388 -wd4296 -wd4350 -wd4365 -wd4389 -wd4464 -wd4510 -wd4512 -wd4514 -wd4548 -wd4610 -wd4623 -wd4625 -wd4626 -wd4706 -wd4710 -wd4711 -wd4800 -wd4820 -wd5027 -w44265 @(Compile.ExtraCompilerFlags)"
+		ExtraCompilerFlags =+ [
+			"-wd4100"
+			, "-wd4127"
+			, "-wd4200"
+			, "-wd4204"
+			, "-wd4221"
+			, "-wd4242"
+			, "-wd4244"
+			, "-wd4245"
+			, "-wd4267"
+			, "-wd4371"
+			, "-wd4388"
+			, "-wd4296"
+			, "-wd4350"
+			, "-wd4365"
+			, "-wd4389"
+			, "-wd4464"
+			, "-wd4510"
+			, "-wd4512"
+			, "-wd4514"
+			, "-wd4548"
+			, "-wd4610"
+			, "-wd4623"
+			, "-wd4625"
+			, "-wd4626"
+			, "-wd4706"
+			, "-wd4710"
+			, "-wd4711"
+			, "-wd4800"
+			, "-wd4820"
+			, "-wd5027"
+			, "-w44265"
+		]
 		{
 			&
 			{
@@ -81,11 +104,13 @@ Property
 	}
 }
 
-Target.ExtraGroups "~Automatic/DependBoringSSL;@(Target.ExtraGroups)"
+Property.MalterlibLinkWithBoringSSL define bool = fg_IsTargetInDependencies("Lib_Malterlib_Cryptography") || fg_IsTargetInDependencies("Lib_Malterlib")
+
+Target.ExtraGroups =+ "~Automatic/DependBoringSSL"
 {
 	&
 	{
-		MalterlibLinkWithOpenSSL true
+		MalterlibLinkWithBoringSSL true
 		TargetIsExecutable true
 		!DocumentationEnabled true
 	}
@@ -99,7 +124,26 @@ Compile
 		CompileDialect "C"
 	}
 
-	SearchPath "@('../../External/boringssl/include'->MakeAbsolute());@(Compile.SearchPath)"
+	SearchPath += "../../External/boringssl/include"->MakeAbsolute()
+}
+
+Target
+{
+	&
+	{
+		LanguageFamily "Native"
+		TargetIsExecutable true
+		!Target.Type "Driver"
+	}
+
+	LinkWithLibraries =+ [["-framework", "Security"]]
+	{
+		&
+		{
+			MalterlibLinkWithBoringSSL true
+			PlatformIsDarwin true
+		}
+	}
 }
 
 %Group "{Malterlib}/{Lib_Malterlib_Cryptography}"
@@ -158,20 +202,14 @@ Compile
 
 Property
 {
-	MalterlibLibrary_Cryptography true
-	{
-		&
-		{
-			MalterlibLibrary_Cryptography ""
-			MalterlibLibrary_All true
-		}
-	}
-	MalterlibSubLibraries "Cryptography;@(MalterlibSubLibraries)"
+	MalterlibLibrary_Cryptography define bool = MalterlibLibrary_All
+	MalterlibSubLibraries =+ "Cryptography"
 	{
 		!!MalterlibLibrary_Cryptography true
 	}
-//	MalterlibSubLibrarySeparate_Lib_Malterlib_Cryptography true
-	MalterlibIncludeRoots "@('Include'->MakeAbsolute());@(MalterlibIncludeRoots)"
+	MalterlibLibrarySeparate_Lib_Malterlib_Cryptography define bool = true
+//	MalterlibSubLibrarySeparate_Lib_Malterlib_Cryptography define bool = true
+	MalterlibIncludeRoots =+ "Include"->MakeAbsolute()
 	{
 		!!MalterlibLibrary_Cryptography true
 	}
@@ -179,14 +217,14 @@ Property
 
 %Group "{Test}/{Malterlib_Cryptography}"
 {
-	Property.MalterlibLinkWithOpenSSL true
+	Property.MalterlibLinkWithBoringSSL true
 }
 
 Property
 {
 	!!MalterlibEnableInternalTests true
 	
-	MalterlibTests "Malterlib_Cryptography;@(MalterlibTests)"
-	MalterlibTestFiles_Malterlib_Cryptography "@('Test/*'->MakeAbsolute())"
-	MalterlibTestExtraGroups_Malterlib_Cryptography "{Test}/{Malterlib_Cryptography}"
+	MalterlibTests =+ "Malterlib_Cryptography"
+	MalterlibTestFiles_Malterlib_Cryptography define [type(CEntity)] = ["Test/*"->MakeAbsolute()]
+	MalterlibTestExtraGroups_Malterlib_Cryptography define [string] = ["{Test}/{Malterlib_Cryptography}"]
 }
