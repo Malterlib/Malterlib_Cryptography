@@ -309,13 +309,15 @@ namespace NMib::NCryptography
 						}
 					;
 
+					X509_REQ_get_pubkey(pCertificateRequest);
+
 					{
 						if
 							(
 								(!pCertificateRequest->req_info)
 								|| (!pCertificateRequest->req_info->pubkey)
-								|| (!pCertificateRequest->req_info->pubkey->public_key)
-								|| (!pCertificateRequest->req_info->pubkey->public_key->data)
+								|| (!X509_PUBKEY_get0_public_key(pCertificateRequest->req_info->pubkey))
+								|| (!X509_PUBKEY_get0_public_key(pCertificateRequest->req_info->pubkey)->data)
 							)
 						{
 							DMibErrorCryptography("The certificate request does not contain a public key");
