@@ -5,6 +5,29 @@ namespace NMib::NCryptography
 {
 }
 
+#if defined(DPlatformFamily_OSX) && (DMibConfig_MemoryManager_Stats_EnableCategories || DMibConfig_MemoryManager_Stats_EnableCallstack)
+extern "C"
+{
+	module_export assure_used void * (* OPENSSL_memory_alloc)(size_t _Size) = [](size_t _Size) -> void *
+		{
+			return NMib::NMemory::CAllocator_NonTrackedHeap::f_Alloc(_Size);
+		}
+	;
+
+	module_export assure_used void (* OPENSSL_memory_free)(void *_pPtr) = [](void *_pPtr) -> void
+		{
+			return NMib::NMemory::CAllocator_NonTrackedHeap::f_FreeNoSize(_pPtr);
+		}
+	;
+
+	module_export assure_used size_t (* OPENSSL_memory_get_size)(void *_pPtr) = [](void *_pPtr) -> size_t
+		{
+			return NMib::NMemory::CAllocator_NonTrackedHeap::f_Size(_pPtr);
+		}
+	;
+}
+#endif
+
 namespace NMib::NCryptography::NBoringSSL
 {
 	namespace
