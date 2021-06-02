@@ -2154,6 +2154,7 @@ Property.CMakeOutputPath_BoringSSL define string = "."->MakeAbsolute()
 	}
 	%Dependency "Lib_test_support_lib"
 	%Dependency "Lib_crypto"
+	%Dependency "Lib_boringssl_gtest"
 	%Group "Windows"
 	{
 		%Group "x64"
@@ -2352,7 +2353,6 @@ Property.CMakeOutputPath_BoringSSL define string = "."->MakeAbsolute()
 			}
 		}
 	}
-	%Dependency "Lib_boringssl_gtest"
 }
 %Target "Lib_test_support_lib"
 {
