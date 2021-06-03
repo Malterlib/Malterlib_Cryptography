@@ -1,4 +1,4 @@
-// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 Import "../Core/Lib_Malterlib.MTarget"
@@ -14,7 +14,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 
 %Import "../../External/boringssl/CMakeLists.txt"
 {
-	Import.CMake_FullRebuildVersion `@(Import.CMake_FullRebuildVersion).15`
+	Import.CMake_FullRebuildVersion `@(Import.CMake_FullRebuildVersion).18`
 	Compile
 	{
 		!!MalterlibCompileSupportTabSetings true
@@ -79,16 +79,16 @@ Import "../Core/Lib_Malterlib.MTarget"
 			}
 		}
 	}
-	%Target "Lib_crypto"
+	%Target "Lib_BoringSSL_crypto"
 	{
 		Property.MalterlibGenerateLibrary true // Needed because for asm objects are not included otherwise
 		Target.LinkerGroup "BoringSSL"
 	}
-	%Target "Lib_decrepit"
+	%Target "Lib_BoringSSL_decrepit"
 	{
 		Target.LinkerGroup "BoringSSL"
 	}
-	%Target "Lib_ssl"
+	%Target "Lib_BoringSSL_ssl"
 	{
 		Target.LinkerGroup "BoringSSL"
 	}
@@ -96,9 +96,9 @@ Import "../Core/Lib_Malterlib.MTarget"
 
 %Group "~Automatic/DependBoringSSL"
 {
-	%Dependency "Lib_decrepit"
-	%Dependency "Lib_ssl"
-	%Dependency "Lib_crypto"
+	%Dependency "Lib_BoringSSL_decrepit"
+	%Dependency "Lib_BoringSSL_ssl"
+	%Dependency "Lib_BoringSSL_crypto"
 	{
 		Dependency.LinkWithObjectFiles false
 	}
@@ -172,7 +172,7 @@ Target
 			%File "Documentation/*"
 		}
 	}
-	%Dependency "Lib_crypto"
+	%Dependency "Lib_BoringSSL_crypto"
 	{
 		&
 		{
@@ -181,7 +181,7 @@ Target
 		Dependency.Indirect true
 		Dependency.LinkWithObjectFiles false
 	}
-	%Dependency "Lib_ssl"
+	%Dependency "Lib_BoringSSL_ssl"
 	{
 		&
 		{
@@ -189,7 +189,7 @@ Target
 		}
 		Dependency.Indirect true
 	}
-	%Dependency "Lib_decrepit"
+	%Dependency "Lib_BoringSSL_decrepit"
 	{
 		&
 		{
@@ -223,7 +223,7 @@ Property
 Property
 {
 	!!MalterlibEnableInternalTests true
-	
+
 	MalterlibTests =+ "Malterlib_Cryptography"
 	MalterlibTestFiles_Malterlib_Cryptography define [type(CEntity)] = ["Test/*"->MakeAbsolute()]
 	MalterlibTestExtraGroups_Malterlib_Cryptography define [string] = ["{Test}/{Malterlib_Cryptography}"]
