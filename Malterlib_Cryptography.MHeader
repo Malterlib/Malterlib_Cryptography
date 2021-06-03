@@ -14,7 +14,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 
 %Import "../../External/boringssl/CMakeLists.txt"
 {
-	Import.CMake_FullRebuildVersion `@(Import.CMake_FullRebuildVersion).18`
+	Import.CMake_FullRebuildVersion `@(Import.CMake_FullRebuildVersion).21`
 	Compile
 	{
 		!!MalterlibCompileSupportTabSetings true
@@ -29,7 +29,15 @@ Import "../Core/Lib_Malterlib.MTarget"
 	}
 	Compile.Type "AssemblerNasm"
 	{
-		!!Compile.Type "Assembler"
+		&
+		{
+			|
+			{
+				!HasParentEntity("File") true
+				!File:this.Identity ~"*.S"
+			}
+			Compile.Type "Assembler"
+		}
 	}
 	Compile
 	{
