@@ -309,23 +309,11 @@ namespace NMib::NCryptography
 						}
 					;
 
-					X509_REQ_get_pubkey(pCertificateRequest);
-
 					{
-						if
-							(
-								(!pCertificateRequest->req_info)
-								|| (!pCertificateRequest->req_info->pubkey)
-								|| (!X509_PUBKEY_get0_public_key(pCertificateRequest->req_info->pubkey))
-								|| (!X509_PUBKEY_get0_public_key(pCertificateRequest->req_info->pubkey)->data)
-							)
-						{
-							DMibErrorCryptography("The certificate request does not contain a public key");
-						}
 						ERR_clear_error();
 						EVP_PKEY *pPublicKey = X509_REQ_get_pubkey(pCertificateRequest);
 						if (!pPublicKey)
-							DMibErrorCryptography(fg_GetExceptionStr("Error unpacking public key"));
+							DMibErrorCryptography(fg_GetExceptionStr("The certificate request does not contain a public key"));
 
 						auto Cleanup = g_OnScopeExit > [&] ()
 							{
@@ -360,8 +348,9 @@ namespace NMib::NCryptography
 					if (!X509_set_issuer_name(pCertificate, X509_get_subject_name(pCACertificate)))
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 issuer"));
 
+
 					ERR_clear_error();
-					if (!X509_set_subject_name(pCertificate, pCertificateRequest->req_info->subject))
+					if (!X509_set_subject_name(pCertificate, X509_REQ_get_subject_name(pCertificateRequest)))
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 subject name"));
 
 					{
