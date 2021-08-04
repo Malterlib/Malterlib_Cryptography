@@ -102,6 +102,16 @@ Import "../Core/Lib_Malterlib.MTarget"
 	}
 }
 
+Import
+{
+	CMake_Variables =+ [
+		`OPENSSL_ROOT_DIR=@("../../External/boringssl"->MakeAbsolute())`
+		, "OPENSSL_LIBRARIES=/dev/null"
+		, "OPENSSL_CRYPTO_LIBRARY=/dev/null"
+		, "OPENSSL_SSL_LIBRARY=/dev/null"
+	]
+}
+
 %Group "~Automatic/DependBoringSSL"
 {
 	%Dependency "Lib_BoringSSL_decrepit"
