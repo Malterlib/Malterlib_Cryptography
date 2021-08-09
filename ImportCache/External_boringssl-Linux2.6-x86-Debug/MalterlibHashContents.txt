@@ -104,7 +104,11 @@ Import.CMake_Variables: [
 	CMAKE_OBJDUMP=llvm-objdump,
 	CMAKE_STRIP=llvm-strip,
 	CMAKE_RANLIB=llvm-ranlib,
-	CMAKE_AR=llvm-ar
+	CMAKE_AR=llvm-ar,
+	OPENSSL_ROOT_DIR=/External/boringssl,
+	OPENSSL_LIBRARIES=/dev/null,
+	OPENSSL_CRYPTO_LIBRARY=/dev/null,
+	OPENSSL_SSL_LIBRARY=/dev/null
 ]
 
 Import.CMake_IncludeInHash: [
