@@ -7,56 +7,6 @@ namespace NMib::NCryptography
 {
 	using namespace NBoringSSL;
 
-	bool CPublicKeySettings_RSA::operator == (CPublicKeySettings_RSA const &_Right) const
-	{
-		return m_KeyLength == _Right.m_KeyLength;
-	}
-
-	bool CPublicKeySettings_RSA::operator < (CPublicKeySettings_RSA const &_Right) const
-	{
-		return m_KeyLength < _Right.m_KeyLength;
-	}
-
-	bool CPublicKeySettings_EC_secp256r1::operator == (CPublicKeySettings_EC_secp256r1 const &_Right) const
-	{
-		return true;
-	}
-
-	bool CPublicKeySettings_EC_secp256r1::operator < (CPublicKeySettings_EC_secp256r1 const &_Right) const
-	{
-		return false;
-	}
-
-	bool CPublicKeySettings_EC_secp384r1::operator == (CPublicKeySettings_EC_secp384r1 const &_Right) const
-	{
-		return true;
-	}
-
-	bool CPublicKeySettings_EC_secp384r1::operator < (CPublicKeySettings_EC_secp384r1 const &_Right) const
-	{
-		return false;
-	}
-
-	bool CPublicKeySettings_EC_secp521r1::operator == (CPublicKeySettings_EC_secp521r1 const &_Right) const
-	{
-		return true;
-	}
-
-	bool CPublicKeySettings_EC_secp521r1::operator < (CPublicKeySettings_EC_secp521r1 const &_Right) const
-	{
-		return false;
-	}
-
-	bool CPublicKeySettings_EC_X25519::operator == (CPublicKeySettings_EC_X25519 const &_Right) const
-	{
-		return true;
-	}
-
-	bool CPublicKeySettings_EC_X25519::operator < (CPublicKeySettings_EC_X25519 const &_Right) const
-	{
-		return false;
-	}
-
 	NContainer::CSecureByteVector CPublicCrypto::fs_GetPublicKeyFromPrivateKey(NContainer::CSecureByteVector const &_PrivateKey)
 	{
 		return fg_RunProtectRegisters

@@ -61,16 +61,6 @@ namespace NMib::NCryptography
 		Extension.m_Value = KeyUsage;
 	}
 
-	bool CCertificateExtension::operator == (CCertificateExtension const &_Right) const
-	{
-		return NStorage::fg_TupleReferences(m_bCritical, m_Value) == NStorage::fg_TupleReferences(_Right.m_bCritical, _Right.m_Value);
-	}
-
-	bool CCertificateExtension::operator < (CCertificateExtension const &_Right) const
-	{
-		return NStorage::fg_TupleReferences(m_bCritical, m_Value) < NStorage::fg_TupleReferences(_Right.m_bCritical, _Right.m_Value);
-	}
-
 	void CCertificate::fs_RegisterExtension(NStr::CStr const &_OID, NStr::CStr const &_ShortName, NStr::CStr const &_LongName)
 	{
 		return fg_RunProtectRegisters

@@ -24,34 +24,29 @@ namespace NMib::NCryptography
 		{
 		}
 
-		bool operator == (CPublicKeySettings_RSA const &_Right) const;
-		bool operator < (CPublicKeySettings_RSA const &_Right) const;
+		auto operator <=> (CPublicKeySettings_RSA const &_Right) const = default;
 
 		uint32 m_KeyLength = 4096;
 	};
 
 	struct CPublicKeySettings_EC_secp256r1
 	{
-		bool operator == (CPublicKeySettings_EC_secp256r1 const &_Right) const;
-		bool operator < (CPublicKeySettings_EC_secp256r1 const &_Right) const;
+		auto operator <=> (CPublicKeySettings_EC_secp256r1 const &_Right) const = default;
 	};
 
 	struct CPublicKeySettings_EC_secp384r1
 	{
-		bool operator == (CPublicKeySettings_EC_secp384r1 const &_Right) const;
-		bool operator < (CPublicKeySettings_EC_secp384r1 const &_Right) const;
+		auto operator <=> (CPublicKeySettings_EC_secp384r1 const &_Right) const = default;
 	};
 
 	struct CPublicKeySettings_EC_secp521r1
 	{
-		bool operator == (CPublicKeySettings_EC_secp521r1 const &_Right) const;
-		bool operator < (CPublicKeySettings_EC_secp521r1 const &_Right) const;
+		auto operator <=> (CPublicKeySettings_EC_secp521r1 const &_Right) const = default;
 	};
 
 	struct CPublicKeySettings_EC_X25519
 	{
-		bool operator == (CPublicKeySettings_EC_X25519 const &_Right) const;
-		bool operator < (CPublicKeySettings_EC_X25519 const &_Right) const;
+		auto operator <=> (CPublicKeySettings_EC_X25519 const &_Right) const = default;
 	};
 
 	using CPublicKeySetting = NStorage::TCStreamableVariant

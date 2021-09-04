@@ -36,8 +36,8 @@ namespace NMib::NCryptography
 		aint f_Compare(TCMessageDigest const &_Other) const;
 		bool operator == (TCMessageDigest const &_Src) const;
 		bool operator == (t_CHash const &_Src) const;
-		bool operator < (TCMessageDigest const &_Src) const;
-		bool operator < (t_CHash const &_Src) const;
+		COrdering_Weak operator <=> (TCMessageDigest const &_Src) const;
+		COrdering_Weak operator <=> (t_CHash const &_Src) const;
 
 		uint8 *f_GetData();
 		uint8 const *f_GetData() const;

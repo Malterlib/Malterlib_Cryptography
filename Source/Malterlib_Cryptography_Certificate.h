@@ -26,8 +26,7 @@ namespace NMib::NCryptography
 
 	struct CCertificateExtension
 	{
-		bool operator == (CCertificateExtension const &_Right) const;
-		bool operator < (CCertificateExtension const &_Right) const;
+		auto operator <=> (CCertificateExtension const &_Right) const = default;
 
 		template <typename tf_CFormatInto>
 		void f_Format(tf_CFormatInto &o_FormatInto) const

@@ -84,17 +84,17 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	bool TCMessageDigest<t_Size, t_CHash>::operator < (const TCMessageDigest &_Src) const
+	COrdering_Weak TCMessageDigest<t_Size, t_CHash>::operator <=> (const TCMessageDigest &_Src) const
 	{
-		return NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size) < 0;
+		return NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size) <=> 0;
 	}
 
 	template <mint t_Size, typename t_CHash>
-	bool TCMessageDigest<t_Size, t_CHash>::operator < (const t_CHash &_Src) const
+	COrdering_Weak TCMessageDigest<t_Size, t_CHash>::operator <=> (const t_CHash &_Src) const
 	{
 		TCMessageDigest Temp = _Src;
 
-		return Temp < (*this);
+		return Temp <=> (*this);
 	}
 
 	template <mint t_Size, typename t_CHash>
