@@ -891,6 +891,10 @@ Property.CMakeOutputPath_BoringSSL define string = `@('.'->MakeAbsolute())`->Mak
 			{
 				Compile.Type "C"
 			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/asn1/a_strex.c`
+			{
+				Compile.Type "C"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/asn1/a_strnid.c`
 			{
 				Compile.Type "C"
@@ -1565,10 +1569,6 @@ Property.CMakeOutputPath_BoringSSL define string = `@('.'->MakeAbsolute())`->Mak
 			{
 				Compile.Type "C"
 			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/a_strex.c`
-			{
-				Compile.Type "C"
-			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/a_verify.c`
 			{
 				Compile.Type "C"
@@ -1590,6 +1590,10 @@ Property.CMakeOutputPath_BoringSSL define string = `@('.'->MakeAbsolute())`->Mak
 				Compile.Type "C"
 			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/i2d_pr.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/name_print.c`
 			{
 				Compile.Type "C"
 			}
@@ -2886,6 +2890,10 @@ Property.CMakeOutputPath_BoringSSL define string = `@('.'->MakeAbsolute())`->Mak
 		{
 			Compile.Type "C++"
 		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/tool/generate_ech.cc`
+		{
+			Compile.Type "C++"
+		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/tool/generate_ed25519.cc`
 		{
 			Compile.Type "C++"
@@ -2967,6 +2975,13 @@ Property.CMakeOutputPath_BoringSSL define string = `@('.'->MakeAbsolute())`->Mak
 		%Group "cfb"
 		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/decrepit/cfb/cfb_test.cc`
+			{
+				Compile.Type "C++"
+			}
+		}
+		%Group "evp"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/decrepit/evp/evp_test.cc`
 			{
 				Compile.Type "C++"
 			}
