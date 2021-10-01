@@ -222,9 +222,9 @@ namespace NMib::NCryptography
 		for (mint i = 0; i < sk_X509_OBJECT_num(certs); i++)
 		{
 			X509_OBJECT const *pObject = sk_X509_OBJECT_value(certs, i);
-			if (pObject->type != X509_LU_X509)
+			if (X509_OBJECT_get_type(pObject) != X509_LU_X509)
 				continue;
-			X509_STORE_add_cert(_pCertificateStoreStore, pObject->data.x509);
+			X509_STORE_add_cert(_pCertificateStoreStore, X509_OBJECT_get0_X509(pObject));
 		}
 	}
 }
