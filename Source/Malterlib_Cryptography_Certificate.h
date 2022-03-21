@@ -24,6 +24,16 @@ namespace NMib::NCryptography
 		, EKeyUsage_DecipherOnly = DMibBit(8)
 	};
 
+	enum EExtendedKeyUsage
+	{
+		EExtendedKeyUsage_None = 0
+		, EExtendedKeyUsage_ServerAuth = DMibBit(0)
+		, EExtendedKeyUsage_ClientAuth = DMibBit(1)
+		, EExtendedKeyUsage_CodeSigning = DMibBit(2)
+		, EExtendedKeyUsage_EmailProtection = DMibBit(3)
+		, EExtendedKeyUsage_TimeStamping = DMibBit(4)
+	};
+
 	struct CCertificateExtension
 	{
 		auto operator <=> (CCertificateExtension const &_Right) const = default;
@@ -42,6 +52,7 @@ namespace NMib::NCryptography
 	{
 		void f_AddExtension_BasicConstraints(bool _bCA, bool _bCritical = true);
 		void f_AddExtension_KeyUsage(EKeyUsage _KeyUsage, bool _bCritical = true);
+		void f_AddExtension_ExtendedKeyUsage(EExtendedKeyUsage _KeyUsage, bool _bCritical = true);
 		void f_MakeCA();
 
 		NStr::CStr m_CommonName; // CN

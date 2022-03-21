@@ -61,6 +61,25 @@ namespace NMib::NCryptography
 		Extension.m_Value = KeyUsage;
 	}
 
+	void CCertificateOptions::f_AddExtension_ExtendedKeyUsage(EExtendedKeyUsage _KeyUsage, bool _bCritical)
+	{
+		NStr::CStr KeyUsage;
+		if (_KeyUsage & EExtendedKeyUsage_ServerAuth)
+			fg_AddStrSep(KeyUsage, "serverAuth", ",");
+		if (_KeyUsage & EExtendedKeyUsage_ClientAuth)
+			fg_AddStrSep(KeyUsage, "clientAuth", ",");
+		if (_KeyUsage & EExtendedKeyUsage_CodeSigning)
+			fg_AddStrSep(KeyUsage, "codeSigning", ",");
+		if (_KeyUsage & EExtendedKeyUsage_EmailProtection)
+			fg_AddStrSep(KeyUsage, "emailProtection", ",");
+		if (_KeyUsage & EExtendedKeyUsage_TimeStamping)
+			fg_AddStrSep(KeyUsage, "timeStamping", ",");
+
+		auto &Extension = m_Extensions["2.5.29.37"].f_Insert();
+		Extension.m_bCritical = _bCritical;
+		Extension.m_Value = KeyUsage;
+	}
+
 	void CCertificate::fs_RegisterExtension(NStr::CStr const &_OID, NStr::CStr const &_ShortName, NStr::CStr const &_LongName)
 	{
 		return fg_RunProtectRegisters
