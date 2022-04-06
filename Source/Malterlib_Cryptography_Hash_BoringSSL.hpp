@@ -32,7 +32,7 @@ namespace NMib::NCryptography
 		if (!pContext)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to create digest context"));
 
-		auto Cleanup = g_OnScopeExit > [&]
+		auto Cleanup = g_OnScopeExit / [&]
 			{
 				EVP_MD_CTX_destroy(pContext);
 				pContext = nullptr;

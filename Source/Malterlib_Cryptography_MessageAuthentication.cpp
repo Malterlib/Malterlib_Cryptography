@@ -23,7 +23,7 @@ namespace NMib::NCryptography
 						if (!(m_pHMACContext = HMAC_CTX_new()))
 							DMibErrorCryptography(fg_GetExceptionStr("Failed to create HMAC context"));
 
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								this->~CInternal();
 							}

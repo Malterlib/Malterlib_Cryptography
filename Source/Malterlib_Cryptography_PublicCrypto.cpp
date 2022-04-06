@@ -14,7 +14,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					EVP_PKEY *pKey = fg_LoadPrivateKeyFromDER(_PrivateKey);
-					auto Cleanup1 = g_OnScopeExit > [&]
+					auto Cleanup1 = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -29,7 +29,7 @@ namespace NMib::NCryptography
 	CPublicCrypto::CPublicKeyParameters CPublicCrypto::fs_GetPublicKeyParameters(NContainer::CSecureByteVector const &_Key)
 	{
 		EVP_PKEY *pKey = fg_LoadPublicKeyFromDER(_Key);
-		auto Cleanup1 = g_OnScopeExit > [&]
+		auto Cleanup1 = g_OnScopeExit / [&]
 			{
 				EVP_PKEY_free(pKey);
 			}
@@ -72,7 +72,7 @@ namespace NMib::NCryptography
 			BIGNUM *pCoordinateX = BN_new();
 			BIGNUM *pCoordinateY = BN_new();
 
-			auto Cleanup = g_OnScopeExit > [&]
+			auto Cleanup = g_OnScopeExit / [&]
 				{
 					BN_free(pCoordinateX);
 					BN_free(pCoordinateY);
@@ -111,7 +111,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					EVP_PKEY *pKey = fg_LoadPrivateKeyFromDER(_KeyData);
-					auto Cleanup1 = g_OnScopeExit > [&]
+					auto Cleanup1 = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -122,7 +122,7 @@ namespace NMib::NCryptography
 					EVP_MD_CTX *Ctx = EVP_MD_CTX_create();
 					if (!Ctx)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_MD_CTX_create failed"));
-					auto Cleanup2 = g_OnScopeExit > [&]
+					auto Cleanup2 = g_OnScopeExit / [&]
 						{
 							EVP_MD_CTX_destroy(Ctx);
 						}
@@ -160,7 +160,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					EVP_PKEY *pKey = fg_LoadPrivateKeyFromDER(_KeyData);
-					auto Cleanup1 = g_OnScopeExit > [&]
+					auto Cleanup1 = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -172,7 +172,7 @@ namespace NMib::NCryptography
 					if (!Ctx)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_MD_CTX_create failed"));
 
-					auto Cleanup2 = g_OnScopeExit > [&]
+					auto Cleanup2 = g_OnScopeExit / [&]
 						{
 							EVP_MD_CTX_destroy(Ctx);
 						}
@@ -196,7 +196,7 @@ namespace NMib::NCryptography
 						ECDSA_SIG *pSignature = ECDSA_do_sign(Digest.f_GetArray(), Digest.f_GetLen(), pECKey);
 						if (!pSignature)
 							DMibErrorCryptography(fg_GetExceptionStr("Signing failed"));
-						auto Cleanup3 = g_OnScopeExit > [&]
+						auto Cleanup3 = g_OnScopeExit / [&]
 							{
 								ECDSA_SIG_free(pSignature);
 							}
@@ -259,7 +259,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					EVP_PKEY *pKey = fg_LoadPublicKeyFromDER(_KeyData);
-					auto Cleanup1 = g_OnScopeExit > [&]
+					auto Cleanup1 = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -270,7 +270,7 @@ namespace NMib::NCryptography
 					EVP_MD_CTX *Ctx = EVP_MD_CTX_create();
 					if (!Ctx)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_MD_CTX_create failed"));
-					auto Cleanup2 = g_OnScopeExit > [&]
+					auto Cleanup2 = g_OnScopeExit / [&]
 						{
 							EVP_MD_CTX_destroy(Ctx);
 						}
@@ -306,7 +306,7 @@ namespace NMib::NCryptography
 					EVP_PKEY *pKey = EVP_PKEY_new();
 					if (!pKey)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating key (1)"));
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -343,7 +343,7 @@ namespace NMib::NCryptography
 				[&]() -> CPublicKeySetting
 				{
 					EVP_PKEY *pKey = fg_LoadPrivateKeyFromDER(_Key);
-					auto Cleanup1 = g_OnScopeExit > [&]
+					auto Cleanup1 = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pKey);
 						}

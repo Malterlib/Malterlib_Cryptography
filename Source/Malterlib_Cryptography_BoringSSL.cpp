@@ -180,7 +180,7 @@ namespace NMib::NCryptography::NBoringSSL
 		BIO* pMemoryBio = BIO_new_mem_buf(const_cast<void*>(static_cast<void const*>(_Data.f_GetArray())), _Data.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO buffer"));
-		auto Cleanup0 = g_OnScopeExit > [&]
+		auto Cleanup0 = g_OnScopeExit / [&]
 			{
 				BIO_free(pMemoryBio);
 			}
@@ -201,7 +201,7 @@ namespace NMib::NCryptography::NBoringSSL
 		BIO* pMemoryBio = BIO_new_mem_buf(const_cast<void*>(static_cast<void const*>(_Data.f_GetArray())), _Data.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO buffer"));
-		auto Cleanup0 = g_OnScopeExit > [&]
+		auto Cleanup0 = g_OnScopeExit / [&]
 			{
 				BIO_free(pMemoryBio);
 			}
@@ -224,7 +224,7 @@ namespace NMib::NCryptography::NBoringSSL
 		BIO* pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
-		auto Cleanup = g_OnScopeExit > [&]
+		auto Cleanup = g_OnScopeExit / [&]
 			{
 				BIO_free(pMemoryBio);
 			}
@@ -251,7 +251,7 @@ namespace NMib::NCryptography::NBoringSSL
 		BIO* pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
-		auto Cleanup = g_OnScopeExit > [&]
+		auto Cleanup = g_OnScopeExit / [&]
 			{
 				BIO_free(pMemoryBio);
 			}
@@ -317,7 +317,7 @@ namespace NMib::NCryptography::NBoringSSL
 				pECKey = EC_KEY_new_by_curve_name(CurveName);
 				if (!pECKey)
 					DMibErrorCryptography(fg_GetExceptionStr("Error creating elliptic curve key"));
-				auto Cleanup = g_OnScopeExit > [&]
+				auto Cleanup = g_OnScopeExit / [&]
 					{
 						EC_KEY_free(pECKey);
 					}
@@ -346,7 +346,7 @@ namespace NMib::NCryptography::NBoringSSL
 		BIO* pMemoryBio = BIO_new_mem_buf( const_cast<void *>(static_cast<void const *>(_CertificateData.f_GetArray())), _CertificateData.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO buffer"));
-		auto Cleanup = g_OnScopeExit > [&]
+		auto Cleanup = g_OnScopeExit / [&]
 			{
 				BIO_free(pMemoryBio);
 			}
@@ -369,7 +369,7 @@ namespace NMib::NCryptography::NBoringSSL
 		BIO* pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
-		auto Cleanup = g_OnScopeExit > [&]
+		auto Cleanup = g_OnScopeExit / [&]
 			{
 				BIO_free(pMemoryBio);
 			}
@@ -394,7 +394,7 @@ namespace NMib::NCryptography::NBoringSSL
 		BIO* pMemoryBio = BIO_new_mem_buf(const_cast<void*>(static_cast<void const*>(_Data.f_GetArray())), _Data.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO buffer"));
-		auto Cleanup0 = g_OnScopeExit > [&]
+		auto Cleanup0 = g_OnScopeExit / [&]
 			{
 				BIO_free(pMemoryBio);
 			}

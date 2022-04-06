@@ -82,7 +82,7 @@ namespace NMib::NCryptography
 						{
 							continue;
 						}
-						auto Cleanup0 = g_OnScopeExit > [&]
+						auto Cleanup0 = g_OnScopeExit / [&]
 							{
 								X509_free(pCertificate);
 							}
@@ -133,7 +133,7 @@ namespace NMib::NCryptography
 							if (!pCertificate)
 								continue;
 
-							auto Cleanup = g_OnScopeExit > [&]
+							auto Cleanup = g_OnScopeExit / [&]
 								{
 									X509_free(pCertificate);
 								}

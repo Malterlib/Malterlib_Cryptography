@@ -15,7 +15,7 @@ namespace NMib::NCryptography
 				{
 					NStr::CStr CertificateDescription;
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -25,7 +25,7 @@ namespace NMib::NCryptography
 					BIO* pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO"));
-					auto Cleanup1 = g_OnScopeExit > [&]
+					auto Cleanup1 = g_OnScopeExit / [&]
 						{
 							BIO_free_all(pMemoryBio);
 						}
@@ -61,7 +61,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -85,7 +85,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -95,7 +95,7 @@ namespace NMib::NCryptography
 					BIO* pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
-					auto Cleanup = g_OnScopeExit > [&]
+					auto Cleanup = g_OnScopeExit / [&]
 						{
 							BIO_free(pMemoryBio);
 						}
@@ -126,7 +126,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -155,7 +155,7 @@ namespace NMib::NCryptography
 				{
 					NStr::CStr CertificateName;
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -180,7 +180,7 @@ namespace NMib::NCryptography
 					NContainer::TCVector<NStr::CStr> lHostnames;
 
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -193,7 +193,7 @@ namespace NMib::NCryptography
 						GENERAL_NAMES* pSubjectAltNames = (GENERAL_NAMES*)X509_get_ext_d2i(pCertificate, NID_subject_alt_name, nullptr, &Index);
 						if (!pSubjectAltNames)
 							break;
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								GENERAL_NAMES_free(pSubjectAltNames);
 							}
@@ -216,7 +216,7 @@ namespace NMib::NCryptography
 								ASN1_STRING_to_UTF8((unsigned char**)&pBuffer, pName->d.ia5);
 								if (pBuffer)
 								{
-									auto Cleanup = g_OnScopeExit > [&]
+									auto Cleanup = g_OnScopeExit / [&]
 										{
 											OPENSSL_free(pBuffer);
 										}
@@ -278,7 +278,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -319,7 +319,7 @@ namespace NMib::NCryptography
 				[&]() -> NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>>
 				{
 					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_CertificateRequestData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
@@ -328,7 +328,7 @@ namespace NMib::NCryptography
 					ERR_clear_error();
 
 					auto pExtensions = X509_REQ_get_extensions(pCertificateRequest);
-					auto Cleanup = g_OnScopeExit > [&]
+					auto Cleanup = g_OnScopeExit / [&]
 						{
 							if (pExtensions)
 								sk_X509_EXTENSION_pop_free(pExtensions, X509_EXTENSION_free);
@@ -492,7 +492,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}
@@ -511,7 +511,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
-					auto Cleanup0 = g_OnScopeExit > [&]
+					auto Cleanup0 = g_OnScopeExit / [&]
 						{
 							X509_free(pCertificate);
 						}

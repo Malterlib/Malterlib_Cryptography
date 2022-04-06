@@ -36,7 +36,7 @@ namespace NMib::NCryptography
 					[&]() -> decltype(auto)
 					{
 						EVP_CIPHER_CTX *pCipherContext = nullptr;
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								EVP_CIPHER_CTX_free(pCipherContext);
 							}
@@ -76,7 +76,7 @@ namespace NMib::NCryptography
 					[&]() -> decltype(auto)
 					{
 						EVP_CIPHER_CTX *pCipherContext = nullptr;
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								EVP_CIPHER_CTX_free(pCipherContext);
 							}
@@ -154,7 +154,7 @@ namespace NMib::NCryptography
 						if (!(m_pCipherContext = EVP_CIPHER_CTX_new()))
 							DMibErrorCryptography(fg_GetExceptionStr("Failed to create cipher context"));
 
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								this->~CInternal();
 							}

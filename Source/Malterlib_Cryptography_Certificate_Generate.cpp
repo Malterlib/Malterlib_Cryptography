@@ -29,7 +29,7 @@ namespace NMib::NCryptography
 			if (!pValue)
 				DMibErrorCryptography(fg_GetExceptionStr("Failed to create ASN1 value"));
 
-			auto Cleanup = g_OnScopeExit > [&]
+			auto Cleanup = g_OnScopeExit / [&]
 				{
 					pValue->length = 0;
 					pValue->data = nullptr;
@@ -51,7 +51,7 @@ namespace NMib::NCryptography
 			X509_EXTENSION *pExtension = nullptr;
 			pExtension = fg_CreateExtension(_Context, _nID, _Extension);
 
-			auto Cleanup1 = g_OnScopeExit > [&]
+			auto Cleanup1 = g_OnScopeExit / [&]
 				{
 					X509_EXTENSION_free(pExtension);
 				}
@@ -65,7 +65,7 @@ namespace NMib::NCryptography
 		void fg_AddExtension(X509V3_CTX &_Context, X509_EXTENSIONS *&_pExtensions, int _nID, CCertificateExtension _Extension)
 		{
 			X509_EXTENSION *pExtension = fg_CreateExtension(_Context, _nID, _Extension);
-			auto Cleanup = g_OnScopeExit > [&]
+			auto Cleanup = g_OnScopeExit / [&]
 				{
 					X509_EXTENSION_free(pExtension);
 				}
@@ -155,7 +155,7 @@ namespace NMib::NCryptography
 					else
 						pKey = fg_LoadPrivateKey(o_KeyData);
 
-					auto Cleanup0 = g_OnScopeExit > [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&] ()
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -165,7 +165,7 @@ namespace NMib::NCryptography
 					X509_REQ *pCertificateRequest = X509_REQ_new();
 					if (!pCertificateRequest)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating certificate request"));
-					auto Cleanup1 = g_OnScopeExit > [&] ()
+					auto Cleanup1 = g_OnScopeExit / [&] ()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
@@ -178,7 +178,7 @@ namespace NMib::NCryptography
 
 					X509_EXTENSIONS *pExtensions = nullptr;
 
-					auto Cleanup2 = g_OnScopeExit > [&]
+					auto Cleanup2 = g_OnScopeExit / [&]
 						{
 							if (pExtensions)
 								sk_X509_EXTENSION_pop_free(pExtensions, X509_EXTENSION_free);
@@ -227,14 +227,14 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_CertRequestData);
-					auto Cleanup0 = g_OnScopeExit > [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&] ()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
 					;
 
 					X509 *pCertificate = fg_LoadCertificate(_CertData);
-					auto Cleanup3 = g_OnScopeExit > [&] ()
+					auto Cleanup3 = g_OnScopeExit / [&] ()
 						{
 							X509_free(pCertificate);
 						}
@@ -245,7 +245,7 @@ namespace NMib::NCryptography
 					auto pPublicKey = X509_get_pubkey(pCertificate);
 					if (!pPublicKey)
 						DMibErrorCryptography(fg_GetExceptionStr("Found no public key in certificate"));
-					auto Cleanup = g_OnScopeExit > [&]
+					auto Cleanup = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pPublicKey);
 						}
@@ -279,21 +279,21 @@ namespace NMib::NCryptography
 					o_SignedCertificateData.f_Clear();
 
 					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_CertRequestData);
-					auto Cleanup0 = g_OnScopeExit > [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&] ()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
 					;
 
 					EVP_PKEY *pCAKey = fg_LoadPrivateKey(_CAKey);
-					auto Cleanup2 = g_OnScopeExit > [&] ()
+					auto Cleanup2 = g_OnScopeExit / [&] ()
 						{
 							EVP_PKEY_free(pCAKey);
 						}
 					;
 
 					X509 *pCACertificate = fg_LoadCertificate(_CACertificate);
-					auto Cleanup3 = g_OnScopeExit > [&] ()
+					auto Cleanup3 = g_OnScopeExit / [&] ()
 						{
 							X509_free(pCACertificate);
 						}
@@ -303,7 +303,7 @@ namespace NMib::NCryptography
 					X509 *pCertificate = X509_new();
 					if (!pCertificate)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating certificate"));
-					auto Cleanup1 = g_OnScopeExit > [&] ()
+					auto Cleanup1 = g_OnScopeExit / [&] ()
 						{
 							X509_free(pCertificate);
 						}
@@ -315,7 +315,7 @@ namespace NMib::NCryptography
 						if (!pPublicKey)
 							DMibErrorCryptography(fg_GetExceptionStr("The certificate request does not contain a public key"));
 
-						auto Cleanup = g_OnScopeExit > [&] ()
+						auto Cleanup = g_OnScopeExit / [&] ()
 							{
 								EVP_PKEY_free(pPublicKey);
 							}
@@ -358,7 +358,7 @@ namespace NMib::NCryptography
 						auto pPublicKey = X509_REQ_get_pubkey(pCertificateRequest);
 						if (!pPublicKey)
 							DMibErrorCryptography(fg_GetExceptionStr("Found no public key in certificate"));
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								EVP_PKEY_free(pPublicKey);
 							}
@@ -374,7 +374,7 @@ namespace NMib::NCryptography
 						auto pCAPublicKey = X509_get_pubkey(pCACertificate);
 						if (!pCAPublicKey)
 							DMibErrorCryptography(fg_GetExceptionStr("Error getting CA certificate public key"));
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								EVP_PKEY_free(pCAPublicKey);
 							}
@@ -386,7 +386,7 @@ namespace NMib::NCryptography
 					{
 						X509_EXTENSIONS *pExtensions = X509_REQ_get_extensions(pCertificateRequest);
 
-						auto Cleanup = g_OnScopeExit > [&]
+						auto Cleanup = g_OnScopeExit / [&]
 							{
 								if (pExtensions)
 									sk_X509_EXTENSION_pop_free(pExtensions, X509_EXTENSION_free);
@@ -457,7 +457,7 @@ namespace NMib::NCryptography
 					X509 *pCertificate = X509_new();
 					if (!pCertificate)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating certificate"));
-					auto Cleanup0 = g_OnScopeExit > [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&] ()
 						{
 							X509_free(pCertificate);
 						}
@@ -466,7 +466,7 @@ namespace NMib::NCryptography
 					EVP_PKEY* pKey = EVP_PKEY_new();
 					if (!pKey)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating key"));
-					auto Cleanup1 = g_OnScopeExit > [&] ()
+					auto Cleanup1 = g_OnScopeExit / [&] ()
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -535,7 +535,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_Pem);
-					auto Cleanup0 = g_OnScopeExit > [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&] ()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
@@ -545,7 +545,7 @@ namespace NMib::NCryptography
 					BIO* pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
-					auto Cleanup = g_OnScopeExit > [&]
+					auto Cleanup = g_OnScopeExit / [&]
 						{
 							BIO_free(pMemoryBio);
 						}
@@ -574,7 +574,7 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_Pem);
-					auto Cleanup0 = g_OnScopeExit > [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&] ()
 						{
 							X509_free(pCertificate);
 						}
@@ -584,7 +584,7 @@ namespace NMib::NCryptography
 					BIO* pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
-					auto Cleanup = g_OnScopeExit > [&]
+					auto Cleanup = g_OnScopeExit / [&]
 						{
 							BIO_free(pMemoryBio);
 						}
