@@ -29,8 +29,7 @@ namespace
 
 		void f_DoTests()
 		{
-
-			DMibTestCategory("Encrypted Stream")
+			DMibTestSuite("Encrypted Stream")
 			{
 				static uint8 const *KeyBytes = (uint8 const *)"abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
 				mint KeyBytesLen = fg_StrLen(KeyBytes);
@@ -38,8 +37,8 @@ namespace
 				CByteVector Buffer;
 				CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
 
-				DMibTestSuite("Secure byte vector Key and IV")
 				{
+					DMibTestPath("Secure byte vector Key and IV");
 					CBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
@@ -59,10 +58,10 @@ namespace
 
 					DMibExpectExceptionType(EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Read), CExceptionCryptography);
 					EncryptedStream.f_Close();
-				};
+				}
 
-				DMibTestSuite("Password and salt")
 				{
+					DMibTestPath("Password and salt");
 					static const char *KeyBytes = "abcdefghijk";
 					CSecureByteVector Salt{0, 1, 2, 3};
 					CKeyExpansion KeyExpansion{KeyBytes, Salt, CKeyDerivationSettings_Scrypt{}, {}};
@@ -80,10 +79,10 @@ namespace
 					EncryptedStream.f_Close();
 
 					DMibExpect(Result, ==, ClearText);
-				};
+				}
 
-				DMibTestSuite("Detect tampering")
 				{
+					DMibTestPath("Detect tampering");
 					CBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
@@ -103,10 +102,10 @@ namespace
 
 					DMibExpectExceptionType(EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Read), CExceptionCryptography);
 					EncryptedStream.f_Close();
-				};
+				}
 
-				DMibTestSuite("Changing buffer size")
 				{
+					DMibTestPath("Changing buffer size");
 					CBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
@@ -136,10 +135,10 @@ namespace
 					EncryptedStream.f_Close();
 
 					DMibExpect(Result, ==, ClearText);
-				};
+				}
 
-				DMibTestSuite("Pure write")
 				{
+					DMibTestPath("Pure write");
 					CBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
@@ -154,10 +153,10 @@ namespace
 
 					EncryptedStream.f_Close();
 					DMibExpectException(EncryptedStream.f_FeedBytes(ClearText.f_GetStr(), 1), DMibCryptographyErrorInstance("Stream not opened for write"));
-				};
+				}
 
-				DMibTestSuite("Random access reads")
 				{
+					DMibTestPath("Random access reads");
 					CBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
@@ -209,10 +208,10 @@ namespace
 					EncryptedStream.f_Close();
 
 					DMibExpectException(EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 1), DMibCryptographyErrorInstance("Stream not opened for read"));
-				};
+				}
 
-				DMibTestSuite("First write, then random access reads")
 				{
+					DMibTestPath("First write, then random access reads");
 					CBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
@@ -264,10 +263,10 @@ namespace
 					EncryptedStream.f_Close();
 
 					DMibExpectException(EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 1), DMibCryptographyErrorInstance("Stream not opened for read"));
-				};
+				}
 
-				DMibTestSuite("Streams shorter than crypto block size")
 				{
+					DMibTestPath("Streams shorter than crypto block size");
 					CBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
@@ -280,9 +279,10 @@ namespace
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 1);
 					DMibExpect(Buffer[0], ==, ClearText[0]);
 					EncryptedStream.f_Close();
-				};
-				DMibTestSuite("All Ciphers")
+				}
+
 				{
+					DMibTestPath("All Ciphers");
 					TCMap<ECryptoType, CStr> Ciphers =
 						{
 							{ECryptoType_AES_256_CBC, "ECryptoType_AES_256_CBC"}
@@ -395,7 +395,7 @@ namespace
 							DMibExpect(Encrypted[Ciphers.fs_GetKey(Cipher1)], !=, Encrypted[Ciphers.fs_GetKey(Cipher2)]);
 						};
 					};
-				};
+				}
 			};
 		}
 	};
