@@ -1,10 +1,13 @@
 CMakeFiles/run_tests.rule
 crypto/chacha/chacha-armv8.S.rule
+crypto/cipher_extra/chacha20_poly1305_armv8.S.rule
 crypto/err_data.c.rule
 crypto/fipsmodule/aesv8-armx.S.rule
 crypto/fipsmodule/armv8-mont.S.rule
 crypto/fipsmodule/ghash-neon-armv8.S.rule
 crypto/fipsmodule/ghashv8-armx.S.rule
+crypto/fipsmodule/p256-armv8-asm.S.rule
+crypto/fipsmodule/p256_beeu-armv8-asm.S.rule
 crypto/fipsmodule/sha1-armv8.S.rule
 crypto/fipsmodule/sha256-armv8.S.rule
 crypto/fipsmodule/sha512-armv8.S.rule
