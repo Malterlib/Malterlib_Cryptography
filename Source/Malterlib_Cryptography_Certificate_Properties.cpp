@@ -147,6 +147,33 @@ namespace NMib::NCryptography
 		;
 	}
 
+	bool CCertificate::fs_IsRoot(NContainer::CByteVector const &_CertificateData)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					NStr::CStr CertificateName;
+					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_free(pCertificate);
+						}
+					;
+					auto pIssuer = X509_get_issuer_name(pCertificate);
+					if (!pIssuer)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to read certificate issuer name"));
+
+					auto pSubject = X509_get_subject_name(pCertificate);
+					if (!pSubject)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to read certificate subject name"));
+
+					return X509_NAME_cmp(pIssuer, pSubject) == 0;
+				}
+			)
+		;
+	}
+
 	NStr::CStr CCertificate::fs_GetIssuerName(NContainer::CByteVector const &_CertificateData)
 	{
 		return fg_RunProtectRegisters
@@ -164,7 +191,7 @@ namespace NMib::NCryptography
 					ERR_clear_error();
 					int nChars = X509_NAME_get_text_by_NID(X509_get_issuer_name(pCertificate), NID_commonName, Buffer, 256);
 					if (nChars < 0)
-						DMibErrorCryptography(fg_GetExceptionStr("Failed to read certificate issuen name"));
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to read certificate issuer name"));
 					return NStr::CStr(Buffer);
 				}
 			)
