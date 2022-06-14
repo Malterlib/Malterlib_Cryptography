@@ -16,7 +16,7 @@ extern "C"
 #	undef X509_NAME
 #	include <openssl/x509v3.h>
 
-#ifdef DPlatformFamily_OSX
+#ifdef DPlatformFamily_macOS
 	#include <Security/Security.h>
 #endif
 

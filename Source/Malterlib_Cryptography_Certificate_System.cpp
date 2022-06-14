@@ -3,7 +3,7 @@
 #include <Mib/Cryptography/BoringSSL>
 #include <Mib/Encoding/Base64>
 
-#if defined(DPlatformFamily_OSX)
+#if defined(DPlatformFamily_macOS)
 	#include <Security/Security.h>
 #elif defined(DPlatformFamily_Windows)
 	#include <Windows.h>
@@ -99,7 +99,7 @@ namespace NMib::NCryptography
 			return pStore;
 		}
 
-#elif defined(DPlatformFamily_OSX)
+#elif defined(DPlatformFamily_macOS)
 
 		X509_STORE *fg_ExtractSystemCertificates()
 		{
