@@ -19,12 +19,12 @@ namespace NMib::NCryptography
 	};
 	struct CUniversallyUniqueIdentifier
 	{
-		uint32 m_TimeLow;
-		uint16 m_TimeMid;
-		uint16 m_TimeHiAndVersion;
-		uint8 m_ClockSequenceHiAndReserved;
-		uint8 m_ClockSquenceLow;
-		uint8 m_Node[6];
+		uint32 m_TimeLow = 0;
+		uint16 m_TimeMid = 0;
+		uint16 m_TimeHiAndVersion = 0;
+		uint8 m_ClockSequenceHiAndReserved = 0;
+		uint8 m_ClockSquenceLow = 0;
+		uint8 m_Node[6] = {0};
 
 		CUniversallyUniqueIdentifier
 			(
@@ -34,14 +34,24 @@ namespace NMib::NCryptography
 			)
 		;
 		CUniversallyUniqueIdentifier(NStr::CStr const &_RegistryFormat, EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
-		~CUniversallyUniqueIdentifier();
+		constexpr CUniversallyUniqueIdentifier
+			(
+				uint32 _TimeLow
+				, uint16 _TimeMid
+				, uint16 _TimeHiAndVersion
+				, uint16 _ClockSequence
+				, uint64 _Node
+				, EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry
+			)
+		;
+		constexpr ~CUniversallyUniqueIdentifier();
 		NStr::CStr f_GetAsString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
 		NStr::CFStr256 f_GetAsStaticString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
 
 		auto operator <=> (CUniversallyUniqueIdentifier const &_Right) const = default;
 
 	private:
-		CUniversallyUniqueIdentifier();
+		constexpr CUniversallyUniqueIdentifier();
 		void fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen);
 		void fp_CreateFromMD5(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen);
 		void fp_CreateFromHash(uint8 *_pHash, int32 _Version);
@@ -62,3 +72,5 @@ namespace NMib::NCryptography
 #ifndef DMibPNoShortCuts
 	using namespace NMib::NCryptography;
 #endif
+
+#include "Malterlib_Cryptography_UUID.hpp"

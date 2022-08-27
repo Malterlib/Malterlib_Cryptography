@@ -43,6 +43,7 @@ namespace NMib::NCryptography
 			break;
 		}
 	}
+
 	CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier(NStr::CStr const &_RegistryFormat, EUniversallyUniqueIdentifierFormat _Format)
 	{
 		uint16 ClockSequence;
@@ -125,18 +126,12 @@ namespace NMib::NCryptography
 	{
 		return fg_GetUUIDAsString<NStr::CStr>(*this, _Format);
 	}
+	
 	NStr::CFStr256 CUniversallyUniqueIdentifier::f_GetAsStaticString(EUniversallyUniqueIdentifierFormat _Format)
 	{
 		return fg_GetUUIDAsString<NStr::CFStr256>(*this, _Format);
 	}
-	CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier()
-	{
-		NMemory::fg_MemClear(*this);
-	}
-	CUniversallyUniqueIdentifier::~CUniversallyUniqueIdentifier()
-	{
-		NMemory::fg_SecureMemClear(*this);
-	}
+
 	void CUniversallyUniqueIdentifier::fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen)
 	{
 		CUniversallyUniqueIdentifier BigEndianNamespace = _Namespace;

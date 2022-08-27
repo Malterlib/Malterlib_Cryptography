@@ -21,10 +21,10 @@ namespace
 		{
 			DMibTestSuite("Computer name")
 			{
-				DMibTest(DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetUserName()) != DMibExpr(""));
+				DMibExpect(NMib::NProcess::NPlatform::fg_Process_GetUserName(), !=, "");
 				DMibTest(DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerDomain()) != DMibExpr("") || DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerDomain()) == DMibExpr(""));
-				DMibTest(DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerName()) != DMibExpr(""));
-				DMibTest(DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerAddress()) != DMibExpr(""));
+				DMibExpect(NMib::NProcess::NPlatform::fg_Process_GetComputerName(), !=, "");
+				DMibExpect(NMib::NProcess::NPlatform::fg_Process_GetComputerAddress(), !=, "");
 			};
 
 			DMibTestSuite("UUID")
@@ -37,22 +37,28 @@ namespace
 				NMib::NCryptography::CUniversallyUniqueIdentifier RootNamespace("{C2EA34BB-5C04-4945-A798-D5685B7CD2A8}");
 				NMib::NCryptography::CUniversallyUniqueIdentifier StringHash0(EUniversallyUniqueIdentifierGenerate_StringHash, RootNamespace, "Test0");
 				NMib::NCryptography::CUniversallyUniqueIdentifier StringHash1(EUniversallyUniqueIdentifierGenerate_StringHash, RootNamespace, "Test1");
+				constexpr NMib::NCryptography::CUniversallyUniqueIdentifier RootNamespaceConst(0xC2EA34BBu, 0x5C04, 0x4945, 0xA798, constant_uint64(0xD5685B7CD2A8));
 
-				DMibTest(DMibExpr(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_Registry)) == DMibExpr("{C2EA34BB-5C04-4945-A798-D5685B7CD2A8}"));
-				DMibTest(DMibExpr(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_Bare)) == DMibExpr("C2EA34BB-5C04-4945-A798-D5685B7CD2A8"));
-				DMibTest(DMibExpr(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_AlphaNum)) == DMibExpr("C2EA34BB5C044945A798D5685B7CD2A8"));
+				DMibExpect(RootNamespaceConst, ==, RootNamespace);
+
+				DMibExpect(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_Registry), ==, "{C2EA34BB-5C04-4945-A798-D5685B7CD2A8}");
+				DMibExpect(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_Bare), ==, "C2EA34BB-5C04-4945-A798-D5685B7CD2A8");
+				DMibExpect(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_AlphaNum), ==, "C2EA34BB5C044945A798D5685B7CD2A8");
 
 				NMib::NCryptography::CUniversallyUniqueIdentifier ParseBare("C2EA34BB-5C04-4945-A798-D5685B7CD2A8", EUniversallyUniqueIdentifierFormat_Bare);
-				DMibTest(DMibExpr(ParseBare.f_GetAsString(EUniversallyUniqueIdentifierFormat_Bare)) == DMibExpr("C2EA34BB-5C04-4945-A798-D5685B7CD2A8"));
-				DMibTest(DMibExpr(TCThrowsException<NMib::NException::CException>()) == DMibLExpr(NMib::NCryptography::CUniversallyUniqueIdentifier("C2EA34BB5C044945A798D5685B7CD2A8", EUniversallyUniqueIdentifierFormat_AlphaNum)));
+				DMibExpect(ParseBare.f_GetAsString(EUniversallyUniqueIdentifierFormat_Bare), ==, "C2EA34BB-5C04-4945-A798-D5685B7CD2A8");
+				DMibExpectException
+					(
+						NMib::NCryptography::CUniversallyUniqueIdentifier("C2EA34BB5C044945A798D5685B7CD2A8", EUniversallyUniqueIdentifierFormat_AlphaNum)
+						, DMibErrorInstance("EUniversallyUniqueIdentifierFormat_AlphaNum parsing of GUID not supported")
+					)
+				;
 				
-				DMibTest(DMibExpr(SecureRandom0) != DMibExpr(SecureRandom1));
-				DMibTest(DMibExpr(Random0) != DMibExpr(Random1));
-				DMibTest(DMibExpr(StringHash0) != DMibExpr(StringHash1));
+				DMibExpect(SecureRandom0, !=, SecureRandom1);
+				DMibExpect(Random0, !=, Random1);
+				DMibExpect(StringHash0, !=, StringHash1);
 			};
-			
-			
-		}		
+		}
 	};
 
 	DMibTestRegister(CMisc_Tests, Malterlib::Cryptography);
