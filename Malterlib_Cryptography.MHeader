@@ -12,6 +12,20 @@ Import "../Core/Lib_Malterlib.MTarget"
 	}
 }
 
+%Group "{Malterlib}/{Lib_Malterlib_Cryptography}/{TargetInjectionBoringSSL}"
+{
+	Compile
+	{
+		&
+		{
+			LanguageFamily "Native"
+			CompileDialect "C"
+		}
+
+		SearchPath += "../../External/boringssl/include"->MakeAbsolute()
+	}
+}
+
 %Import "../../External/boringssl/CMakeLists.txt"
 {
 	Import.CMake_Variables =+ "CMAKE_BUILD_WITH_INSTALL_RPATH=ON"
@@ -42,7 +56,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 		{
 			|
 			{
-				!HasParentEntity("File") true
+				!this.Type "File"
 				!File:this.Identity ~"*.S"
 			}
 			Compile.Type "Assembler"
@@ -99,15 +113,47 @@ Import "../Core/Lib_Malterlib.MTarget"
 	%Target "Lib_BoringSSL_crypto"
 	{
 		Property.MalterlibGenerateLibrary true // Needed because for asm objects are not included otherwise
-		Target.LinkerGroup "BoringSSL"
+
+		Target
+		{
+			LinkerGroup "BoringSSL"
+			DependencyInjectionGroups =+ "{Malterlib}/{Lib_Malterlib_Cryptography}/{TargetInjectionBoringSSL}"
+		}
+
+		%Dependency "Security"
+		{
+			!!PlatformIsDarwin true
+
+			Dependency
+			{
+				Type "Framework"
+				Indirect true
+			}
+		}
 	}
 	%Target "Lib_BoringSSL_decrepit"
 	{
 		Target.LinkerGroup "BoringSSL"
+		%Dependency "Lib_BoringSSL_crypto"
+		{
+			Dependency
+			{
+				Indirect true
+				LinkWithObjectFiles false
+			}
+		}
 	}
 	%Target "Lib_BoringSSL_ssl"
 	{
 		Target.LinkerGroup "BoringSSL"
+		%Dependency "Lib_BoringSSL_crypto"
+		{
+			Dependency
+			{
+				Indirect true
+				LinkWithObjectFiles false
+			}
+		}
 	}
 }
 
@@ -119,58 +165,6 @@ Import
 		, "OPENSSL_CRYPTO_LIBRARY=/dev/null"
 		, "OPENSSL_SSL_LIBRARY=/dev/null"
 	]
-}
-
-%Group "~Automatic/DependBoringSSL"
-{
-	%Dependency "Lib_BoringSSL_decrepit"
-	%Dependency "Lib_BoringSSL_ssl"
-	%Dependency "Lib_BoringSSL_crypto"
-	{
-		Dependency.LinkWithObjectFiles false
-	}
-}
-
-Property.MalterlibLinkWithBoringSSL define bool = fg_IsTargetInDependencies("Lib_Malterlib_Cryptography") || fg_IsTargetInDependencies("Lib_Malterlib")
-
-Target.ExtraGroups =+ "~Automatic/DependBoringSSL"
-{
-	&
-	{
-		MalterlibLinkWithBoringSSL true
-		TargetIsExecutable true
-		!DocumentationEnabled true
-	}
-}
-
-Compile
-{
-	&
-	{
-		LanguageFamily "Native"
-		CompileDialect "C"
-	}
-
-	SearchPath += "../../External/boringssl/include"->MakeAbsolute()
-}
-
-Target
-{
-	&
-	{
-		LanguageFamily "Native"
-		TargetIsExecutable true
-		!Target.Type "Driver"
-	}
-
-	LinkWithLibraries =+ [["-framework", "Security"]]
-	{
-		&
-		{
-			MalterlibLinkWithBoringSSL true
-			PlatformIsDarwin true
-		}
-	}
 }
 
 %Group "{Malterlib}/{Lib_Malterlib_Cryptography}"
@@ -229,13 +223,13 @@ Target
 
 Property
 {
-	MalterlibLibrary_Cryptography define bool = MalterlibLibrary_All
+	MalterlibLibrary_Cryptography: bool = MalterlibLibrary_All
 	MalterlibSubLibraries =+ "Cryptography"
 	{
 		!!MalterlibLibrary_Cryptography true
 	}
-	MalterlibLibrarySeparate_Lib_Malterlib_Cryptography define bool = true
-//	MalterlibSubLibrarySeparate_Lib_Malterlib_Cryptography define bool = true
+	MalterlibLibrarySeparate_Lib_Malterlib_Cryptography: bool = true
+//	MalterlibSubLibrarySeparate_Lib_Malterlib_Cryptography: bool = true
 	MalterlibIncludeRoots =+ "Include"->MakeAbsolute()
 	{
 		!!MalterlibLibrary_Cryptography true
@@ -244,7 +238,6 @@ Property
 
 %Group "{Test}/{Malterlib_Cryptography}"
 {
-	Property.MalterlibLinkWithBoringSSL true
 }
 
 Property
@@ -252,6 +245,6 @@ Property
 	!!MalterlibEnableInternalTests true
 
 	MalterlibTests =+ "Malterlib_Cryptography"
-	MalterlibTestFiles_Malterlib_Cryptography define [type(CEntity)] = ["Test/*"->MakeAbsolute()]
-	MalterlibTestExtraGroups_Malterlib_Cryptography define [string] = ["{Test}/{Malterlib_Cryptography}"]
+	MalterlibTestFiles_Malterlib_Cryptography: [type(CEntity)] = ["Test/*"->MakeAbsolute()]
+	MalterlibTestExtraGroups_Malterlib_Cryptography: [string] = ["{Test}/{Malterlib_Cryptography}"]
 }
