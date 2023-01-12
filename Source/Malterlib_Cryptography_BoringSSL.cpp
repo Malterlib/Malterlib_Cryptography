@@ -5,28 +5,84 @@ namespace NMib::NCryptography
 {
 }
 
-#if defined(DPlatformFamily_macOS) && (DMibConfig_MemoryManager_Stats_EnableCategories || DMibConfig_MemoryManager_Stats_EnableCallstack)
 extern "C"
 {
-	module_export assure_used void * (* OPENSSL_memory_alloc)(size_t _Size) = [](size_t _Size) -> void *
-		{
-			return NMib::NMemory::CAllocator_NonTrackedHeap::f_Alloc(_Size);
-		}
-	;
+#if (DMibConfig_MemoryManager_Stats_EnableCategories || DMibConfig_MemoryManager_Stats_EnableCallstack)
+	void *OPENSSL_malloc(size_t _Size)
+	{
+		return NMib::NMemory::CAllocator_NonTrackedHeap::f_Alloc(_Size);
+	}
 
-	module_export assure_used void (* OPENSSL_memory_free)(void *_pPtr) = [](void *_pPtr) -> void
-		{
-			return NMib::NMemory::CAllocator_NonTrackedHeap::f_FreeNoSize(_pPtr);
-		}
-	;
+	void OPENSSL_free(void *_pPtr)
+	{
+		if (!_pPtr)
+			return;
 
-	module_export assure_used size_t (* OPENSSL_memory_get_size)(void *_pPtr) = [](void *_pPtr) -> size_t
-		{
-			return NMib::NMemory::CAllocator_NonTrackedHeap::f_Size(_pPtr);
-		}
-	;
-}
+		mint Size = NMib::NMemory::CAllocator_NonTrackedHeap::f_Size(_pPtr);
+		OPENSSL_cleanse(_pPtr, Size);
+
+		return NMib::NMemory::CAllocator_NonTrackedHeap::f_Free(_pPtr, Size);
+	}
+
+	void *OPENSSL_realloc(void *_pPtr, size_t _NewSize)
+	{
+		if (_pPtr == NULL)
+			return NMib::NMemory::CAllocator_NonTrackedHeap::f_Alloc(_NewSize);
+
+		size_t OldSize = NMib::NMemory::CAllocator_NonTrackedHeap::f_Size(_pPtr);
+
+		void *pMem = NMib::NMemory::CAllocator_NonTrackedHeap::f_Alloc(_NewSize);
+		if (!pMem)
+			return pMem;
+
+		size_t ToCopy = _NewSize;
+		if (OldSize < ToCopy)
+			ToCopy = OldSize;
+
+		memcpy(pMem, _pPtr, ToCopy);
+		NMib::NMemory::CAllocator_NonTrackedHeap::f_Free(_pPtr, OldSize);
+
+		return pMem;
+	}
+#else
+	void *OPENSSL_malloc(size_t _Size)
+	{
+		return NMib::NMemory::fg_Alloc(_Size);
+	}
+
+	void OPENSSL_free(void *_pPtr)
+	{
+		if (!_pPtr)
+			return;
+
+		mint Size = NMib::NMemory::fg_Size(_pPtr);
+		OPENSSL_cleanse(_pPtr, Size);
+
+		return NMib::NMemory::fg_Free(_pPtr, Size);
+	}
+
+	void *OPENSSL_realloc(void *_pPtr, size_t _NewSize)
+	{
+		if (_pPtr == NULL)
+			return NMib::NMemory::fg_Alloc(_NewSize);
+
+		size_t OldSize = NMib::NMemory::fg_Size(_pPtr);
+
+		void *pMem = NMib::NMemory::fg_Alloc(_NewSize);
+		if (!pMem)
+			return pMem;
+
+		size_t ToCopy = _NewSize;
+		if (OldSize < ToCopy)
+			ToCopy = OldSize;
+
+		memcpy(pMem, _pPtr, ToCopy);
+		NMib::NMemory::fg_Free(_pPtr, OldSize);
+
+		return pMem;
+	}
 #endif
+}
 
 namespace NMib::NCryptography::NBoringSSL
 {
