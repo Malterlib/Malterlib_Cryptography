@@ -23,7 +23,7 @@ namespace NMib::NCryptography
 	template <typename t_CHashImpl>
 	void TCHashImpl<t_CHashImpl>::f_Reset()
 	{
-		mp_Implementation = {};
+		mp_Implementation.f_Reset();
 	}
 	
 	template <typename t_CHashImpl>

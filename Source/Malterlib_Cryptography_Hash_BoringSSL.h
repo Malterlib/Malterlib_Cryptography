@@ -30,6 +30,8 @@ namespace NMib::NCryptography
 		template <typename tf_CDigest>
 		void f_GetDigest(tf_CDigest &o_Digest) &&;
 
+		void f_Reset();
+
 	private:
 		void fp_Init();
 		void fp_Destroy();

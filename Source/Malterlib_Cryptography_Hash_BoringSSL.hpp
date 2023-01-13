@@ -46,6 +46,15 @@ namespace NMib::NCryptography
 	}
 
 	template <EDigestType t_DigestType, mint t_DigestSize>
+	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_Reset()
+	{
+		auto &pContext = fg_Context(mp_pContext);
+
+		if (!EVP_DigestInit_ex(pContext, fg_GetDigest(t_DigestType), nullptr))
+			DMibErrorCryptography(fg_GetExceptionStr("Failed to init digest (reset)"));
+	}
+
+	template <EDigestType t_DigestType, mint t_DigestSize>
 	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::fp_Destroy()
 	{
 		auto &pContext = fg_Context(mp_pContext);
