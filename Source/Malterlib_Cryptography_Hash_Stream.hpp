@@ -225,11 +225,11 @@ namespace NMib::NStream
 	class TCBinaryStreamTypeReference<t_CStream, NCryptography::TCMessageDigest<t_Size, t_CHash>>
 	{
 	public:
-		static void fs_Feed(t_CStream &_Stream, NCryptography::TCMessageDigest<t_Size, t_CHash> const &_Data)
+		static constexpr void fs_Feed(t_CStream &_Stream, NCryptography::TCMessageDigest<t_Size, t_CHash> const &_Data)
 		{
 			_Stream.f_FeedBytes(_Data.f_GetData(), t_Size);
 		}
-		static void fs_Consume(t_CStream &_Stream, NCryptography::TCMessageDigest<t_Size, t_CHash> &_Data)
+		static constexpr void fs_Consume(t_CStream &_Stream, NCryptography::TCMessageDigest<t_Size, t_CHash> &_Data)
 		{
 			_Stream.f_ConsumeBytes(_Data.f_GetData(), t_Size);
 		}
