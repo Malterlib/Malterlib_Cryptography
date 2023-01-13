@@ -12,16 +12,30 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHashImpl>
-	void TCHashImpl<t_CHashImpl>::f_GetDigest(CMessageDigest &_Digest) const
+	void TCHashImpl<t_CHashImpl>::f_GetDigest(CMessageDigest &_Digest) const &
 	{
 		mp_Implementation.f_GetDigest(_Digest);
 	}
 
 	template <typename t_CHashImpl>
-	auto TCHashImpl<t_CHashImpl>::f_GetDigest() const -> CMessageDigest
+	void TCHashImpl<t_CHashImpl>::f_GetDigest(CMessageDigest &_Digest) &&
+	{
+		fg_Move(mp_Implementation).f_GetDigest(_Digest);
+	}
+
+	template <typename t_CHashImpl>
+	auto TCHashImpl<t_CHashImpl>::f_GetDigest() const & -> CMessageDigest
 	{
 		CMessageDigest Digest;
 		mp_Implementation.f_GetDigest(Digest);
+		return Digest;
+	}
+
+	template <typename t_CHashImpl>
+	auto TCHashImpl<t_CHashImpl>::f_GetDigest() && -> CMessageDigest
+	{
+		CMessageDigest Digest;
+		fg_Move(mp_Implementation).f_GetDigest(Digest);
 		return Digest;
 	}
 }

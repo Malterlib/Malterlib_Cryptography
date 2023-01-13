@@ -25,7 +25,10 @@ namespace NMib::NCryptography
 		void f_AddData(void const *_pData, mint _Len);
 
 		template <typename tf_CDigest>
-		void f_GetDigest(tf_CDigest &o_Digest) const;
+		void f_GetDigest(tf_CDigest &o_Digest) const &;
+
+		template <typename tf_CDigest>
+		void f_GetDigest(tf_CDigest &o_Digest) &&;
 
 	private:
 		void fp_Init();

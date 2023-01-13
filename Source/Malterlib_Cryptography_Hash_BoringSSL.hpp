@@ -125,7 +125,7 @@ namespace NMib::NCryptography
 
 	template <EDigestType t_DigestType, mint t_DigestSize>
 	template <typename tf_CDigest>
-	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_GetDigest(tf_CDigest &o_Digest) const
+	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_GetDigest(tf_CDigest &o_Digest) const &
 	{
 		static_assert(t_DigestSize == tf_CDigest::mc_Size);
 		auto Temp = *this;
@@ -157,10 +157,36 @@ namespace NMib::NCryptography
 		}
 	}
 
-		unsigned int Size;
-		if (!EVP_DigestFinal_ex(pContext, o_Digest.f_GetData(), &Size))
-			DMibErrorCryptography(fg_GetExceptionStr("Failed to finalize digest"));
+	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <typename tf_CDigest>
+	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_GetDigest(tf_CDigest &o_Digest) &&
+	{
+		static_assert(t_DigestSize == tf_CDigest::mc_Size);
 
-		DMibFastCheck(Size == t_DigestSize);
+		auto &pContext = fg_Context(mp_pContext);
+		DMibFastCheck(pContext);
+		if constexpr (t_DigestType == EDigestType_SHA256_16)
+		{
+			DMibFastCheck(EVP_MD_CTX_size(pContext) == 32);
+
+			uint8 Temp[32];
+			unsigned int Size;
+			if (!EVP_DigestFinal_ex(pContext, Temp, &Size))
+				DMibErrorCryptography(fg_GetExceptionStr("Failed to finalize digest"));
+
+			DMibFastCheck(Size == 32);
+
+			NMemory::fg_MemCopy(o_Digest.f_GetData(), Temp, 16);
+		}
+		else
+		{
+			DMibFastCheck(EVP_MD_CTX_size(pContext) == t_DigestSize);
+
+			unsigned int Size;
+			if (!EVP_DigestFinal_ex(pContext, o_Digest.f_GetData(), &Size))
+				DMibErrorCryptography(fg_GetExceptionStr("Failed to finalize digest"));
+
+			DMibFastCheck(Size == t_DigestSize);
+		}
 	}
 }

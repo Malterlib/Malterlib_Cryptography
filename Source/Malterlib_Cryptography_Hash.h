@@ -77,8 +77,10 @@ namespace NMib::NCryptography
 
 		void f_Reset();
 		inline_small void f_AddData(void const *_pData, mint _Len);
-		void f_GetDigest(CMessageDigest &_Digest) const;
-		CMessageDigest f_GetDigest() const;
+		void f_GetDigest(CMessageDigest &_Digest) const &;
+		void f_GetDigest(CMessageDigest &_Digest) &&;
+		CMessageDigest f_GetDigest() const &;
+		CMessageDigest f_GetDigest() &&;
 
 		static CMessageDigest fs_DigestFromData(void const *_pData, mint _Len);
 		static CMessageDigest fs_DigestFromData(NContainer::CByteVector const &_Data);

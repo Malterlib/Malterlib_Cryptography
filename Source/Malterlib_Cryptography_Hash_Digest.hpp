@@ -41,7 +41,11 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const t_CHash &_Src)
+	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(t_CHash &&_Src)
+	{
+		fg_Move(_Src).f_GetDigest(*this);
+	}
+
 	template <mint t_Size, typename t_CHash>
 	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const t_CHash &_Src)
 	{
