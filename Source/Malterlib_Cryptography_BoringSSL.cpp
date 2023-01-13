@@ -174,6 +174,7 @@ namespace NMib::NCryptography::NBoringSSL
 		case EDigestType_MD4: return EVP_md4();
 		case EDigestType_MD5: return EVP_md5();
 		case EDigestType_SHA1: return EVP_sha1();
+		case EDigestType_SHA256_16: return EVP_sha256();
 		default: DMibErrorCryptography(fg_GetExceptionStr("Unknown digest"));
 		}
 	}
@@ -220,6 +221,7 @@ namespace NMib::NCryptography::NBoringSSL
 
 		case EDigestType_SHA224:
 		case EDigestType_SHA1:
+		case EDigestType_SHA256_16:
 		case EDigestType_MD5:
 		case EDigestType_MD4:
 		case EDigestType_None:

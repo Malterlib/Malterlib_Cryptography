@@ -132,7 +132,30 @@ namespace NMib::NCryptography
 
 		auto &pContext = fg_Context(Temp.mp_pContext);
 		DMibFastCheck(pContext);
-		DMibFastCheck(EVP_MD_CTX_size(pContext) == t_DigestSize);
+		if constexpr (t_DigestType == EDigestType_SHA256_16)
+		{
+			DMibFastCheck(EVP_MD_CTX_size(pContext) == 32);
+
+			uint8 Temp[32];
+			unsigned int Size;
+			if (!EVP_DigestFinal_ex(pContext, Temp, &Size))
+				DMibErrorCryptography(fg_GetExceptionStr("Failed to finalize digest"));
+
+			DMibFastCheck(Size == 32);
+
+			NMemory::fg_MemCopy(o_Digest.f_GetData(), Temp, 16);
+		}
+		else
+		{
+			DMibFastCheck(EVP_MD_CTX_size(pContext) == t_DigestSize);
+
+			unsigned int Size;
+			if (!EVP_DigestFinal_ex(pContext, o_Digest.f_GetData(), &Size))
+				DMibErrorCryptography(fg_GetExceptionStr("Failed to finalize digest"));
+
+			DMibFastCheck(Size == t_DigestSize);
+		}
+	}
 
 		unsigned int Size;
 		if (!EVP_DigestFinal_ex(pContext, o_Digest.f_GetData(), &Size))

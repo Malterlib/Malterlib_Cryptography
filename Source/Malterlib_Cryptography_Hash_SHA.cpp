@@ -7,6 +7,9 @@
 
 namespace NMib::NCryptography
 {
+	template struct TCHashImpl_BoringSSL<EDigestType_SHA256_16, 16>;
+	template struct TCHashImpl<TCHashImpl_BoringSSL<EDigestType_SHA256_16, 16>>;
+	template struct TCMessageDigest<CHash_SHA256_16::mc_DigestSize, CHash_SHA256_16>;
 	template struct TCHashImpl_BoringSSL<EDigestType_SHA1, 20>;
 	template struct TCHashImpl<TCHashImpl_BoringSSL<EDigestType_SHA1, 20>>;
 	template struct TCMessageDigest<CHash_SHA1::mc_DigestSize, CHash_SHA1>;

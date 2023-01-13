@@ -18,6 +18,7 @@ namespace NMib::NCryptography
 		, EDigestType_SHA1		// Be careful, only to be used for compatibility with legacy systems (borken hash)
 		, EDigestType_MD5		// Be careful, only to be used for compatibility with legacy systems (borken hash)
 		, EDigestType_MD4		// Be careful, only to be used for compatibility with legacy systems (borken hash)
+		, EDigestType_SHA256_16	// Use first 16 bytes of SHA256
 	};
 
 	template <mint t_Size, typename t_CHash>
