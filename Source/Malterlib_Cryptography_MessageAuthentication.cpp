@@ -121,7 +121,7 @@ namespace NMib::NCryptography
 	NCryptography::CHashDigest_SHA256 fg_MessageAuthenication_HMAC_SHA256(uint8 const *_pData, mint _DataLen, uint8 const *_pKey, mint _KeyLen)
 	{
 		NCryptography::CHashDigest_SHA256 Return;
-		unsigned int Size = Return.fs_GetSize();
+		unsigned int Size = Return.mc_Size;
 		if
 			(
 				!HMAC
@@ -139,7 +139,7 @@ namespace NMib::NCryptography
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to run HMAC-SHA256"));
 		}
 
-		if (Size != Return.fs_GetSize())
+		if (Size != Return.mc_Size)
 			DMibErrorCryptography("Failed to run HMAC-SHA256: Unexpected digest size");
 
 		return Return;
@@ -148,7 +148,7 @@ namespace NMib::NCryptography
 	NCryptography::CHashDigest_SHA1 fg_MessageAuthenication_HMAC_SHA1(uint8 const *_pData, mint _DataLen, uint8 const *_pKey, mint _KeyLen)
 	{
 		NCryptography::CHashDigest_SHA1 Return;
-		unsigned int Size = Return.fs_GetSize();
+		unsigned int Size = Return.mc_Size;
 		if
 			(
 				!HMAC
@@ -166,7 +166,7 @@ namespace NMib::NCryptography
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to run HMAC-SHA1"));
 		}
 
-		if (Size != Return.fs_GetSize())
+		if (Size != Return.mc_Size)
 			DMibErrorCryptography("Failed to run HMAC-SHA1: Unexpected digest size");
 
 		return Return;

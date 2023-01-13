@@ -47,7 +47,6 @@ namespace NMib::NCryptography
 		template <typename tf_CIntType>
 		constexpr tf_CIntType f_FoldToInt() const;
 
-		constexpr static mint fs_GetSize();
 		static TCMessageDigest fs_FromString(ch8 const *_pString);
 		static TCMessageDigest fs_FromBytes(uint8 const *_pData, mint _Len);
 

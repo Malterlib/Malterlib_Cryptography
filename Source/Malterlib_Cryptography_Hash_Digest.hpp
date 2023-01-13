@@ -104,12 +104,6 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	constexpr mint TCMessageDigest<t_Size, t_CHash>::fs_GetSize()
-	{
-		return t_Size;
-	}
-
-	template <mint t_Size, typename t_CHash>
 	constexpr uint8 *TCMessageDigest<t_Size, t_CHash>::f_GetData()
 	{
 		return mp_Data;

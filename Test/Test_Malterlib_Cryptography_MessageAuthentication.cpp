@@ -57,9 +57,9 @@ public:
 					IncrementalHMAC.f_Update(PlainText.f_GetArray() + i, ThisTime);
 				}
 				NCryptography::CHashDigest_SHA256 Result;
-				auto nBytes = IncrementalHMAC.f_Finalize(Result.f_GetData(), Result.fs_GetSize());
+				auto nBytes = IncrementalHMAC.f_Finalize(Result.f_GetData(), Result.mc_Size);
 				DMibExpect(Result, ==, ContinuousHMAC);
-				DMibExpect(nBytes, ==, ContinuousHMAC.fs_GetSize());
+				DMibExpect(nBytes, ==, ContinuousHMAC.mc_Size);
 			}
 
 			{
@@ -68,9 +68,9 @@ public:
 				CIncrementalHMAC IncrementalHMAC(EDigestType_SHA256, Key);
 				IncrementalHMAC.f_Update(PlainText.f_GetArray(), Lengths[0]);
 				NCryptography::CHashDigest_SHA256 Result;
-				auto nBytes = IncrementalHMAC.f_Finalize(Result.f_GetData(), Result.fs_GetSize());
+				auto nBytes = IncrementalHMAC.f_Finalize(Result.f_GetData(), Result.mc_Size);
 				DMibExpect(Result, !=, ContinuousHMAC);
-				DMibExpect(nBytes, ==, ContinuousHMAC.fs_GetSize());
+				DMibExpect(nBytes, ==, ContinuousHMAC.mc_Size);
 			}
 		};
 	}
