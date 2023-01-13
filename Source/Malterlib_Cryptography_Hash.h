@@ -24,29 +24,30 @@ namespace NMib::NCryptography
 	template <mint t_Size, typename t_CHash>
 	struct TCMessageDigest
 	{
-		TCMessageDigest();
-		~TCMessageDigest();
-		TCMessageDigest(TCMessageDigest const &_Src);
-		TCMessageDigest(t_CHash const &_Src);
-		TCMessageDigest &operator = (TCMessageDigest const &_Src);
-		TCMessageDigest &operator = (t_CHash const &_Src);
+		constexpr TCMessageDigest();
+		constexpr ~TCMessageDigest();
+		constexpr TCMessageDigest(TCMessageDigest const &_Src);
+		constexpr TCMessageDigest(t_CHash const &_Src);
+		constexpr TCMessageDigest(t_CHash &&_Src);
+		constexpr TCMessageDigest &operator = (TCMessageDigest const &_Src);
+		constexpr TCMessageDigest &operator = (t_CHash const &_Src);
 
 		void f_Clear();
-		bool f_IsCleared() const;
+		constexpr bool f_IsCleared() const;
 
-		aint f_Compare(TCMessageDigest const &_Other) const;
-		bool operator == (TCMessageDigest const &_Src) const;
-		bool operator == (t_CHash const &_Src) const;
-		COrdering_Strong operator <=> (TCMessageDigest const &_Src) const;
-		COrdering_Strong operator <=> (t_CHash const &_Src) const;
+		constexpr aint f_Compare(TCMessageDigest const &_Other) const;
+		constexpr bool operator == (TCMessageDigest const &_Src) const;
+		constexpr bool operator == (t_CHash const &_Src) const;
+		constexpr COrdering_Strong operator <=> (TCMessageDigest const &_Src) const;
+		constexpr COrdering_Strong operator <=> (t_CHash const &_Src) const;
 
-		uint8 *f_GetData();
-		uint8 const *f_GetData() const;
+		constexpr uint8 *f_GetData();
+		constexpr uint8 const *f_GetData() const;
 
 		template <typename tf_CIntType>
-		tf_CIntType f_FoldToInt() const;
+		constexpr tf_CIntType f_FoldToInt() const;
 
-		static mint fs_GetSize();
+		constexpr static mint fs_GetSize();
 		static TCMessageDigest fs_FromString(ch8 const *_pString);
 		static TCMessageDigest fs_FromBytes(uint8 const *_pData, mint _Len);
 
@@ -58,7 +59,7 @@ namespace NMib::NCryptography
 		constexpr static mint mc_Size = t_Size;
 
 	private:
-		uint8 mp_Data[t_Size];
+		uint8 mp_Data[t_Size] = {0};
 	};
 
 	template <typename t_CHashImpl>

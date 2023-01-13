@@ -6,15 +6,15 @@
 namespace NMib::NCryptography
 {
 	template <mint t_Size, typename t_CHash>
-	TCMessageDigest<t_Size, t_CHash>::TCMessageDigest()
+	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest()
 	{
-		f_Clear();
 	}
 
 	template <mint t_Size, typename t_CHash>
-	TCMessageDigest<t_Size, t_CHash>::~TCMessageDigest()
+	constexpr TCMessageDigest<t_Size, t_CHash>::~TCMessageDigest()
 	{
-		f_Clear();
+		if (!std::is_constant_evaluated())
+			f_Clear();
 	}
 
 	template <mint t_Size, typename t_CHash>
@@ -24,7 +24,7 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	bool TCMessageDigest<t_Size, t_CHash>::f_IsCleared() const
+	constexpr bool TCMessageDigest<t_Size, t_CHash>::f_IsCleared() const
 	{
 		for (mint i = 0; i < t_Size; ++i)
 		{
@@ -35,39 +35,41 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const TCMessageDigest &_Src)
+	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const TCMessageDigest &_Src)
 	{
 		NMemory::fg_MemCopy(mp_Data, _Src.mp_Data, sizeof(mp_Data));
 	}
 
 	template <mint t_Size, typename t_CHash>
 	TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const t_CHash &_Src)
+	template <mint t_Size, typename t_CHash>
+	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const t_CHash &_Src)
 	{
 		_Src.f_GetDigest(*this);
 	}
 
 	template <mint t_Size, typename t_CHash>
-	auto TCMessageDigest<t_Size, t_CHash>::operator = (const TCMessageDigest &_Src) -> TCMessageDigest &
+	constexpr auto TCMessageDigest<t_Size, t_CHash>::operator = (const TCMessageDigest &_Src) -> TCMessageDigest &
 	{
 		NMemory::fg_MemCopy(mp_Data, _Src.mp_Data, sizeof(mp_Data));
 		return *this;
 	}
 
 	template <mint t_Size, typename t_CHash>
-	auto TCMessageDigest<t_Size, t_CHash>::operator = (const t_CHash &_Src) -> TCMessageDigest &
+	constexpr auto TCMessageDigest<t_Size, t_CHash>::operator = (const t_CHash &_Src) -> TCMessageDigest &
 	{
 		_Src.f_GetDigest(*this);
 		return *this;
 	}
 
 	template <mint t_Size, typename t_CHash>
-	aint TCMessageDigest<t_Size, t_CHash>::f_Compare(const TCMessageDigest &_Other) const
+	constexpr aint TCMessageDigest<t_Size, t_CHash>::f_Compare(const TCMessageDigest &_Other) const
 	{
 		return NMemory::fg_MemCmp(mp_Data, _Other.mp_Data, sizeof(mp_Data));
 	}
 
 	template <mint t_Size, typename t_CHash>
-	bool TCMessageDigest<t_Size, t_CHash>::operator == (const TCMessageDigest &_Src) const
+	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const TCMessageDigest &_Src) const
 	{
 		if (NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size))
 			return false;
@@ -76,7 +78,7 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	bool TCMessageDigest<t_Size, t_CHash>::operator == (const t_CHash &_Src) const
+	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const t_CHash &_Src) const
 	{
 		TCMessageDigest Temp = _Src;
 
@@ -84,13 +86,13 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const TCMessageDigest &_Src) const
+	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const TCMessageDigest &_Src) const
 	{
 		return NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size) <=> 0;
 	}
 
 	template <mint t_Size, typename t_CHash>
-	COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const t_CHash &_Src) const
+	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const t_CHash &_Src) const
 	{
 		TCMessageDigest Temp = _Src;
 
@@ -98,19 +100,19 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	mint TCMessageDigest<t_Size, t_CHash>::fs_GetSize()
+	constexpr mint TCMessageDigest<t_Size, t_CHash>::fs_GetSize()
 	{
 		return t_Size;
 	}
 
 	template <mint t_Size, typename t_CHash>
-	uint8 *TCMessageDigest<t_Size, t_CHash>::f_GetData()
+	constexpr uint8 *TCMessageDigest<t_Size, t_CHash>::f_GetData()
 	{
 		return mp_Data;
 	}
 
 	template <mint t_Size, typename t_CHash>
-	uint8 const *TCMessageDigest<t_Size, t_CHash>::f_GetData() const
+	constexpr uint8 const *TCMessageDigest<t_Size, t_CHash>::f_GetData() const
 	{
 		return mp_Data;
 	}
@@ -121,7 +123,7 @@ namespace NMib::NCryptography
 	//       i using XOR
 	template <mint t_Size, typename t_CHash>
 	template <typename tf_CIntType>
-	tf_CIntType TCMessageDigest<t_Size, t_CHash>::f_FoldToInt() const
+	constexpr tf_CIntType TCMessageDigest<t_Size, t_CHash>::f_FoldToInt() const
 	{
 		tf_CIntType Temp = 0;
 		mint IntSize = sizeof(Temp);
