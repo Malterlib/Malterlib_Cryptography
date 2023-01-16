@@ -1,4 +1,4 @@
-Property.CMakeOutputPath_BoringSSL define string = `@('.'->MakeAbsolute())`->MakeAbsolute()
+Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsolute()
 %Target "Tool_BoringSSL_global_target"
 {
 	Property.MalterlibTargetNameType "Normal"
