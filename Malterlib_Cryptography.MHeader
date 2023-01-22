@@ -50,6 +50,14 @@ Import "../Core/Lib_Malterlib.MTarget"
 			!!CompileDialect "C"
 		}
 	}
+	Compile
+	{
+		!!Compile.Type "AssemblerNasm"
+		ExtraCompilerFlags =+ "-gcv8"
+		{
+			!!PlatformFamily "Windows"
+		}
+	}
 	Compile.Type "AssemblerNasm"
 	{
 		&
