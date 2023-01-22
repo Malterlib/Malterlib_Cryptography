@@ -75,6 +75,8 @@ Import "../Core/Lib_Malterlib.MTarget"
 		!!CompileDialect "C"
 		PrefixHeader undefined
 
+		Analyzer false
+
 		PreprocessorDefines =+ "OPENSSL_C11_ATOMIC=1"
 
 		ExtraCompilerFlags =+ [

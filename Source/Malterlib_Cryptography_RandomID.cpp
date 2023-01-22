@@ -1,88 +1,134 @@
 
 #include "Malterlib_Cryptography_RandomID.h"
+#include <Mib/String/Appender>
 
 namespace NMib::NCryptography
 {
 	namespace
 	{
 		ch8 g_UnmistakableChars[] = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
-		static constexpr mint gc_MaxCharacters = 512;
+		constexpr mint gc_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
+
+		template
+		<
+			mint t_nBytesCache = 4
+			, auto t_fNewBytes = [](uint8 *o_pBytes) -> void
+			{
+				auto Values = NMisc::fg_GetRandomUnsigned();
+				o_pBytes[0] = Values & 0xff;
+				o_pBytes[1] = (Values >> 8) & 0xff;
+				o_pBytes[2] = (Values >> 16) & 0xff;
+				o_pBytes[3] = (Values >> 24) & 0xff;
+			}
+		>
+		struct TCUniformIntDistribution
+		{
+			TCUniformIntDistribution(uint8 _Max)
+				: m_Max(_Max)
+				, m_Mask(fg_RoundPowerOfTwoUp(_Max) - 1)
+			{
+			}
+
+			~TCUniformIntDistribution()
+			{
+				NMemory::fg_SecureMemClear(m_Bytes);
+			}
+
+			void f_NewBytes()
+			{
+				t_fNewBytes(m_Bytes);
+				m_iByte = 0;
+			}
+
+			uint8 operator ()()
+			{
+				while (true)
+				{
+					if (m_iByte == t_nBytesCache)
+						f_NewBytes();
+
+					auto Value = m_Bytes[m_iByte++] & m_Mask;
+					if (Value < m_Max)
+						return Value;
+				}
+			}
+
+			uint8 m_Bytes[t_nBytesCache];
+			mint m_iByte = t_nBytesCache;
+			uint8 m_Max;
+			uint8 m_Mask;
+		};
+
+		using CUniformIntDistribution = TCUniformIntDistribution<>;
+		using CUniformIntDistributionHighEntropy = TCUniformIntDistribution
+			<
+				8
+				, [](uint8 *o_pBytes) -> void
+				{
+					NSys::fg_Security_GenerateHighEntropyData(o_pBytes, 8);
+				}
+			>
+		;
 	}
 
-	NStr::CStr fg_RandomID(mint _nCharacters)
+	NStr::CStr fg_RandomID(mint _Len)
 	{
-		if (_nCharacters > gc_MaxCharacters)
-			DMibError("Out of range");
-
-		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
-		mint const BufferSize = ((_nCharacters + 3) / 4) * 4;
-		uint8 RandomData[gc_MaxCharacters * 4];
-
-		for (mint i = 0; i < BufferSize / 4; ++i)
-			*((uint32 *)(RandomData + i*4)) = NMisc::fg_GetRandomUnsigned();
-
 		NStr::CStr Return;
+		{
+			NStr::CStr::CAppender Appender(Return);
 
-		for (mint i = 0; i < _nCharacters; ++i)
-			Return.f_AddChar(g_UnmistakableChars[RandomData[i] % c_nChars]);
+			CUniformIntDistribution RandomDistribution(gc_nChars);
+			for (mint i = 0; i < _Len; ++i)
+				Appender += g_UnmistakableChars[RandomDistribution()];
+		}
 
 		return Return;
 	}
 
-	NStr::CStr fg_HighEntropyRandomID(mint _nCharacters)
+	NStr::CStr fg_HighEntropyRandomID(mint _Len)
 	{
-		if (_nCharacters > gc_MaxCharacters)
-			DMibError("Out of range");
-
-		const mint c_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
-		mint const BufferSize = ((_nCharacters + 3) / 4) * 4;
-		uint8 RandomData[gc_MaxCharacters * 4];
-
-		NSys::fg_Security_GenerateHighEntropyData(RandomData, BufferSize);
-
 		NStr::CStr Return;
+		{
+			NStr::CStr::CAppender Appender(Return);
 
-		for (mint i = 0; i < _nCharacters; ++i)
-			Return.f_AddChar(g_UnmistakableChars[RandomData[i] % c_nChars]);
+			CUniformIntDistributionHighEntropy RandomDistribution(gc_nChars);
+			for (mint i = 0; i < _Len; ++i)
+				Appender += g_UnmistakableChars[RandomDistribution()];
+		}
 
 		return Return;
 	}
 
 	NStr::CStrSecure fg_RandomID(ch8 const *_pCharacters, mint _Len)
 	{
-		mint nCharsInRandomID = _Len;
 		mint nChars = NStr::fg_StrLen(_pCharacters);
-		mint BufferSize = ((nCharsInRandomID + 3) / 4) * 4;
-		NContainer::CSecureByteVector RandomData;
-		RandomData.f_SetLen(BufferSize);
-		uint8 *pRandomData = RandomData.f_GetArray();
-
-		for (mint i = 0; i < sizeof(RandomData) / 4; ++i)
-			*((uint32 *)(pRandomData + i*4)) = NMisc::fg_GetRandomUnsigned();
+		DMibFastCheck(nChars > 0);
 
 		NStr::CStrSecure Return;
+		{
+			NStr::CStrSecure::CAppender Appender(Return);
 
-		for (mint i = 0; i < nCharsInRandomID; ++i)
-			Return.f_AddChar(_pCharacters[RandomData[i] % nChars]);
+			CUniformIntDistribution RandomDistribution(nChars);
+			for (mint i = 0; i < _Len; ++i)
+				Appender += _pCharacters[RandomDistribution()];
+		}
 
 		return Return;
 	}
 
 	NStr::CStrSecure fg_HighEntropyRandomID(ch8 const *_pCharacters, mint _Len)
 	{
-		mint nCharsInRandomID = _Len;
 		mint nChars = NStr::fg_StrLen(_pCharacters);
-		mint BufferSize = ((nCharsInRandomID + 3) / 4) * 4;
-		NContainer::CSecureByteVector RandomData;
-		RandomData.f_SetLen(BufferSize);
-		uint8 *pRandomData = RandomData.f_GetArray();
-
-		NSys::fg_Security_GenerateHighEntropyData(pRandomData, BufferSize);
+		DMibFastCheck(nChars > 0);
 
 		NStr::CStrSecure Return;
+		{
+			NStr::CStrSecure::CAppender Appender(Return);
 
-		for (mint i = 0; i < nCharsInRandomID; ++i)
-			Return.f_AddChar(_pCharacters[RandomData[i] % nChars]);
+			CUniformIntDistributionHighEntropy RandomDistribution(nChars);
+			for (mint i = 0; i < _Len; ++i)
+				Appender += _pCharacters[RandomDistribution()];
+		}
 
 		return Return;
 	}
