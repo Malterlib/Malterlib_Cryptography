@@ -13,8 +13,10 @@ namespace NMib::NCryptography
 	template <mint t_Size, typename t_CHash>
 	constexpr TCMessageDigest<t_Size, t_CHash>::~TCMessageDigest()
 	{
-		if (!std::is_constant_evaluated())
+		if_not_consteval
+		{
 			f_Clear();
+		}
 	}
 
 	template <mint t_Size, typename t_CHash>

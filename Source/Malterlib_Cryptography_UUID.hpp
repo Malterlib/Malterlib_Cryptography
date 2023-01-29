@@ -9,8 +9,10 @@ namespace NMib::NCryptography
 
 	constexpr CUniversallyUniqueIdentifier::~CUniversallyUniqueIdentifier()
 	{
-		if (!std::is_constant_evaluated())
+		if_not_consteval
+		{
 			NMemory::fg_SecureMemClear(*this);
+		}
 	}
 
 	constexpr CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier
