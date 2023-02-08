@@ -6,6 +6,7 @@
 extern "C"
 {
 #	include <openssl/dh.h>
+#	include <openssl/bn.h>
 #	include <openssl/ssl.h>
 #	include <openssl/evp.h>
 #	include <openssl/aes.h>

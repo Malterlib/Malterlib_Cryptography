@@ -2,6 +2,8 @@
 
 #include <Mib/Cryptography/BoringSSL>
 
+#include <openssl/hmac.h>
+
 namespace NMib::NCryptography
 {
 	using namespace NBoringSSL;
