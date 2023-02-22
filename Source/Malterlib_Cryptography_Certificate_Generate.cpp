@@ -337,7 +337,7 @@ namespace NMib::NCryptography
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 serial"));
 
 					ERR_clear_error();
-					if (!X509_gmtime_adj(X509_get_notBefore(pCertificate), 0))
+					if (!X509_gmtime_adj(X509_get_notBefore(pCertificate), -60)) // 60 seconds in the past to account for system clock adjustments
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 not before"));
 
 					ERR_clear_error();
@@ -483,7 +483,7 @@ namespace NMib::NCryptography
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 serial"));
 
 					ERR_clear_error();
-					if (!X509_gmtime_adj(X509_get_notBefore(pCertificate), 0))
+					if (!X509_gmtime_adj(X509_get_notBefore(pCertificate), -60)) // 60 seconds in the past to account for system clock adjustments
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 not before"));
 
 					ERR_clear_error();
