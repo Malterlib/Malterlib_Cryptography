@@ -102,7 +102,7 @@ public:
 				NStr::CStrSecure OpenSSLPassword("ABCDEFGH");
 				CEncryptAES EncryptAES4
 					(
-					 	CEncryptKeyIV::fs_GenerateKeyIV(OpenSSLPassword, {}, CKeyDerivationSettings_PKCS5_Deprecated{EDigestType_SHA256, 1}, ECryptoType_AES_256_CBC)
+						CEncryptKeyIV::fs_GenerateKeyIV(OpenSSLPassword, {}, CKeyDerivationSettings_PKCS5_Deprecated{EDigestType_SHA256, 1}, ECryptoType_AES_256_CBC)
 					)
 				;
 
@@ -176,23 +176,23 @@ public:
 				}
 
 			}
- 			{
+			{
 				DMibTestPath("IncorrectPassword");
- 				CStrSecure IncorrectPassword("MalterlibPasswordTest2");
+				CStrSecure IncorrectPassword("MalterlibPasswordTest2");
 				auto KeyIV = CEncryptKeyIV::fs_GenerateKeyIV(IncorrectPassword, Salt, CKeyDerivationSettings_PKCS5_Deprecated{});
 				CIncrementalEncrypt EncryptAES1(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, KeyIV);
- 				DecryptedLen = EncryptAES1.f_Decrypt(Encrypted.f_GetArray(), EncryptedLen, Decrypted.f_GetArray(EncryptedLen + BlockSize));
+				DecryptedLen = EncryptAES1.f_Decrypt(Encrypted.f_GetArray(), EncryptedLen, Decrypted.f_GetArray(EncryptedLen + BlockSize));
 				DMibExpectExceptionType(EncryptAES1.f_FinalizePaddedDecrypt(Decrypted.f_GetArray() + DecryptedLen, Decrypted.f_GetLen() - DecryptedLen), CExceptionCryptography);
- 			}
+			}
 
- 			{
+			{
 				DMibTestPath("IncorrectSalt");
 				CSecureByteVector IncorrectSalt = f_GetRandomBuffer(8, 4);
 				auto KeyIV = CEncryptKeyIV::fs_GenerateKeyIV(Password, IncorrectSalt, CKeyDerivationSettings_PKCS5_Deprecated{});
 				CIncrementalEncrypt EncryptAES2(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, KeyIV);
- 				DecryptedLen = EncryptAES2.f_Decrypt(Encrypted.f_GetArray(), EncryptedLen, Decrypted.f_GetArray());
+				DecryptedLen = EncryptAES2.f_Decrypt(Encrypted.f_GetArray(), EncryptedLen, Decrypted.f_GetArray());
 				DMibExpectExceptionType(EncryptAES2.f_FinalizePaddedDecrypt(Decrypted.f_GetArray() + DecryptedLen, Decrypted.f_GetLen() - DecryptedLen), CExceptionCryptography);
- 			}
+			}
 
 			{
 				DMibTestPath("Incorrect Key");

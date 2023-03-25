@@ -66,13 +66,13 @@ namespace NMib::NCryptography
 		{
 			NContainer::CSecureByteVector m_Modulus;
 			NContainer::CSecureByteVector m_Exponent;
- 		};
+		};
 
 		struct CPublicKeyParameters_EC
 		{
 			NContainer::CSecureByteVector m_CoordinateX;
 			NContainer::CSecureByteVector m_CoordinateY;
- 		};
+		};
 
 		using CPublicKeyParameters = NStorage::TCVariant<CPublicKeyParameters_RSA, CPublicKeyParameters_EC>;
 

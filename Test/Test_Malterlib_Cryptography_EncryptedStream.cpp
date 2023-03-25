@@ -113,8 +113,8 @@ namespace
 					EncryptedStream.f_SetBufferSize(1);
 					DMibExpectException
 						(
-						 	EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write)
-						 	, DMibCryptographyErrorInstance("Buffer size cannot be smaller than cipher block size: 16")
+							EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write)
+							, DMibCryptographyErrorInstance("Buffer size cannot be smaller than cipher block size: 16")
 						)
 					;
 
@@ -377,8 +377,8 @@ namespace
 							{
 								DMibExpectException
 									(
-									 	DecryptStream.f_ConsumeBytes(PartialResult.f_GetStr(nPartialChars + 1), nPartialChars)
-									 	, DMibCryptographyErrorInstance("Crypto does not support random read access")
+										DecryptStream.f_ConsumeBytes(PartialResult.f_GetStr(nPartialChars + 1), nPartialChars)
+										, DMibCryptographyErrorInstance("Crypto does not support random read access")
 									)
 								;
 							}
