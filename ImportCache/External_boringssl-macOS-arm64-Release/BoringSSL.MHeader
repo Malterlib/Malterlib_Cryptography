@@ -108,7 +108,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 					{
 						Compile
 						{
-							Custom_CommandLine `go run util/all_tests.go -build-dir @(`@('.'->MakeAbsolute())`->MakeAbsolute()->EscapeHost()) && cd ssl/test/runner && go test -shim-path @(`@('.'->MakeAbsolute())/ssl/test/bssl_shim`->MakeAbsolute()->EscapeHost())`
+							Custom_CommandLine `go test ./ssl/test/runner/hpke ./util/ar ./util/fipstools/acvp/acvptool/testmodulewrapper ./util/fipstools/delocate && go run util/all_tests.go -build-dir @(`@('.'->MakeAbsolute())`->MakeAbsolute()->EscapeHost()) && cd ssl/test/runner && go test -shim-path @(`@('.'->MakeAbsolute())/ssl/test/bssl_shim`->MakeAbsolute()->EscapeHost())`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('../../../../External/boringssl'->MakeAbsolute())`->MakeAbsolute()
@@ -664,13 +664,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C"
 		}
-		%Group "hkdf"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/hkdf/hkdf.c`
-			{
-				Compile.Type "C"
-			}
-		}
 		%Group "hpke"
 		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/hpke/hpke.c`
@@ -690,6 +683,17 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				{
 					Compile.Type "Assembler"
 				}
+			}
+		}
+		%Group "kyber"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/keccak.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/kyber.c`
+			{
+				Compile.Type "C"
 			}
 		}
 		%Group "lhash"
@@ -846,6 +850,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		%Group "rsa_extra"
 		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/rsa_extra/rsa_asn1.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/rsa_extra/rsa_crypt.c`
 			{
 				Compile.Type "C"
 			}
@@ -4941,6 +4949,13 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 					Compile.Type "C++"
 				}
 			}
+			%Group "hkdf"
+			{
+				%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/hkdf/hkdf_test.cc`
+				{
+					Compile.Type "C++"
+				}
+			}
 			%Group "md5"
 			{
 				%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/md5/md5_test.cc`
@@ -4981,13 +4996,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				}
 			}
 		}
-		%Group "hkdf"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/hkdf/hkdf_test.cc`
-			{
-				Compile.Type "C++"
-			}
-		}
 		%Group "hpke"
 		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/hpke/hpke_test.cc`
@@ -5012,6 +5020,13 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/impl_dispatch_test.cc`
 		{
 			Compile.Type "C++"
+		}
+		%Group "kyber"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/kyber_test.cc`
+			{
+				Compile.Type "C++"
+			}
 		}
 		%Group "lhash"
 		{
@@ -5225,6 +5240,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/rand/ctrdrbg_vectors.txt`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/hmac_extra/hmac_tests.txt`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/hpke/hpke_test_vectors.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/keccak_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/kyber_tests.txt`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/empty_password.p12`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/no_encryption.p12`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/nss.p12`->MakeAbsolute(),
@@ -5285,6 +5302,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_any.pem`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_duplicate.pem`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_invalid.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_none.pem`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid1.pem`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid2.pem`->MakeAbsolute(),
 							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid3.pem`->MakeAbsolute(),

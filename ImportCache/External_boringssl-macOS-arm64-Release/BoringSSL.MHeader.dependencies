@@ -1,5 +1,6 @@
 ../../../../External/boringssl/CMakeLists.txt
 ../../../../External/boringssl/cmake/go.cmake
+../../../../External/boringssl/cmake/paths.cmake
 ../../../../External/boringssl/cmake/perlasm.cmake
 ../../../../External/boringssl/crypto/CMakeLists.txt
 ../../../../External/boringssl/crypto/fipsmodule/CMakeLists.txt
@@ -11,3 +12,4 @@
 ../../../../External/boringssl/tool/CMakeLists.txt
 ../../../../External/boringssl/util/fipstools/CMakeLists.txt
 ../../../../External/boringssl/util/fipstools/acvp/modulewrapper/CMakeLists.txt
+../../../../External/boringssl/util/go_tests.txt
