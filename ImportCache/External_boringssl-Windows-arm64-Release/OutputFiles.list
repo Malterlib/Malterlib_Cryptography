@@ -1,0 +1,2 @@
+#(CMakeIntermediateDirectory)/External_boringssl/crypto/err_data.c
+#(CMakeIntermediateDirectory)/External_boringssl/crypto_test_data.cc
