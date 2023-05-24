@@ -37,6 +37,16 @@ Import "../Core/Lib_Malterlib.MTarget"
 		}
 	}
 
+	Import.CMake_Variables =+ "OPENSSL_NO_ASM=ON"
+	{
+		&
+		{
+			PlatformFamily "Windows"
+			HostPlatformFamily "Windows"
+			Architecture "arm64"
+		}
+	}
+
 	Import.CMake_FullRebuildVersion `@(Import.CMake_FullRebuildVersion).21`
 	Compile
 	{
