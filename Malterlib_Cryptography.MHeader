@@ -181,9 +181,9 @@ Import
 {
 	CMake_Variables =+ [
 		`OPENSSL_ROOT_DIR=@("../../External/boringssl"->MakeAbsolute())`
-		, "OPENSSL_LIBRARIES=/dev/null"
-		, "OPENSSL_CRYPTO_LIBRARY=/dev/null"
-		, "OPENSSL_SSL_LIBRARY=/dev/null"
+		, `OPENSSL_LIBRARIES=@(Malterlib_DummmyLibrary)`
+		, `OPENSSL_CRYPTO_LIBRARY=@(Malterlib_DummmyLibrary)`
+		, `OPENSSL_SSL_LIBRARY=@(Malterlib_DummmyLibrary)`
 	]
 }
 
