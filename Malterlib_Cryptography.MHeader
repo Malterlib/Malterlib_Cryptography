@@ -36,7 +36,6 @@ Import "../Core/Lib_Malterlib.MTarget"
 			!HostPlatformFamily "Linux"
 		}
 	}
-
 	Import.CMake_Variables =+ "OPENSSL_NO_ASM=ON"
 	{
 		&
@@ -88,6 +87,9 @@ Import "../Core/Lib_Malterlib.MTarget"
 		Analyzer false
 
 		PreprocessorDefines =+ "OPENSSL_C11_ATOMIC=1"
+		{
+			!PlatformFamily "Windows"
+		}
 
 		ExtraCompilerFlags =+ [
 			"-wd4100"
