@@ -9,18 +9,7 @@ namespace NMib::NCryptography
 		ch8 g_UnmistakableChars[] = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
 		constexpr mint gc_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
 
-		template
-		<
-			mint t_nBytesCache = 4
-			, auto t_fNewBytes = [](uint8 *o_pBytes) -> void
-			{
-				auto Values = NMisc::fg_GetRandomUnsigned();
-				o_pBytes[0] = Values & 0xff;
-				o_pBytes[1] = (Values >> 8) & 0xff;
-				o_pBytes[2] = (Values >> 16) & 0xff;
-				o_pBytes[3] = (Values >> 24) & 0xff;
-			}
-		>
+		template <mint t_nBytesCache, typename t_CNewBytes>
 		struct TCUniformIntDistribution
 		{
 			TCUniformIntDistribution(uint8 _Max)
@@ -36,7 +25,7 @@ namespace NMib::NCryptography
 
 			void f_NewBytes()
 			{
-				t_fNewBytes(m_Bytes);
+				t_CNewBytes::fs_NewBytes(m_Bytes);
 				m_iByte = 0;
 			}
 
@@ -59,16 +48,28 @@ namespace NMib::NCryptography
 			uint8 m_Mask;
 		};
 
-		using CUniformIntDistribution = TCUniformIntDistribution<>;
-		using CUniformIntDistributionHighEntropy = TCUniformIntDistribution
-			<
-				8
-				, [](uint8 *o_pBytes) -> void
-				{
-					NSys::fg_Security_GenerateHighEntropyData(o_pBytes, 8);
-				}
-			>
-		;
+		struct CNewBytesRandom
+		{
+			static void fs_NewBytes(uint8 *o_pBytes)
+			{
+				auto Values = NMisc::fg_GetRandomUnsigned();
+				o_pBytes[0] = Values & 0xff;
+				o_pBytes[1] = (Values >> 8) & 0xff;
+				o_pBytes[2] = (Values >> 16) & 0xff;
+				o_pBytes[3] = (Values >> 24) & 0xff;
+			}
+		};
+
+		struct CNewBytesHighEntropy
+		{
+			static void fs_NewBytes(uint8 *o_pBytes)
+			{
+				NSys::fg_Security_GenerateHighEntropyData(o_pBytes, 8);
+			}
+		};
+
+		using CUniformIntDistribution = TCUniformIntDistribution<4, CNewBytesRandom>;
+		using CUniformIntDistributionHighEntropy = TCUniformIntDistribution<8, CNewBytesHighEntropy>;
 	}
 
 	NStr::CStr fg_RandomID(mint _Len)
