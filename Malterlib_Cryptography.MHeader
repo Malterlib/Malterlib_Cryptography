@@ -26,6 +26,47 @@ Import "../Core/Lib_Malterlib.MTarget"
 	}
 }
 
+%Group "{Malterlib}/{Lib_Malterlib_Cryptography}/{DependOnBoringSSL}"
+{
+
+	%Dependency "Lib_BoringSSL_crypto"
+	{
+		&
+		{
+			!DocumentationEnabled true
+			!Target.Type "Tool"
+		}
+		Dependency.Indirect !TargetIsExecutable
+	}
+	%Dependency "Lib_BoringSSL_ssl"
+	{
+		&
+		{
+			!DocumentationEnabled true
+			!Target.Type "Tool"
+		}
+		Dependency.Indirect !TargetIsExecutable
+	}
+	%Dependency "Lib_BoringSSL_decrepit"
+	{
+		&
+		{
+			!DocumentationEnabled true
+			!Target.Type "Tool"
+		}
+		Dependency.Indirect !TargetIsExecutable
+	}
+	%Dependency "Lib_BoringSSL_fipsmodule"
+	{
+		&
+		{
+			!DocumentationEnabled true
+			!Target.Type "Tool"
+		}
+		Dependency.Indirect !TargetIsExecutable
+	}
+}
+
 %Import "../../External/boringssl/CMakeLists.txt"
 {
 	Import.CMake_Variables =+ "CMAKE_BUILD_WITH_INSTALL_RPATH=ON"
