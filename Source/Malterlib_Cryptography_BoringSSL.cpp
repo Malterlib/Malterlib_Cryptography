@@ -82,6 +82,21 @@ extern "C"
 		return pMem;
 	}
 #endif
+	void *OPENSSL_zalloc(size_t size) {
+		void *ret = OPENSSL_malloc(size);
+		if (ret != NULL) {
+			memset(ret, 0, size);
+		}
+		return ret;
+	}
+
+	void *OPENSSL_calloc(size_t num, size_t size) {
+		if (size != 0 && num > SIZE_MAX / size) {
+			OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
+			return NULL;
+		}
+		return OPENSSL_zalloc(num * size);
+	}
 }
 
 namespace NMib::NCryptography::NBoringSSL
