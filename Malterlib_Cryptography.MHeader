@@ -172,6 +172,16 @@ Import "../Core/Lib_Malterlib.MTarget"
 				!Target.VisualStudioPlatform "Clang"
 			}
 		}
+
+		ExtraCompilerFlags += "/std:c11"
+		{
+			&
+			{
+				Compile.Type "C"
+				PlatformType "Windows"
+				!Target.VisualStudioPlatform "Clang"
+			}
+		}
 	}
 	%Target "Lib_BoringSSL_crypto"
 	{
