@@ -58,9 +58,14 @@ crypto/fipsmodule/modes/gcm_tests.txt
 crypto/fipsmodule/rand/ctrdrbg_vectors.txt
 crypto/hmac_extra/hmac_tests.txt
 crypto/hpke/hpke_test_vectors.txt
-crypto/kyber/keccak_tests.txt
+crypto/keccak/keccak_tests.txt
 crypto/kyber/kyber_tests.txt
+crypto/pkcs8/test/bad1.p12
+crypto/pkcs8/test/bad2.p12
+crypto/pkcs8/test/bad3.p12
 crypto/pkcs8/test/empty_password.p12
+crypto/pkcs8/test/empty_password_ber.p12
+crypto/pkcs8/test/empty_password_ber_nested.p12
 crypto/pkcs8/test/no_encryption.p12
 crypto/pkcs8/test/nss.p12
 crypto/pkcs8/test/null_password.p12
@@ -71,6 +76,8 @@ crypto/pkcs8/test/unicode_password.p12
 crypto/pkcs8/test/windows.p12
 crypto/poly1305/poly1305_tests.txt
 crypto/siphash/siphash_tests.txt
+crypto/spx/spx_tests.txt
+crypto/spx/spx_tests_deterministic.txt
 crypto/x509/test/basic_constraints_ca.pem
 crypto/x509/test/basic_constraints_ca_pathlen_0.pem
 crypto/x509/test/basic_constraints_ca_pathlen_1.pem
