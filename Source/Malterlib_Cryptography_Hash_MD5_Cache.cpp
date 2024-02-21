@@ -40,9 +40,7 @@ namespace NMib::NCryptography
 	CHashCache::~CHashCache()
 	{
 		if (!mp_HashFileName.f_IsEmpty() && mp_bUpdateHash)
-		{
 			f_SaveToFile(mp_HashFileName);
-		}
 	}
 
 	bool CHashCache::f_SetAlwaysCheckHash(bool _bAlwaysCheck)
@@ -77,6 +75,24 @@ namespace NMib::NCryptography
 		mp_CachedDigests[ConsistentName] = _Digest;
 	}
 
+	void CHashCache::f_ClearPrefix(NStr::CStr const &_Prefix)
+	{
+		NStr::CStr ConsistentPrefix = NPrivate::fg_GetConsistentPath(_Prefix);
+		NContainer::TCVector<NStr::CStr> ToRemove;
+
+		for (auto iDigest = mp_CachedDigests.f_GetIterator(); iDigest; ++iDigest)
+		{
+			if (iDigest.f_GetKey().f_StartsWith(ConsistentPrefix))
+				ToRemove.f_Insert(iDigest.f_GetKey());
+		}
+
+		for (auto &FileName : ToRemove)
+		{
+			DMibLog(Debug, "REMOVING HASH: {}", FileName);
+			mp_CachedDigests.f_Remove(FileName);
+		}
+	}
+
 	CHashDigest_MD5 CHashCache::f_GetHash(NStr::CStr const &_FileName, NStr::CStr const &_AlternameFileName)
 	{
 		NStr::CStr ConsistentName = NPrivate::fg_GetConsistentPath(_FileName);
@@ -104,7 +120,6 @@ namespace NMib::NCryptography
 					return *pHash;
 				}
 			}
-
 		}
 
 		CHashDigest_MD5 Digest;
