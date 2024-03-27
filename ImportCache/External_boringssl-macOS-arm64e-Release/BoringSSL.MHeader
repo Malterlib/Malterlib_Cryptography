@@ -18,8 +18,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	{
 		!!Compile.Type "C++"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest`->MakeAbsolute()
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
 			"BORINGSSL_IMPLEMENTATION"
@@ -36,9 +38,28 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	Target.BaseFileName "boringssl_gtest"
 	%Group "third_party"
 	{
-		%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/src/gtest-all.cc`
+		%Group "googletest"
 		{
-			Compile.Type "C++"
+			%Group "googlemock"
+			{
+				%Group "src"
+				{
+					%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/src/gmock-all.cc`
+					{
+						Compile.Type "C++"
+					}
+				}
+			}
+			%Group "googletest"
+			{
+				%Group "src"
+				{
+					%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/src/gtest-all.cc`
+					{
+						Compile.Type "C++"
+					}
+				}
+			}
 		}
 	}
 }
@@ -75,13 +96,303 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		Dependency.Link false
 	}
 }
+%Target "Lib_BoringSSL_crypto_test_data"
+{
+	Compile
+	{
+		!!Compile.Type "C++"
+		SearchPath += []
+		PreprocessorDefines += [
+			"BORINGSSL_IMPLEMENTATION"
+		]
+	}
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Target.Group "External/BoringSSL"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "StaticLibrary"
+	Target.BaseName "BoringSSL_crypto_test_data"
+	Target.BaseFileName "crypto_test_data"
+	Target.ObjectLibrary true
+	%Group "macOS"
+	{
+		%Group "arm64e"
+		{
+			%Group `@(FullConfiguration)`
+			{
+				%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto_test_data.cc`->MakeAbsolute()
+				{
+					Compile.AllowNonExisting true
+					Compile.Type "C++"
+				}
+				%File `@('.'->MakeAbsolute())/crypto_test_data.cc.rule`
+				{
+					Compile
+					{
+						Type "Custom"
+						Custom_CommandLine `go run util/embed_test_data.go -file-list @(`@('.'->MakeAbsolute())/embed_test_data_args.txt`->MakeAbsolute()->EscapeHost()) > @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto_test_data.cc`->MakeAbsolute()->EscapeHost())`
+						AllowNonExisting true
+						Custom_WorkingDirectory `@('../../../../External/boringssl'->MakeAbsolute())`->MakeAbsolute()
+						Custom_Outputs [
+							`@(CMakeIntermediateDirectory)/External_boringssl/crypto_test_data.cc`->MakeAbsolute()
+						]
+						Custom_Inputs [
+							`@('../../../../External/boringssl'->MakeAbsolute())/util/embed_test_data.go`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/blake2/blake2b256_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_cbc_sha1_tls_implicit_iv_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_cbc_sha1_tls_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ccm_bluetooth_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ccm_bluetooth_8_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ccm_matter_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ctr_hmac_sha256.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_gcm_randnonce_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_gcm_siv_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_gcm_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_192_gcm_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_cbc_sha1_tls_implicit_iv_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_cbc_sha1_tls_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_ctr_hmac_sha256.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_gcm_randnonce_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_gcm_siv_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_gcm_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/chacha20_poly1305_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/xchacha20_poly1305_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/cipher_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/des_ede3_cbc_sha1_tls_implicit_iv_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/des_ede3_cbc_sha1_tls_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_128_cbc.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_128_ctr.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_128_gcm.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_192_cbc.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_192_ctr.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_256_cbc.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_256_ctr.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_256_gcm.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/tdes_cbc.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/tdes_ecb.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/ed25519_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/ecdh_extra/ecdh_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/evp_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/scrypt_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/aes_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/exp_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/gcd_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/miller_rabin_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_exp_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_inv_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_mul_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_sqrt_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/product_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/quotient_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/shift_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/sum_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_3des_cmac_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_aes128_cmac_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_aes192_cmac_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_aes256_cmac_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ec/p256-nistz_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ecdsa/ecdsa_sign_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ecdsa/ecdsa_verify_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/modes/gcm_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/rand/ctrdrbg_vectors.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/hmac_extra/hmac_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/hpke/hpke_test_vectors.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/keccak/keccak_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/kyber_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/bad1.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/bad2.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/bad3.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/empty_password.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/empty_password_ber.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/empty_password_ber_nested.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/no_encryption.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/nss.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/null_password.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/openssl.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/pbes2_sha1.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/pbes2_sha256.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/unicode_password.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/windows.p12`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/poly1305/poly1305_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/siphash/siphash_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/spx_tests.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/spx_tests_deterministic.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca_pathlen_0.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca_pathlen_1.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca_pathlen_10.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_leaf.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_none.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_authority_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_basic_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_ext_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_name_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_subject_alt_name.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_subject_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_authority_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_basic_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_ext_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_name_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_subject_alt_name.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_subject_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_authority_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_basic_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_ext_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_name_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_subject_alt_name.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_subject_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_names1.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_names2.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_names3.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_any.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_duplicate.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_invalid.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_mapped_any.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_mapped_oid3.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_mapped.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require_duplicate.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require_no_policies.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require1.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require2.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_any.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_duplicate.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_invalid.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_none.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid1.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid2.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid3.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid4.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid5.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_require.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_require1.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_root_cross_inhibit_mapping.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_root.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_root2.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha1_explicit.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha1_mgf1_syntax_error.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha1.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha224.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_explicit_trailer.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_mgf1_sha384.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_mgf1_syntax_error.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_omit_nulls.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_salt_overflow.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_salt31.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_unknown_mgf.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_wrong_trailer.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha384.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha512.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/some_names1.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/some_names2.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/some_names3.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_authority_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_basic_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_ext_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_key_usage.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_name_constraints.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_subject_alt_name.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_subject_key_identifier.pem`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_cbc_pkcs5_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_cmac_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_gcm_siv_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_gcm_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/chacha20_poly1305_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/dsa_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp224r1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp256r1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp384r1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp521r1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp224r1_sha224_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp224r1_sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp224r1_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp256r1_sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp256r1_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp384r1_sha384_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/eddsa_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha384_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha224_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha384_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/kwp_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/kw_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/primality_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha1_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha224_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha224_mgf1sha224_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha256_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha256_mgf1sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha384_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha384_mgf1sha384_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha512_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha512_mgf1sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha256_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha256_mgf1sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha512_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha512_mgf1sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha256_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha256_mgf1sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha1_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_misc_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pkcs1_2048_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pkcs1_3072_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pkcs1_4096_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_32_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_3072_sha256_mgf1_32_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_4096_sha256_mgf1_32_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_4096_sha512_mgf1_32_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_misc_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_sig_gen_misc_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha224_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha384_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_3072_sha256_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_3072_sha384_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_3072_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_4096_sha384_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_4096_sha512_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/x25519_test.txt`->MakeAbsolute(),
+							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/xchacha20_poly1305_test.txt`->MakeAbsolute()
+						]
+					}
+				}
+			}
+		}
+	}
+}
 %Target "Lib_BoringSSL_test_support_lib"
 {
 	Compile
 	{
 		!!Compile.Type "C++"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
@@ -122,10 +433,12 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Lib_BoringSSL_boringssl_gtest"
 	{
 		Dependency.Indirect true
+		Dependency.IndirectOrdered true
 	}
 	%Dependency "Lib_BoringSSL_crypto"
 	{
 		Dependency.Indirect true
+		Dependency.IndirectOrdered true
 	}
 }
 %Target "Com_BoringSSL_urandom_test"
@@ -134,7 +447,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	{
 		!!Compile.Type "C++"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
@@ -167,7 +481,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	{
 		!!Compile.Type "C++"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
@@ -374,6 +689,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				{
 					Compile.Type "C++"
 				}
+				%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ec/p256_test.cc`
+				{
+					Compile.Type "C++"
+				}
 			}
 			%Group "ecdsa"
 			{
@@ -454,6 +773,13 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
+		%Group "keccak"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/keccak/keccak_test.cc`
+			{
+				Compile.Type "C++"
+			}
+		}
 		%Group "kyber"
 		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/kyber_test.cc`
@@ -520,6 +846,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			{
 				Compile.Type "C++"
 			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/rand_extra/getentropy_test.cc`
+			{
+				Compile.Type "C++"
+			}
 		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/refcount_test.cc`
 		{
@@ -550,6 +880,13 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C++"
 			}
 		}
+		%Group "spx"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/spx_test.cc`
+			{
+				Compile.Type "C++"
+			}
+		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/thread_test.cc`
 		{
 			Compile.Type "C++"
@@ -574,6 +911,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "x509"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/tab_test.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x509_test.cc`
 			{
 				Compile.Type "C++"
@@ -583,277 +924,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C++"
 			}
 		}
-		%Group "x509v3"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/tab_test.cc`
-			{
-				Compile.Type "C++"
-			}
-		}
 	}
 	%Dependency "Lib_BoringSSL_boringssl_gtest"
 	%Dependency "Lib_BoringSSL_crypto"
-	%Group "macOS"
-	{
-		%Group "arm64e"
-		{
-			%Group `@(FullConfiguration)`
-			{
-				%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto_test_data.cc`->MakeAbsolute()
-				{
-					Compile.AllowNonExisting true
-					Compile.Type "C++"
-				}
-				%File `@('.'->MakeAbsolute())/crypto_test_data.cc.rule`
-				{
-					Compile
-					{
-						Type "Custom"
-						Custom_CommandLine `go run util/embed_test_data.go -file-list @(`@('.'->MakeAbsolute())/embed_test_data_args.txt`->MakeAbsolute()->EscapeHost()) > @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto_test_data.cc`->MakeAbsolute()->EscapeHost())`
-						AllowNonExisting true
-						Custom_WorkingDirectory `@('../../../../External/boringssl'->MakeAbsolute())`->MakeAbsolute()
-						Custom_Outputs [
-							`@(CMakeIntermediateDirectory)/External_boringssl/crypto_test_data.cc`->MakeAbsolute()
-						]
-						Custom_Inputs [
-							`@('../../../../External/boringssl'->MakeAbsolute())/util/embed_test_data.go`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/blake2/blake2b256_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_cbc_sha1_tls_implicit_iv_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_cbc_sha1_tls_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ccm_bluetooth_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ccm_bluetooth_8_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ccm_matter_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_ctr_hmac_sha256.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_gcm_randnonce_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_gcm_siv_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_128_gcm_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_192_gcm_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_cbc_sha1_tls_implicit_iv_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_cbc_sha1_tls_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_ctr_hmac_sha256.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_gcm_randnonce_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_gcm_siv_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/aes_256_gcm_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/chacha20_poly1305_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/xchacha20_poly1305_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/cipher_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/des_ede3_cbc_sha1_tls_implicit_iv_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/des_ede3_cbc_sha1_tls_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_128_cbc.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_128_ctr.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_128_gcm.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_192_cbc.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_192_ctr.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_256_cbc.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_256_ctr.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/aes_256_gcm.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/tdes_cbc.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/cipher_extra/test/nist_cavp/tdes_ecb.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/ed25519_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/ecdh_extra/ecdh_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/evp_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/scrypt_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/aes_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/exp_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/gcd_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/miller_rabin_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_exp_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_inv_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_mul_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/mod_sqrt_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/product_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/quotient_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/shift_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/test/sum_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_3des_cmac_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_aes128_cmac_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_aes192_cmac_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/cmac/cavp_aes256_cmac_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ec/p256-nistz_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ecdsa/ecdsa_sign_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/ecdsa/ecdsa_verify_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/modes/gcm_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/rand/ctrdrbg_vectors.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/hmac_extra/hmac_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/hpke/hpke_test_vectors.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/keccak_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/kyber_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/empty_password.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/no_encryption.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/nss.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/null_password.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/openssl.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/pbes2_sha1.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/pbes2_sha256.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/unicode_password.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/pkcs8/test/windows.p12`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/poly1305/poly1305_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/siphash/siphash_tests.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca_pathlen_0.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca_pathlen_1.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_ca_pathlen_10.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_leaf.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/basic_constraints_none.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_authority_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_basic_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_ext_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_name_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_subject_alt_name.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_intermediate_subject_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_authority_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_basic_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_ext_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_name_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_subject_alt_name.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_leaf_subject_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_authority_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_basic_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_ext_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_name_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_subject_alt_name.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/invalid_extension_root_subject_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_names1.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_names2.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/many_names3.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_any.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_duplicate.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_invalid.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_mapped_any.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_mapped_oid3.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_mapped.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require_duplicate.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require_no_policies.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require1.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate_require2.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_intermediate.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_any.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_duplicate.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_invalid.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_none.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid1.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid2.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid3.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid4.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_oid5.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_require.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf_require1.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_leaf.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_root_cross_inhibit_mapping.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_root.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/policy_root2.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha1_explicit.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha1_mgf1_syntax_error.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha1.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha224.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_explicit_trailer.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_mgf1_sha384.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_mgf1_syntax_error.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_omit_nulls.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_salt_overflow.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_salt31.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_unknown_mgf.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256_wrong_trailer.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha256.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha384.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/pss_sha512.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/some_names1.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/some_names2.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/some_names3.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_authority_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_basic_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_ext_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_key_usage.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_name_constraints.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_subject_alt_name.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/test/trailing_data_leaf_subject_key_identifier.pem`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_cbc_pkcs5_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_cmac_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_gcm_siv_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/aes_gcm_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/chacha20_poly1305_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/dsa_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp224r1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp256r1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp384r1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdh_secp521r1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp224r1_sha224_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp224r1_sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp224r1_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp256r1_sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp256r1_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp384r1_sha384_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/eddsa_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha384_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hkdf_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha224_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha384_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/hmac_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/kwp_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/kw_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/primality_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha1_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha224_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha224_mgf1sha224_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha256_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha256_mgf1sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha384_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha384_mgf1sha384_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha512_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_2048_sha512_mgf1sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha256_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha256_mgf1sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha512_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_3072_sha512_mgf1sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha256_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha256_mgf1sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha1_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_4096_sha512_mgf1sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_oaep_misc_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pkcs1_2048_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pkcs1_3072_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pkcs1_4096_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_32_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_3072_sha256_mgf1_32_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_4096_sha256_mgf1_32_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_4096_sha512_mgf1_32_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_pss_misc_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_sig_gen_misc_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha224_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha384_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_2048_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_3072_sha256_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_3072_sha384_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_3072_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_4096_sha384_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_4096_sha512_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/rsa_signature_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/x25519_test.txt`->MakeAbsolute(),
-							`@('../../../../External/boringssl'->MakeAbsolute())/third_party/wycheproof_testvectors/xchacha20_poly1305_test.txt`->MakeAbsolute()
-						]
-					}
-				}
-			}
-		}
-	}
+	%Dependency "Lib_BoringSSL_crypto_test_data"
 	%Dependency "Lib_BoringSSL_test_support_lib"
 }
 %Target "Com_BoringSSL_ssl_test"
@@ -862,7 +936,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	{
 		!!Compile.Type "C++"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
@@ -873,7 +948,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	{
 		!!Compile.Type "C"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
@@ -922,7 +998,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	{
 		!!Compile.Type "C++"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
@@ -968,6 +1045,13 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C++"
 			}
 		}
+		%Group "des"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/decrepit/des/des_test.cc`
+			{
+				Compile.Type "C++"
+			}
+		}
 		%Group "evp"
 		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/decrepit/evp/evp_test.cc`
@@ -1005,8 +1089,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION",
-			"_BORINGSSL_LIBPKI_"
+			"BORINGSSL_IMPLEMENTATION"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -1036,6 +1119,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/certificate.cc`
+		{
+			Compile.Type "C++"
+		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/certificate_policies.cc`
 		{
 			Compile.Type "C++"
@@ -1056,29 +1143,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
-		%Group "fillins"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/fillins/base64.cc`
-			{
-				Compile.Type "C++"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/fillins/ip_address.cc`
-			{
-				Compile.Type "C++"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/fillins/openssl_util.cc`
-			{
-				Compile.Type "C++"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/fillins/string_util.cc`
-			{
-				Compile.Type "C++"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/fillins/utf_string_conversions.cc`
-			{
-				Compile.Type "C++"
-			}
-		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/general_names.cc`
 		{
 			Compile.Type "C++"
@@ -1087,7 +1151,19 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/ip_util.cc`
+		{
+			Compile.Type "C++"
+		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/name_constraints.cc`
+		{
+			Compile.Type "C++"
+		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/ocsp.cc`
+		{
+			Compile.Type "C++"
+		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/ocsp_verify_result.cc`
 		{
 			Compile.Type "C++"
 		}
@@ -1135,10 +1211,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
-		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/tag.cc`
-		{
-			Compile.Type "C++"
-		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/trust_store_collection.cc`
 		{
 			Compile.Type "C++"
@@ -1167,6 +1239,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Lib_BoringSSL_crypto"
 	{
 		Dependency.Indirect true
+		Dependency.IndirectOrdered true
 	}
 }
 %Target "Com_BoringSSL_pki_test"
@@ -1175,12 +1248,12 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	{
 		!!Compile.Type "C++"
 		SearchPath += [
-			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock/include`->MakeAbsolute(),
+			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION",
-			"_BORINGSSL_LIBPKI_"
+			"BORINGSSL_IMPLEMENTATION"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -1205,6 +1278,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/certificate_unittest.cc`
+		{
+			Compile.Type "C++"
+		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/certificate_policies_unittest.cc`
 		{
 			Compile.Type "C++"
@@ -1221,22 +1298,15 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
-		%Group "fillins"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/fillins/file_util.cc`
-			{
-				Compile.Type "C++"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/fillins/path_service.cc`
-			{
-				Compile.Type "C++"
-			}
-		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/general_names_unittest.cc`
 		{
 			Compile.Type "C++"
 		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/input_unittest.cc`
+		{
+			Compile.Type "C++"
+		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/ip_util_unittest.cc`
 		{
 			Compile.Type "C++"
 		}
@@ -1249,6 +1319,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			Compile.Type "C++"
 		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/nist_pkits_unittest.cc`
+		{
+			Compile.Type "C++"
+		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/ocsp_unittest.cc`
 		{
 			Compile.Type "C++"
 		}
@@ -1284,6 +1358,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C++"
 		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/pem_unittest.cc`
+		{
+			Compile.Type "C++"
+		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/signature_algorithm_unittest.cc`
 		{
 			Compile.Type "C++"
@@ -1301,6 +1379,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			Compile.Type "C++"
 		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/trust_store_collection_unittest.cc`
+		{
+			Compile.Type "C++"
+		}
+		%File `@('../../../../External/boringssl'->MakeAbsolute())/pki/trust_store_in_memory_unittest.cc`
 		{
 			Compile.Type "C++"
 		}
@@ -1839,10 +1921,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		{
 			Compile.Type "C"
 		}
-		%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/cpu_arm.c`
-		{
-			Compile.Type "C"
-		}
 		%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/cpu_intel.c`
 		{
 			Compile.Type "C"
@@ -2048,12 +2126,15 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				}
 			}
 		}
-		%Group "kyber"
+		%Group "keccak"
 		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/keccak.c`
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/keccak/keccak.c`
 			{
 				Compile.Type "C"
 			}
+		}
+		%Group "kyber"
+		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/kyber/kyber.c`
 			{
 				Compile.Type "C"
@@ -2229,6 +2310,37 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C"
 			}
 		}
+		%Group "spx"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/address.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/fors.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/merkle.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/spx.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/thash.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/spx_util.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/spx/wots.c`
+			{
+				Compile.Type "C"
+			}
+		}
 		%Group "stack"
 		{
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/stack/stack.c`
@@ -2340,7 +2452,147 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			{
 				Compile.Type "C"
 			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x509.c`
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_akey.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_akeya.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_alt.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_bcons.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_bitst.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_conf.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_cpols.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_crld.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_enum.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_extku.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_genn.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_ia5.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_info.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_int.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_lib.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_ncons.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_ocsp.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_pcons.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_pmaps.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_prn.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_purp.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_skey.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/v3_utl.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_algor.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_all.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_attrib.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_crl.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_exten.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_name.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_pubkey.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_req.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_sig.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_spki.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_val.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_x509.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_x509a.c`
 			{
 				Compile.Type "C"
 			}
@@ -2400,6 +2652,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			{
 				Compile.Type "C"
 			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x509.c`
+			{
+				Compile.Type "C"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x509cset.c`
 			{
 				Compile.Type "C"
@@ -2413,172 +2669,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C"
 			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x509spki.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_algor.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_all.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_attrib.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_crl.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_exten.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_info.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_name.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_pkey.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_pubkey.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_req.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_sig.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_spki.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_val.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_x509.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509/x_x509a.c`
-			{
-				Compile.Type "C"
-			}
-		}
-		%Group "x509v3"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_akey.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_akeya.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_alt.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_bcons.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_bitst.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_conf.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_cpols.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_crld.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_enum.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_extku.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_genn.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_ia5.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_info.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_int.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_lib.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_ncons.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_ocsp.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_pcons.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_pmaps.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_prn.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_purp.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_skey.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/x509v3/v3_utl.c`
-			{
-				Compile.Type "C"
-			}
-		}
-		%Group "fipsmodule"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bcm.c`
-			{
-				Compile.Type "C"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/fips_shared_support.c`
 			{
 				Compile.Type "C"
 			}
@@ -2610,11 +2700,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile.Type "Assembler"
 						}
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv8-win.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv4-apple.S`->MakeAbsolute()
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
@@ -2701,28 +2786,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 								Custom_Inputs [
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/chacha/asm/chacha-armv8.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
-						%File `@('.'->MakeAbsolute())/crypto/chacha/chacha-armv4-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/chacha`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/chacha/asm/chacha-armv4.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv4-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv4-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/chacha/asm/chacha-armv4.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
@@ -3052,11 +3115,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv4-apple.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv4-linux.S`->MakeAbsolute()
 						{
 							Compile.AllowNonExisting true
@@ -3139,28 +3197,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 								Custom_Inputs [
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/test/asm/trampoline-armv8.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
-						%File `@('.'->MakeAbsolute())/crypto/test/trampoline-armv4-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/test`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/test/asm/trampoline-armv4.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv4-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv4-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/test/asm/trampoline-armv4.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
@@ -3320,6 +3356,96 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							]
 						}
 					}
+				}
+			}
+		}
+	}
+	%Group "third_party"
+	{
+		%Group "asm"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/fiat/asm/fiat_curve25519_adx_mul.S`
+			{
+				Compile.Type "Assembler"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/fiat/asm/fiat_curve25519_adx_square.S`
+			{
+				Compile.Type "Assembler"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/fiat/asm/fiat_p256_adx_mul.S`
+			{
+				Compile.Type "Assembler"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/fiat/asm/fiat_p256_adx_sqr.S`
+			{
+				Compile.Type "Assembler"
+			}
+		}
+	}
+	%Dependency "Tool_BoringSSL_boringssl_prefix_symbols"
+	{
+		Dependency.Link false
+	}
+	%Dependency "Lib_BoringSSL_fipsmodule"
+	{
+		Dependency.Indirect true
+		Dependency.IndirectOrdered true
+	}
+}
+%Target "Lib_BoringSSL_fipsmodule"
+{
+	Compile
+	{
+		!!Compile.Type "C"
+		SearchPath += [
+			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
+		]
+		PreprocessorDefines += [
+			"BORINGSSL_IMPLEMENTATION"
+		]
+	}
+	Compile
+	{
+		!!Compile.Type "Assembler"
+		SearchPath += [
+			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
+		]
+		PreprocessorDefines += [
+			"BORINGSSL_IMPLEMENTATION"
+		]
+	}
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Target.Group "External/BoringSSL"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "StaticLibrary"
+	Target.BaseName "BoringSSL_fipsmodule"
+	Target.BaseFileName "fipsmodule"
+	Target.ObjectLibrary true
+	%Group "crypto"
+	{
+		%Group "fipsmodule"
+		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bcm.c`
+			{
+				Compile.Type "C"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/fips_shared_support.c`
+			{
+				Compile.Type "C"
+			}
+		}
+	}
+	%Group "macOS"
+	{
+		%Group "arm64e"
+		{
+			%Group `@(FullConfiguration)`
+			{
+				%Group "crypto"
+				{
 					%Group "fipsmodule"
 					{
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv8-apple.S`->MakeAbsolute()
@@ -3502,17 +3628,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv7-apple.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv7-linux.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/armv4-mont-apple.S`->MakeAbsolute()
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
@@ -3522,17 +3638,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bsaes-armv7-apple.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bsaes-armv7-linux.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-armv4-apple.S`->MakeAbsolute()
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
@@ -3542,17 +3648,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv7-apple.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv7-linux.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-armv4-large-apple.S`->MakeAbsolute()
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
@@ -3562,27 +3658,12 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv4-apple.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv4-linux.S`->MakeAbsolute()
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
 						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv4-apple.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
 						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv4-linux.S`->MakeAbsolute()
-						{
-							Compile.AllowNonExisting true
-							Compile.Type "Assembler"
-						}
-						%File `@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/vpaes-armv7-apple.S`->MakeAbsolute()
 						{
 							Compile.AllowNonExisting true
 							Compile.Type "Assembler"
@@ -4451,7 +4532,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) ios64 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-apple.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) ios64 sha256 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-apple.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -4473,7 +4554,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) linux64 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-linux.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) linux64 sha256 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-linux.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -4495,7 +4576,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) win64 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-win.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) win64 sha256 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-win.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -4517,7 +4598,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) ios64 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-apple.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) ios64 sha512 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-apple.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -4539,7 +4620,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) linux64 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-linux.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) linux64 sha512 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-linux.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -4561,7 +4642,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) win64 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-win.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv8.pl`->MakeAbsolute()->EscapeHost()) win64 sha512 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-win.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -4644,28 +4725,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 							}
 						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/aesv8-armv7-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/aesv8-armx.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv7-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv7-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/aesv8-armx.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
 						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/aesv8-armv7-linux.S.rule`
 						{
 							Compile
@@ -4679,28 +4738,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 								Custom_Inputs [
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/aesv8-armx.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/armv4-mont-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/asm/armv4-mont.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/armv4-mont-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/armv4-mont-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/bn/asm/armv4-mont.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
@@ -4732,28 +4769,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 							}
 						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/bsaes-armv7-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/bsaes-armv7.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bsaes-armv7-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bsaes-armv7-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/bsaes-armv7.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
 						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/bsaes-armv7-linux.S.rule`
 						{
 							Compile
@@ -4767,28 +4782,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 								Custom_Inputs [
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/bsaes-armv7.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/ghash-armv4-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/modes/asm/ghash-armv4.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-armv4-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-armv4-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/modes/asm/ghash-armv4.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
@@ -4820,28 +4813,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 							}
 						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/ghashv8-armv7-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/modes/asm/ghashv8-armx.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv7-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv7-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/modes/asm/ghashv8-armx.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
 						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/ghashv8-armv7-linux.S.rule`
 						{
 							Compile
@@ -4855,28 +4826,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 								Custom_Inputs [
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/modes/asm/ghashv8-armx.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/sha1-armv4-large-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha1-armv4-large.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-armv4-large-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-armv4-large-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha1-armv4-large.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
@@ -4908,28 +4857,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 							}
 						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/sha256-armv4-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha256-armv4.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv4-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv4-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha256-armv4.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
 						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/sha256-armv4-linux.S.rule`
 						{
 							Compile
@@ -4952,28 +4879,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 							}
 						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/sha512-armv4-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv4.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv4-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv4-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv4.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
 						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/sha512-armv4-linux.S.rule`
 						{
 							Compile
@@ -4987,28 +4892,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 								]
 								Custom_Inputs [
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-armv4.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86gas.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86masm.pl`->MakeAbsolute(),
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86nasm.pl`->MakeAbsolute()
-								]
-							}
-						}
-						%File `@('.'->MakeAbsolute())/crypto/fipsmodule/vpaes-armv7-apple.S.rule`
-						{
-							Compile
-							{
-								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/vpaes-armv7.pl`->MakeAbsolute()->EscapeHost()) ios32 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/vpaes-armv7-apple.S`->MakeAbsolute()->EscapeHost())`
-								AllowNonExisting true
-								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
-								Custom_Outputs [
-									`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/vpaes-armv7-apple.S`->MakeAbsolute()
-								]
-								Custom_Inputs [
-									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/aes/asm/vpaes-armv7.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/arm-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86_64-xlate.pl`->MakeAbsolute(),
 									`@('../../../../External/boringssl'->MakeAbsolute())/crypto/perlasm/x86asm.pl`->MakeAbsolute(),
@@ -5969,7 +5852,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) macosx @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-x86_64-apple.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) macosx sha256 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-x86_64-apple.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -5991,7 +5874,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) elf @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-x86_64-linux.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) elf sha256 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-x86_64-linux.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -6013,7 +5896,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) macosx @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-x86_64-apple.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) macosx sha512 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-x86_64-apple.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -6035,7 +5918,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 							Compile
 							{
 								Type "Custom"
-								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) elf @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-x86_64-linux.S`->MakeAbsolute()->EscapeHost())`
+								Custom_CommandLine `MToolCMake -E make_directory @(`@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()->EscapeHost()) && perl @(`@('../../../../External/boringssl'->MakeAbsolute())/crypto/fipsmodule/sha/asm/sha512-x86_64.pl`->MakeAbsolute()->EscapeHost()) elf sha512 @(`@(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-x86_64-linux.S`->MakeAbsolute()->EscapeHost())`
 								AllowNonExisting true
 								Custom_WorkingDirectory `@('.'->MakeAbsolute())/crypto/fipsmodule`->MakeAbsolute()
 								Custom_Outputs [
@@ -6186,20 +6069,6 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						}
 					}
 				}
-			}
-		}
-	}
-	%Group "third_party"
-	{
-		%Group "asm"
-		{
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/fiat/asm/fiat_curve25519_adx_mul.S`
-			{
-				Compile.Type "Assembler"
-			}
-			%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/fiat/asm/fiat_curve25519_adx_square.S`
-			{
-				Compile.Type "Assembler"
 			}
 		}
 	}
@@ -6383,6 +6252,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Lib_BoringSSL_crypto"
 	{
 		Dependency.Indirect true
+		Dependency.IndirectOrdered true
 	}
 }
 %Target "Com_BoringSSL_bssl_shim"
@@ -6600,9 +6470,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Lib_BoringSSL_crypto"
 	{
 		Dependency.Indirect true
+		Dependency.IndirectOrdered true
 	}
 	%Dependency "Lib_BoringSSL_ssl"
 	{
 		Dependency.Indirect true
+		Dependency.IndirectOrdered true
 	}
 }

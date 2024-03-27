@@ -1,4 +1,3 @@
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv4-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv4-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/chacha/chacha-armv8-linux.S
@@ -21,7 +20,6 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesni-x86-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesni-x86_64-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesni-x86_64-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv7-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv7-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-armv8-linux.S
@@ -29,7 +27,6 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-gcm-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-gcm-armv8-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/aesv8-gcm-armv8-win.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/armv4-mont-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/armv4-mont-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/armv8-mont-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/armv8-mont-linux.S
@@ -39,11 +36,9 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bn-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bn-armv8-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bn-armv8-win.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bsaes-armv7-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/bsaes-armv7-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/co-586-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/co-586-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-armv4-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-armv4-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-neon-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-neon-armv8-linux.S
@@ -56,7 +51,6 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-x86-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-x86_64-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghash-x86_64-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv7-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv7-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/ghashv8-armv8-linux.S
@@ -81,7 +75,6 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/rsaz-avx2-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-586-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-586-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-armv4-large-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-armv4-large-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-armv8-linux.S
@@ -90,7 +83,6 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha1-x86_64-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-586-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-586-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv4-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv4-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-armv8-linux.S
@@ -99,14 +91,12 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha256-x86_64-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-586-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-586-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv4-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv4-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-armv8-win.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-x86_64-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/sha512-x86_64-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/vpaes-armv7-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/vpaes-armv7-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/vpaes-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/vpaes-armv8-linux.S
@@ -121,7 +111,6 @@
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/x86_64-mont-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/x86_64-mont5-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/fipsmodule/x86_64-mont5-linux.S
-#(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv4-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv4-linux.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv8-apple.S
 #(CMakeIntermediateDirectory)/External_boringssl/crypto/test/trampoline-armv8-linux.S
