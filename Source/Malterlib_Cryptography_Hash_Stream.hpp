@@ -63,6 +63,13 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
+	mint TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_ContainerLengthLimit() const
+	{
+		DMibError("Stream does not support reading");
+		return 0;
+	}
+
+	template <typename t_CHash, typename t_CStreamType>
 	NStream::CFilePos TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_GetPosition() const
 	{
 		DMibError("Stream does not support positioning");
@@ -157,6 +164,13 @@ namespace NMib::NCryptography
 	bool TCBinaryStreamHash<t_CHash, t_CStreamType>::f_IsAtEndOfStream() const
 	{
 		DMibError("Stream does not support positioning");
+	}
+
+	template <typename t_CHash, typename t_CStreamType>
+	mint TCBinaryStreamHash<t_CHash, t_CStreamType>::f_ContainerLengthLimit() const
+	{
+		DMibError("Stream does not support reading");
+		return 0;
 	}
 
 	template <typename t_CHash, typename t_CStreamType>

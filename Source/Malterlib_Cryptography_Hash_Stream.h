@@ -21,6 +21,7 @@ namespace NMib::NCryptography
 		void f_ConsumeBytes(void *_pMem, mint _nBytes);
 		bool f_IsValid() const;
 		bool f_IsAtEndOfStream() const;
+		mint f_ContainerLengthLimit() const;
 
 		NStream::CFilePos f_GetLength() const;
 		NStream::CFilePos f_GetPosition() const;
@@ -57,6 +58,7 @@ namespace NMib::NCryptography
 		void f_ConsumeBytes(void *_pMem, mint _nBytes);
 		bool f_IsValid() const;
 		bool f_IsAtEndOfStream() const;
+		mint f_ContainerLengthLimit() const;
 
 		NStream::CFilePos f_GetLength() const;
 		NStream::CFilePos f_GetPosition() const;
