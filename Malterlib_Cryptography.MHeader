@@ -28,7 +28,6 @@ Import "../Core/Lib_Malterlib.MTarget"
 
 %Group "{Malterlib}/{Lib_Malterlib_Cryptography}/{DependOnBoringSSL}"
 {
-
 	%Dependency "Lib_BoringSSL_crypto"
 	{
 		&
@@ -37,6 +36,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 			!Target.Type "Tool"
 		}
 		Dependency.Indirect !TargetIsExecutable
+		Dependency.LinkWithObjectFiles false
 	}
 	%Dependency "Lib_BoringSSL_ssl"
 	{
@@ -46,6 +46,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 			!Target.Type "Tool"
 		}
 		Dependency.Indirect !TargetIsExecutable
+		Dependency.LinkWithObjectFiles false
 	}
 	%Dependency "Lib_BoringSSL_decrepit"
 	{
@@ -55,6 +56,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 			!Target.Type "Tool"
 		}
 		Dependency.Indirect !TargetIsExecutable
+		Dependency.LinkWithObjectFiles false
 	}
 	%Dependency "Lib_BoringSSL_fipsmodule"
 	{
@@ -64,6 +66,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 			!Target.Type "Tool"
 		}
 		Dependency.Indirect !TargetIsExecutable
+		Dependency.LinkWithObjectFiles false
 	}
 }
 
@@ -170,6 +173,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 			{
 				PlatformType "Windows"
 				!Target.VisualStudioPlatform "Clang"
+				!Target.PlatformToolset "ClangCL"
 			}
 		}
 
@@ -180,6 +184,7 @@ Import "../Core/Lib_Malterlib.MTarget"
 				Compile.Type "C"
 				PlatformType "Windows"
 				!Target.VisualStudioPlatform "Clang"
+				!Target.PlatformToolset "ClangCL"
 			}
 		}
 	}
@@ -266,6 +271,7 @@ Import
 			%File "Documentation/*"
 		}
 	}
+	
 	%Dependency "Lib_BoringSSL_crypto"
 	{
 		&
@@ -282,6 +288,7 @@ Import
 			!DocumentationEnabled true
 		}
 		Dependency.Indirect true
+		Dependency.LinkWithObjectFiles false
 	}
 	%Dependency "Lib_BoringSSL_decrepit"
 	{
@@ -290,9 +297,18 @@ Import
 			!DocumentationEnabled true
 		}
 		Dependency.Indirect true
+		Dependency.LinkWithObjectFiles false
+	}
+	%Dependency "Lib_BoringSSL_fipsmodule"
+	{
+		&
+		{
+			!DocumentationEnabled true
+		}
+		Dependency.Indirect true
+		Dependency.LinkWithObjectFiles false
 	}
 }
-
 
 Property
 {
