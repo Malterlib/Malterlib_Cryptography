@@ -50,6 +50,7 @@ namespace NMib::NCryptography
 		X509_STORE *fg_ExtractSystemCertificates()
 		{
 			auto pStore = X509_STORE_new();
+			auto Now = NTime::CTime::fs_NowUTC();
 
 			auto fIsPKCS7 = [](DWORD _EncodeType)
 				{
@@ -87,7 +88,38 @@ namespace NMib::NCryptography
 						}
 					;
 
-					X509_STORE_add_cert(pStore, pCertificate);
+					if (fg_GetX509ExpireTime(pCertificate) > Now)
+						X509_STORE_add_cert(pStore, pCertificate);
+				}
+
+				for (PCCRL_CONTEXT pCrlContext = CertEnumCRLsInStore(hStore, nullptr); pCrlContext; pCrlContext = CertEnumCRLsInStore(hStore, pCrlContext))
+				{
+					NStr::CStr OutputType = fIsPKCS7(pCrlContext->dwCertEncodingType) ? "PKCS7" : "X509 CRL";
+					NContainer::CByteVector Data;
+					Data.f_Insert(pCrlContext->pbCrlEncoded, pCrlContext->cbCrlEncoded);
+					NStr::CStr CertData = NEncoding::fg_Base64Encode(Data);
+					NStr::CStr CertAsString = NStr::CStr::CFormat("-----BEGIN {}-----\n{}\n-----END {}-----\n") << OutputType << CertData << OutputType;
+
+					NContainer::CByteVector lCertData;
+					lCertData.f_SetLen(CertAsString.f_GetLen());
+					NMemory::fg_MemCopy(lCertData.f_GetArray(), CertAsString.f_GetStr(), CertAsString.f_GetLen());
+
+					X509_CRL *pCrl;
+					try
+					{
+						pCrl = fg_LoadCrl(lCertData);
+					}
+					catch (CExceptionCryptography const &)
+					{
+						continue;
+					}
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_CRL_free(pCrl);
+						}
+					;
+
+					X509_STORE_add_crl(pStore, pCrl);
 				}
 
 				CertCloseStore(hStore, 0);
@@ -103,6 +135,8 @@ namespace NMib::NCryptography
 
 		X509_STORE *fg_ExtractSystemCertificates()
 		{
+			auto Now = NTime::CTime::fs_NowUTC();
+
 			auto pStore = X509_STORE_new();
 
 			NContainer::TCSet<NContainer::CByteVector> Untrusted;
@@ -309,7 +343,8 @@ namespace NMib::NCryptography
 					}
 				;
 
-				X509_STORE_add_cert(pStore, pCertificate);
+				if (fg_GetX509ExpireTime(pCertificate) > Now)
+					X509_STORE_add_cert(pStore, pCertificate);
 			}
 
 			return pStore;

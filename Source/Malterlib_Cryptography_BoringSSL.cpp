@@ -433,6 +433,29 @@ namespace NMib::NCryptography::NBoringSSL
 		return pCertificate;
 	}
 
+	X509_CRL *fg_LoadCrl(NContainer::CByteVector const &_CertificateData)
+	{
+		if (_CertificateData.f_IsEmpty())
+			DMibErrorCryptography("Empty CRL data");
+
+		ERR_clear_error();
+		BIO* pMemoryBio = BIO_new_mem_buf( const_cast<void *>(static_cast<void const *>(_CertificateData.f_GetArray())), _CertificateData.f_GetLen());
+		if (!pMemoryBio)
+			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO buffer"));
+		auto Cleanup = g_OnScopeExit / [&]
+			{
+				BIO_free(pMemoryBio);
+			}
+		;
+
+		ERR_clear_error();
+		X509_CRL *pCRL = PEM_read_bio_X509_CRL(pMemoryBio, nullptr, nullptr, nullptr);;
+		if (!pCRL)
+			DMibErrorCryptography(fg_GetExceptionStr("Error reading x509 certificate"));
+
+		return pCRL;
+	}
+
 	NContainer::CByteVector fg_ConvertX509ToBinary(X509 *_pCertificate)
 	{
 		if (!_pCertificate)
@@ -458,6 +481,93 @@ namespace NMib::NCryptography::NBoringSSL
 		if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 			DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate from BIO"));
 		return Return;
+	}
+
+	namespace
+	{
+		bool fg_IsValidDateTime(int _Years, int _Months, int _Days, int _Hours, int _Minutes, int _Seconds)
+		{
+			return fg_Clamp(_Months, 1, 12) == _Months
+				&& fg_Clamp(_Days, 1, NTime::CTimeConvert::fs_GetDaysInMonth(_Years, _Months - 1)) == _Days
+				&& fg_Clamp(_Hours, 0, 23) == _Hours
+				&& fg_Clamp(_Minutes, 0, 59) == _Minutes
+				&& fg_Clamp(_Seconds, 0, 59) == _Seconds
+			;
+		}
+	}
+
+	NTime::CTime fg_ConvertFromASN1Time(ASN1_TIME const *_pTime)
+	{
+		if (!_pTime)
+			return NTime::CTime::fs_StartOfTime();
+
+		if (_pTime->type == V_ASN1_UTCTIME)
+		{
+			if (_pTime->length < 10)
+				return NTime::CTime::fs_StartOfTime();
+
+			ch8 const *pData = (ch8 const *)_pTime->data;
+
+			for (int i = 0; i < 10; ++i)
+			{
+				if (!NStr::fg_CharIsNumber(pData[i]))
+					return NTime::CTime::fs_StartOfTime();
+			}
+
+			int Years = (pData[0] - '0') * 10 + (pData[1] - '0');
+			if (Years < 50)
+				Years += 100;
+			Years += 1900;
+
+			int Months = (pData[2] - '0') * 10 + (pData[3] - '0');
+			int Days = (pData[4] - '0') * 10 + (pData[5] - '0');
+			int Hours = (pData[6] - '0') * 10 + (pData[7] - '0');
+			int Minutes = (pData[8] - '0') * 10 + (pData[9] - '0');
+			int Seconds = 0;
+
+			if (_pTime->length >= 12 && NStr::fg_CharIsNumber(pData[10]) && NStr::fg_CharIsNumber(pData[11]))
+				Seconds = (pData[10] - '0') * 10 + (pData[11] - '0');
+
+			if (!fg_IsValidDateTime(Years, Months, Days, Hours, Minutes, Seconds))
+				return NTime::CTime::fs_StartOfTime();
+
+			return NTime::CTimeConvert::fs_CreateTime(Years, Months, Days, Hours, Minutes, Seconds);
+		}
+		else if (_pTime->type == V_ASN1_GENERALIZEDTIME)
+		{
+			if (_pTime->length < 12)
+				return NTime::CTime::fs_StartOfTime();
+
+			ch8 const *pData = (ch8 const *)_pTime->data;
+
+			for (int i = 0; i < 12; ++i)
+			{
+				if (!NStr::fg_CharIsNumber(pData[i]))
+					return NTime::CTime::fs_StartOfTime();
+			}
+
+			int Years = (pData[0] - '0') * 1000 + (pData[1] - '0') * 100 + (pData[2] - '0') * 10 + (pData[3] - '0');
+			int Months = (pData[4] - '0') * 10 + (pData[5] - '0');
+			int Days = (pData[6] - '0') * 10 + (pData[7] - '0');
+			int Hours = (pData[8] - '0') * 10 + (pData[9] - '0');
+			int Minutes = (pData[10] - '0') * 10 + (pData[11] - '0');
+			int Seconds = 0;
+
+			if (_pTime->length >= 14 && NStr::fg_CharIsNumber(pData[12]) && NStr::fg_CharIsNumber(pData[13]))
+				Seconds = (pData[12] - '0') * 10 + (pData[13] - '0');
+
+			if (!fg_IsValidDateTime(Years, Months, Days, Hours, Minutes, Seconds))
+				return NTime::CTime::fs_StartOfTime();
+
+			return NTime::CTimeConvert::fs_CreateTime(Years, Months, Days, Hours, Minutes, Seconds);
+		}
+
+		return NTime::CTime::fs_StartOfTime();
+	}
+
+	NTime::CTime fg_GetX509ExpireTime(X509 *_pCertificate)
+	{
+		return fg_ConvertFromASN1Time(X509_get_notAfter(_pCertificate));
 	}
 
 	EVP_PKEY *fg_LoadPrivateKey(NContainer::CSecureByteVector const &_Data)

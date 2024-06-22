@@ -59,7 +59,10 @@ namespace NMib::NCryptography::NBoringSSL
 	NContainer::CSecureByteVector fg_ConvertPublicKeyToDER(EVP_PKEY *_pKey);
 	void fg_GenerateKey(EVP_PKEY *_pKey, CCertificateOptions const &_Options);
 	X509 *fg_LoadCertificate(NContainer::CByteVector const &_CertificateData);
+	X509_CRL *fg_LoadCrl(NContainer::CByteVector const &_CertificateData);
+	NTime::CTime fg_ConvertFromASN1Time(ASN1_TIME const *_pTime);
 	NContainer::CByteVector fg_ConvertX509ToBinary(X509 *_pCertificate);
+	NTime::CTime fg_GetX509ExpireTime(X509 *_pCertificate);
 	EVP_PKEY *fg_LoadPrivateKey(NContainer::CSecureByteVector const &_Data);
 }
 
