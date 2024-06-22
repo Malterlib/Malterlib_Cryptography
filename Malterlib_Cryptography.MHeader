@@ -239,9 +239,16 @@ Import
 {
 	CMake_Variables =+ [
 		`OPENSSL_ROOT_DIR=@("../../External/boringssl"->MakeAbsolute())`
+		, `OPENSSL_INCLUDE_DIR=@("../../External/boringssl/include"->MakeAbsolute())`
 		, `OPENSSL_LIBRARIES=@(Malterlib_DummmyLibrary)`
 		, `OPENSSL_CRYPTO_LIBRARY=@(Malterlib_DummmyLibrary)`
+		, `OPENSSL_CRYPTO_LIBRARIES=@(Malterlib_DummmyLibrary)`
 		, `OPENSSL_SSL_LIBRARY=@(Malterlib_DummmyLibrary)`
+		, `OPENSSL_SSL_LIBRARIES=@(Malterlib_DummmyLibrary)`
+		, "OPENSSL_USE_STATIC_LIBS=TRUE"
+		, "OPENSSL_MSVC_STATIC_RT=TRUE"
+		, "OPENSSL_FOUND=TRUE"
+		, "DISABLE_OPENSSL_WINDOWS=TRUE"
 	]
 }
 
