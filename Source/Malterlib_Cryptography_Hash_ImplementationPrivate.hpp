@@ -63,17 +63,17 @@ namespace NMib::NCryptography
 		TCHashImpl Hash;
 
 		CMibFilePos Length = _Stream.f_GetLength();
-		int const Size = 32768;
-		uint8 Temp[Size];
+
+		NFile::CFileIoTempBuffer Buffer;
+
 		while (Length)
 		{
-			mint ThisTime = mint(fg_Min(Length, CMibFilePos(Size)));
-			_Stream.f_ConsumeBytes(Temp, ThisTime);
-			Hash.f_AddData(Temp, ThisTime);
+			auto BufferResult = Buffer.f_UseBuffer(Length);
+			_Stream.f_ConsumeBytes(BufferResult.m_pBuffer, BufferResult.m_nBytes);
+			Hash.f_AddData(BufferResult.m_pBuffer, BufferResult.m_nBytes);
 
-			Length -= ThisTime;
+			Length -= BufferResult.m_nBytes;
 		}
-		NMemory::fg_SecureMemClear(Temp);
 		Ret = Hash;
 		return Ret;
 	}
