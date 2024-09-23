@@ -216,7 +216,7 @@ namespace NMib::NCryptography
 						BN_bn2bin(pComponentR, Signature.f_GetArray() + (ExpectedBytes - BN_num_bytes(pComponentR)));
 						BN_bn2bin(pComponentS, Signature.f_GetArray() + (ExpectedBytes*2 - BN_num_bytes(pComponentS)));
 					}
-					else if (RSA *pRSA = EVP_PKEY_get0_RSA(pKey))
+					else if (EVP_PKEY_get0_RSA(pKey))
 					{
 						ERR_clear_error();
 						if (EVP_DigestSignInit(Ctx, NULL, Md, NULL, pKey) != 1)

@@ -187,6 +187,11 @@ Import "../Core/Lib_Malterlib.MTarget"
 				!Target.PlatformToolset "ClangCL"
 			}
 		}
+
+		Warnings_UnusedFunction false
+		{
+			!!Compiler "Clang"
+		}
 	}
 	%Target "Lib_BoringSSL_crypto"
 	{
@@ -248,6 +253,7 @@ Import
 		, "OPENSSL_USE_STATIC_LIBS=TRUE"
 		, "OPENSSL_MSVC_STATIC_RT=TRUE"
 		, "OPENSSL_FOUND=TRUE"
+		, "OpenSSL_FOUND=TRUE"
 		, "DISABLE_OPENSSL_WINDOWS=TRUE"
 	]
 }
