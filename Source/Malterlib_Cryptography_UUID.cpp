@@ -86,6 +86,11 @@ namespace NMib::NCryptography
 		m_Node[5] = (Node >> 8*0) & uint8(0xff);
 	}
 
+	CUniversallyUniqueIdentifier CUniversallyUniqueIdentifier::fs_Empty()
+	{
+		return {};
+	}
+
 	template <typename tf_CStrType>
 	static tf_CStrType fg_GetUUIDAsString(CUniversallyUniqueIdentifier &_UUID, EUniversallyUniqueIdentifierFormat _Format)
 	{

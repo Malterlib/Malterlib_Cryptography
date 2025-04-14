@@ -22,7 +22,6 @@ namespace NMib::NCryptography
 			, uint16 _TimeHiAndVersion
 			, uint16 _ClockSequence
 			, uint64 _Node
-			, EUniversallyUniqueIdentifierFormat _Format
 		)
 		: m_TimeLow(_TimeLow)
 		, m_TimeMid(_TimeMid)

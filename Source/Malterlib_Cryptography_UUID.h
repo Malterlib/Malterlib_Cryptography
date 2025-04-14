@@ -41,12 +41,13 @@ namespace NMib::NCryptography
 				, uint16 _TimeHiAndVersion
 				, uint16 _ClockSequence
 				, uint64 _Node
-				, EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry
 			)
 		;
 		constexpr ~CUniversallyUniqueIdentifier();
 		NStr::CStr f_GetAsString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
 		NStr::CFStr256 f_GetAsStaticString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
+
+		static CUniversallyUniqueIdentifier fs_Empty();
 
 		auto operator <=> (CUniversallyUniqueIdentifier const &_Right) const = default;
 
