@@ -6,8 +6,8 @@ namespace NMib::NCryptography
 {
 	namespace
 	{
-		ch8 g_UnmistakableChars[] = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
-		constexpr mint gc_nChars = sizeof(g_UnmistakableChars) / sizeof(g_UnmistakableChars[0]) - 1;
+		constexpr ch8 gc_UnmistakableChars[] = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
+		constexpr mint gc_nChars = fg_ArraySize(gc_UnmistakableChars) - 1;
 
 		template <mint t_nBytesCache, typename t_CNewBytes>
 		struct TCUniformIntDistribution
@@ -80,7 +80,7 @@ namespace NMib::NCryptography
 
 			CUniformIntDistribution RandomDistribution(gc_nChars);
 			for (mint i = 0; i < _Len; ++i)
-				Appender += g_UnmistakableChars[RandomDistribution()];
+				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
 		return Return;
@@ -94,7 +94,7 @@ namespace NMib::NCryptography
 
 			CUniformIntDistributionHighEntropy RandomDistribution(gc_nChars);
 			for (mint i = 0; i < _Len; ++i)
-				Appender += g_UnmistakableChars[RandomDistribution()];
+				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
 		return Return;
