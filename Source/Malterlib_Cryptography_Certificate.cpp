@@ -72,7 +72,7 @@ namespace NMib::NCryptography
 			fg_AddStrSep(KeyUsage, "codeSigning", ",");
 		if (_KeyUsage & EExtendedKeyUsage_EmailProtection)
 			fg_AddStrSep(KeyUsage, "emailProtection", ",");
-		if (_KeyUsage & EExtendedKeyUsage_TimeStamping)
+		if (_KeyUsage & EExtendedKeyUsage_Timestamping)
 			fg_AddStrSep(KeyUsage, "timeStamping", ",");
 
 		auto &Extension = m_Extensions["2.5.29.37"].f_Insert();

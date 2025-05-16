@@ -31,7 +31,7 @@ namespace NMib::NCryptography
 		, EExtendedKeyUsage_ClientAuth = DMibBit(1)
 		, EExtendedKeyUsage_CodeSigning = DMibBit(2)
 		, EExtendedKeyUsage_EmailProtection = DMibBit(3)
-		, EExtendedKeyUsage_TimeStamping = DMibBit(4)
+		, EExtendedKeyUsage_Timestamping = DMibBit(4)
 	};
 
 	struct CCertificateExtension
