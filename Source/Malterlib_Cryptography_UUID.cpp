@@ -171,7 +171,7 @@ namespace NMib::NCryptography
 	{
 		static_assert(sizeof(*this) == 16, "Strung packing not correct");
 
-		NMemory::fg_MemCopy(this, _pHash, sizeof(*this));
+		NMemory::fg_MemCopy((void *)this, _pHash, sizeof(*this));
 
 		m_TimeLow = fg_ByteSwapBE(m_TimeLow);
 		m_TimeMid = fg_ByteSwapBE(m_TimeMid);
