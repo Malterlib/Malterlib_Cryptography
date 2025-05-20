@@ -32,7 +32,7 @@ namespace NMib::NCryptography
 	template <typename t_CParentStream, typename t_CStreamType>
 	decltype(auto) TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::fp_GetParentStream() const
 	{
-		if constexpr (!NTraits::TCIsBaseOf<typename NTraits::TCRemoveReference<t_CParentStream>::CType, NStream::CBinaryStream>::mc_Value)
+		if constexpr (!NTraits::cIsBaseOf<NTraits::TCRemoveReference<t_CParentStream>, NStream::CBinaryStream>)
 		{
 			if (!mp_Stream)
 				DMibErrorCryptography("Stream has not been opened");
@@ -56,7 +56,7 @@ namespace NMib::NCryptography
 		NMemory::fg_SecureMemClear(mp_DecryptedBlock.f_GetArray(), mp_DecryptedBlock.f_GetLen());
 		mp_pHMACContext.f_Clear();
 		mp_pEncryptContext.f_Clear();
-		if constexpr (!NTraits::TCIsBaseOf<typename NTraits::TCRemoveReference<t_CParentStream>::CType, NStream::CBinaryStream>::mc_Value)
+		if constexpr (!NTraits::cIsBaseOf<NTraits::TCRemoveReference<t_CParentStream>, NStream::CBinaryStream>)
 			mp_Stream = nullptr;
 		mp_CurrentLoaded = -1;
 
