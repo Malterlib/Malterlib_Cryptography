@@ -317,15 +317,15 @@ namespace NMib::NCryptography
 
 					switch (_KeySetting.f_GetTypeID())
 					{
-					case EPublicKeyType_EC_secp256r1:
-					case EPublicKeyType_EC_secp384r1:
-					case EPublicKeyType_EC_secp521r1:
-					case EPublicKeyType_EC_X25519:
+					case EPublicKeyType::mc_EC_secp256r1:
+					case EPublicKeyType::mc_EC_secp384r1:
+					case EPublicKeyType::mc_EC_secp521r1:
+					case EPublicKeyType::mc_EC_X25519:
 						ERR_clear_error();
 						if (!EVP_PKEY_get0_EC_KEY(pKey)) //Did we get one?
 							DMibErrorCryptography(fg_GetExceptionStr("Error getting EC_Key"));
 						break;
-					case EPublicKeyType_RSA:
+					case EPublicKeyType::mc_RSA:
 						break;
 					}
 

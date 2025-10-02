@@ -1,4 +1,4 @@
-// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #include <Mib/Core/Core>
@@ -25,19 +25,19 @@ public:
 			CSecureByteVector Truncated(Message);
 			Truncated.f_SetLen(Truncated.f_GetLen() - 1);
 
-			// Apparently we cannot create EPublicKeyType_EC_X25519 keys
-			for (aint KeyType = EPublicKeyType_RSA; KeyType <= EPublicKeyType_EC_secp521r1; ++KeyType)
+			// Apparently we cannot create EPublicKeyType::mc_EC_X25519 keys
+			for (EPublicKeyType KeyType = EPublicKeyType::mc_RSA; KeyType <= EPublicKeyType::mc_EC_secp521r1; KeyType = EPublicKeyType(uint32(KeyType) + 1))
 			{
 				DMibTestPath("KeySetting {}"_f << KeyType);
 
 				CPublicKeySetting KeySettings;
 				switch (KeyType)
 				{
-				case EPublicKeyType_RSA:          KeySettings = CPublicKeySettings_RSA{};          break;
-				case EPublicKeyType_EC_secp256r1: KeySettings = CPublicKeySettings_EC_secp256r1{}; break;
-				case EPublicKeyType_EC_secp384r1: KeySettings = CPublicKeySettings_EC_secp384r1{}; break;
-				case EPublicKeyType_EC_secp521r1: KeySettings = CPublicKeySettings_EC_secp521r1{}; break;
-				case EPublicKeyType_EC_X25519:    KeySettings = CPublicKeySettings_EC_X25519{};    break;
+				case EPublicKeyType::mc_RSA:          KeySettings = CPublicKeySettings_RSA{};          break;
+				case EPublicKeyType::mc_EC_secp256r1: KeySettings = CPublicKeySettings_EC_secp256r1{}; break;
+				case EPublicKeyType::mc_EC_secp384r1: KeySettings = CPublicKeySettings_EC_secp384r1{}; break;
+				case EPublicKeyType::mc_EC_secp521r1: KeySettings = CPublicKeySettings_EC_secp521r1{}; break;
+				case EPublicKeyType::mc_EC_X25519:    KeySettings = CPublicKeySettings_EC_X25519{};    break;
 				}
 
 				NContainer::CSecureByteVector PrivateKey;

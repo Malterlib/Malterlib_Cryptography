@@ -7,19 +7,19 @@
 
 namespace NMib::NCryptography
 {
-	enum EPublicKeyType
+	enum class EPublicKeyType : uint32
 	{
-		EPublicKeyType_RSA
-		, EPublicKeyType_EC_secp256r1
-		, EPublicKeyType_EC_secp384r1
-		, EPublicKeyType_EC_secp521r1
-		, EPublicKeyType_EC_X25519
+		mc_RSA
+		, mc_EC_secp256r1
+		, mc_EC_secp384r1
+		, mc_EC_secp521r1
+		, mc_EC_X25519
 	};
 
 	struct CPublicKeySettings_RSA
 	{
 		CPublicKeySettings_RSA() = default;
-		CPublicKeySettings_RSA(uint32 _KeyLength)
+		explicit CPublicKeySettings_RSA(uint32 _KeyLength)
 			: m_KeyLength(_KeyLength)
 		{
 		}
@@ -52,11 +52,11 @@ namespace NMib::NCryptography
 	using CPublicKeySetting = NStorage::TCStreamableVariant
 		<
 			EPublicKeyType
-			, NStorage::TCMember<CPublicKeySettings_RSA, EPublicKeyType_RSA>
-			, NStorage::TCMember<CPublicKeySettings_EC_secp256r1, EPublicKeyType_EC_secp256r1>
-			, NStorage::TCMember<CPublicKeySettings_EC_secp384r1, EPublicKeyType_EC_secp384r1>
-			, NStorage::TCMember<CPublicKeySettings_EC_secp521r1, EPublicKeyType_EC_secp521r1>
-			, NStorage::TCMember<CPublicKeySettings_EC_X25519, EPublicKeyType_EC_X25519>
+			, NStorage::TCMember<CPublicKeySettings_RSA, EPublicKeyType::mc_RSA>
+			, NStorage::TCMember<CPublicKeySettings_EC_secp256r1, EPublicKeyType::mc_EC_secp256r1>
+			, NStorage::TCMember<CPublicKeySettings_EC_secp384r1, EPublicKeyType::mc_EC_secp384r1>
+			, NStorage::TCMember<CPublicKeySettings_EC_secp521r1, EPublicKeyType::mc_EC_secp521r1>
+			, NStorage::TCMember<CPublicKeySettings_EC_X25519, EPublicKeyType::mc_EC_X25519>
 		>
 	;
 

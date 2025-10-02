@@ -346,10 +346,10 @@ namespace NMib::NCryptography::NBoringSSL
 	{
 		switch (_Options.m_KeySetting.f_GetTypeID())
 		{
-		case EPublicKeyType_RSA:
+		case EPublicKeyType::mc_RSA:
 			{
 				ERR_clear_error();
-				RSA *pRSA = RSA_generate_key(_Options.m_KeySetting.f_Get<EPublicKeyType_RSA>().m_KeyLength, RSA_F4, nullptr, nullptr);
+				RSA *pRSA = RSA_generate_key(_Options.m_KeySetting.f_Get<EPublicKeyType::mc_RSA>().m_KeyLength, RSA_F4, nullptr, nullptr);
 				if (!pRSA)
 					DMibErrorCryptography(fg_GetExceptionStr("Error generating RSA key"));
 				ERR_clear_error();
@@ -358,10 +358,10 @@ namespace NMib::NCryptography::NBoringSSL
 				pRSA = nullptr;
 			}
 			break;
-		case EPublicKeyType_EC_secp256r1:
-		case EPublicKeyType_EC_secp384r1:
-		case EPublicKeyType_EC_secp521r1:
-		case EPublicKeyType_EC_X25519:
+		case EPublicKeyType::mc_EC_secp256r1:
+		case EPublicKeyType::mc_EC_secp384r1:
+		case EPublicKeyType::mc_EC_secp521r1:
+		case EPublicKeyType::mc_EC_X25519:
 			{
 				ERR_clear_error();
 				EC_KEY *pECKey;
@@ -369,16 +369,16 @@ namespace NMib::NCryptography::NBoringSSL
 				int CurveName = NID_secp521r1;
 				switch (_Options.m_KeySetting.f_GetTypeID())
 				{
-				case EPublicKeyType_EC_secp256r1:
+				case EPublicKeyType::mc_EC_secp256r1:
 					CurveName = NID_X9_62_prime256v1;
 					break;
-				case EPublicKeyType_EC_secp384r1:
+				case EPublicKeyType::mc_EC_secp384r1:
 					CurveName = NID_secp384r1;
 					break;
-				case EPublicKeyType_EC_secp521r1:
+				case EPublicKeyType::mc_EC_secp521r1:
 					CurveName = NID_secp521r1;
 					break;
-				case EPublicKeyType_EC_X25519:
+				case EPublicKeyType::mc_EC_X25519:
 					CurveName = NID_X25519;
 					break;
 				default:
