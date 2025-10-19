@@ -209,7 +209,7 @@ namespace NMib::NCryptography
 							if (!CFNumberGetValue(pTrustResult, kCFNumberSInt32Type, &Result))
 								return kSecTrustSettingsResultInvalid;
 
-							 if (Result == kSecTrustSettingsResultTrustRoot || Result == kSecTrustSettingsResultTrustAsRoot || Result == kSecTrustSettingsResultDeny)
+							if (Result == kSecTrustSettingsResultTrustRoot || Result == kSecTrustSettingsResultTrustAsRoot || Result == kSecTrustSettingsResultDeny)
 								return (SecTrustSettingsResult)Result;
 						}
 						else

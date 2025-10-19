@@ -15,6 +15,7 @@ The Cryptography module provides comprehensive cryptographic functionality for t
 - **Random Data Generation**: Cryptographically secure random number generation
 - **UUID Generation**: Version 4 UUID generation
 - **Certificate Management**: X.509 certificate generation, validation, and system integration
+- **Detached Signatures**: Async helpers for digest + signature generation (`fg_SignFiles`) that emit structured JSON (algorithm, digest hex/base64, signature base64/length) for safe transport and future verification tooling
 
 ### Special Components
 - **EncryptedStream**: Stream-based encryption/decryption for large data
@@ -77,6 +78,23 @@ The Cryptography module provides comprehensive cryptographic functionality for t
 // Malterlib_Cryptography_Certificate.h
 // System integration in Malterlib_Cryptography_Certificate_System.cpp
 ```
+
+### Detached Signatures
+```cpp
+CSecureByteVector PrivateKey = ...; // load securely
+auto SignMetadata = NCryptography::fg_SignFiles("/opt/Deploy/App.bin", fg_Move(PrivateKey));
+auto Metadata = co_await SignMetadata();
+
+// JSON keys include:
+//   InputType, MessageLength
+//   DigestAlgorithm
+//   Signature (binary bytes)
+//   Certificate (binary bytes)
+//   Manifest (Same format as CDirectoryManifest::f_ToJson)
+//   TimestampToken (binary bytes, optional)
+```
+- Provide the file or directory path instead of raw buffers; the helper schedules the work on `fg_ConcurrentActorHighCPU()`, streams file contents incrementally, and attaches a manifest so downstream verification knows which files were signed (in which order).
+- Treat the returned `CEJsonSorted` as the API contract for downstream storage and future verification tooling.
 
 ### Using Symmetric Encryption
 ```cpp
