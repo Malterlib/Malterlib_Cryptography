@@ -33,7 +33,7 @@ namespace NMib::NCryptography
 			for (auto iHash = Hash.f_GetChildIterator(); iHash; ++iHash)
 				mp_CachedDigests[NPrivate::fg_GetConsistentPath(iHash->f_GetName())] = CHashDigest_MD5::fs_FromString(iHash->f_GetThisValue());
 		}
-		else
+		else if (_File)
 			DMibLog(Debug, "Hash cache file not found: {}", _File);
 	}
 
