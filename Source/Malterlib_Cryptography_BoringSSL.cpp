@@ -308,7 +308,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography(fg_GetExceptionStr("Error writing private key to BIO"));
 
 		NContainer::CSecureByteVector Return;
-		Return.f_SetLen(pMemoryBio->num_write);
+		Return.f_SetLen(BIO_number_written(pMemoryBio));
 		ERR_clear_error();
 		if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 			DMibErrorCryptography(fg_GetExceptionStr("Error reading private key from BIO"));
@@ -335,7 +335,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography(fg_GetExceptionStr("Error writing public key to BIO"));
 
 		NContainer::CSecureByteVector Return;
-		Return.f_SetLen(pMemoryBio->num_write);
+		Return.f_SetLen(BIO_number_written(pMemoryBio));
 		ERR_clear_error();
 		if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 			DMibErrorCryptography(fg_GetExceptionStr("Error reading private key from BIO"));
@@ -476,7 +476,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography(fg_GetExceptionStr("Error writing certificate to BIO"));
 
 		NContainer::CByteVector Return;
-		Return.f_SetLen(pMemoryBio->num_write);
+		Return.f_SetLen(BIO_number_written(pMemoryBio));
 		ERR_clear_error();
 		if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 			DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate from BIO"));

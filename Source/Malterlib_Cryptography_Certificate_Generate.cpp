@@ -556,7 +556,7 @@ namespace NMib::NCryptography
 						DMibErrorCryptography(fg_GetExceptionStr("Error writing certificate signing request to BIO"));
 
 					NContainer::CByteVector Return;
-					Return.f_SetLen(pMemoryBio->num_write);
+					Return.f_SetLen(BIO_number_written(pMemoryBio));
 					ERR_clear_error();
 					if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 						DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate signing request from BIO"));
@@ -595,7 +595,7 @@ namespace NMib::NCryptography
 						DMibErrorCryptography(fg_GetExceptionStr("Error writing certificate signing request to BIO"));
 
 					NContainer::CByteVector Return;
-					Return.f_SetLen(pMemoryBio->num_write);
+					Return.f_SetLen(BIO_number_written(pMemoryBio));
 					ERR_clear_error();
 					if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 						DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate signing request from BIO"));
