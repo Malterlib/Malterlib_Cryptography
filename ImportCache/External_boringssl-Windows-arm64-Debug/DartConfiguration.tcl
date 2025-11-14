@@ -63,8 +63,8 @@ UpdateOptions:
 UpdateType: git
 
 # Compiler info
-Compiler: C:/Program Files/Microsoft Visual Studio/18/Insiders/VC/Tools/MSVC/14.50.35717/bin/Hostx64/arm64/cl.exe
-CompilerVersion: 19.50.35717.0
+Compiler: C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Tools/MSVC/14.44.35207/bin/Hostx64/arm64/cl.exe
+CompilerVersion: 19.44.35220.0
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 

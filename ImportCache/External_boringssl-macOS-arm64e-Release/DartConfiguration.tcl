@@ -63,7 +63,7 @@ UpdateOptions:
 UpdateType: git
 
 # Compiler info
-Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchainc++
+Compiler: c++
 CompilerVersion: 17.0.0.17000404
 
 # Dynamic analysis (MemCheck)
