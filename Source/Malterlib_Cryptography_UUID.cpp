@@ -3,6 +3,7 @@
 
 #include "Malterlib_Cryptography_UUID.h"
 #include <Mib/Cryptography/Hashes/SHA>
+#include <Mib/Cryptography/SecureRandom>
 
 namespace NMib::NCryptography
 {
@@ -20,14 +21,8 @@ namespace NMib::NCryptography
 			break;
 		case EUniversallyUniqueIdentifierGenerate_Random:
 			{
-				uint32 Random = NMisc::fg_GetRandomUnsigned();
-				NMemory::fg_MemCopy((uint8 *)this, &Random, 4);
-				Random = NMisc::fg_GetRandomUnsigned();
-				NMemory::fg_MemCopy((uint8 *)this + 4, &Random, 4);
-				Random = NMisc::fg_GetRandomUnsigned();
-				NMemory::fg_MemCopy((uint8 *)this + 8, &Random, 4);
-				Random = NMisc::fg_GetRandomUnsigned();
-				NMemory::fg_MemCopy((uint8 *)this + 12, &Random, 4);
+				static_assert(sizeof(*this) == 16 && NTraits::cIsTriviallyCopyAssignable<CUniversallyUniqueIdentifier>);
+				NMisc::fg_SecureRandomThreadLocal().f_GetBytes((uint8 *)this, 16);
 
 				m_TimeHiAndVersion &= 0x0FFF;
 				m_TimeHiAndVersion |= ((4) << 12);
@@ -131,7 +126,7 @@ namespace NMib::NCryptography
 	{
 		return fg_GetUUIDAsString<NStr::CStr>(*this, _Format);
 	}
-	
+
 	NStr::CFStr256 CUniversallyUniqueIdentifier::f_GetAsStaticString(EUniversallyUniqueIdentifierFormat _Format)
 	{
 		return fg_GetUUIDAsString<NStr::CFStr256>(*this, _Format);
