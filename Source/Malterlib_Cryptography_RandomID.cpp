@@ -1,6 +1,7 @@
 
 #include "Malterlib_Cryptography_RandomID.h"
 #include <Mib/String/Appender>
+#include <Mib/Cryptography/SecureRandom>
 
 namespace NMib::NCryptography
 {
@@ -60,6 +61,14 @@ namespace NMib::NCryptography
 			}
 		};
 
+		struct CNewBytesSecure
+		{
+			static void fs_NewBytes(uint8 *o_pBytes)
+			{
+				NMisc::fg_SecureRandomThreadLocal().f_GetBytes(o_pBytes, 8);
+			}
+		};
+
 		struct CNewBytesHighEntropy
 		{
 			static void fs_NewBytes(uint8 *o_pBytes)
@@ -68,6 +77,7 @@ namespace NMib::NCryptography
 			}
 		};
 
+		using CUniformIntDistributionSecure = TCUniformIntDistribution<8, CNewBytesSecure>;
 		using CUniformIntDistribution = TCUniformIntDistribution<4, CNewBytesRandom>;
 		using CUniformIntDistributionHighEntropy = TCUniformIntDistribution<8, CNewBytesHighEntropy>;
 	}
@@ -78,7 +88,8 @@ namespace NMib::NCryptography
 		{
 			NStr::CStr::CAppender Appender(Return);
 
-			CUniformIntDistribution RandomDistribution(gc_nChars);
+			// Use ChaCha20-based secure random (fast and cryptographically secure)
+			CUniformIntDistributionSecure RandomDistribution(gc_nChars);
 			for (mint i = 0; i < _Len; ++i)
 				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
@@ -109,7 +120,8 @@ namespace NMib::NCryptography
 		{
 			NStr::CStrSecure::CAppender Appender(Return);
 
-			CUniformIntDistribution RandomDistribution(nChars);
+			// Use ChaCha20-based secure random (fast and cryptographically secure)
+			CUniformIntDistributionSecure RandomDistribution(nChars);
 			for (mint i = 0; i < _Len; ++i)
 				Appender += _pCharacters[RandomDistribution()];
 		}
@@ -127,6 +139,39 @@ namespace NMib::NCryptography
 			NStr::CStrSecure::CAppender Appender(Return);
 
 			CUniformIntDistributionHighEntropy RandomDistribution(nChars);
+			for (mint i = 0; i < _Len; ++i)
+				Appender += _pCharacters[RandomDistribution()];
+		}
+
+		return Return;
+	}
+
+	NStr::CStr fg_FastRandomID(mint _Len)
+	{
+		NStr::CStr Return;
+		{
+			NStr::CStr::CAppender Appender(Return);
+
+			// Use fast XorShift RNG (not cryptographically secure, but very fast)
+			CUniformIntDistribution RandomDistribution(gc_nChars);
+			for (mint i = 0; i < _Len; ++i)
+				Appender += gc_UnmistakableChars[RandomDistribution()];
+		}
+
+		return Return;
+	}
+
+	NStr::CStrSecure fg_FastRandomID(ch8 const *_pCharacters, mint _Len)
+	{
+		mint nChars = NStr::fg_StrLen(_pCharacters);
+		DMibFastCheck(nChars > 0);
+
+		NStr::CStrSecure Return;
+		{
+			NStr::CStrSecure::CAppender Appender(Return);
+
+			// Use fast XorShift RNG (not cryptographically secure, but very fast)
+			CUniformIntDistribution RandomDistribution(nChars);
 			for (mint i = 0; i < _Len; ++i)
 				Appender += _pCharacters[RandomDistribution()];
 		}

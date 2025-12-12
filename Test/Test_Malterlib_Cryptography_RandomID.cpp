@@ -96,6 +96,30 @@ namespace
 						}
 					>("HighEntropyRandomID 5", 5)
 				;
+				f_Test
+					<
+						[](mint _Len)
+						{
+							return fg_FastRandomID(_Len);
+						}
+					>("FastRandomID", 55)
+				;
+				f_Test
+					<
+						[](mint _Len)
+						{
+							return fg_FastRandomID("1234", _Len);
+						}
+					>("FastRandomID 4", 4)
+				;
+				f_Test
+					<
+						[](mint _Len)
+						{
+							return fg_FastRandomID("12345", _Len);
+						}
+					>("FastRandomID 5", 5)
+				;
 			};
 		}
 	};

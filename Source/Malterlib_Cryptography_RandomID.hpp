@@ -12,4 +12,14 @@ namespace NMib::NCryptography
 
 		return RandomID;
 	}
+
+	template <typename tf_CContainer>
+	NStr::CStr fg_FastRandomID(tf_CContainer &_AssociativeContainer, mint _nCharacters)
+	{
+		NStr::CStr RandomID = fg_FastRandomID(_nCharacters);
+		while (_AssociativeContainer.f_FindEqual(RandomID))
+			RandomID = fg_FastRandomID(_nCharacters);
+
+		return RandomID;
+	}
 }
