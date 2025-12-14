@@ -33,18 +33,18 @@ namespace NMib::NCryptography
 		}
 
 	private:
-		static constexpr mint mc_BlockSize = 64;                    // ChaCha20 block size (512 bits)
-		static constexpr mint mc_ReseedThreshold = 1024 * 1024;     // Reseed every 1MB for forward secrecy
+		static constexpr mint mcp_BlockSize = 64;                    // ChaCha20 block size (512 bits)
+		static constexpr mint mcp_ReseedThreshold = 1024 * 1024;     // Reseed every 1MB for forward secrecy
 
 		void fp_Reseed();
 		void fp_GenerateBlock();
 
 		// Members ordered to avoid padding: buffer first (cache-line aligned), then key (32-byte aligned)
-		uint8 align_cacheline mp_Buffer[mc_BlockSize];	// ChaCha20 block cache (cache-line aligned for optimal access)
+		uint8 align_cacheline mp_Buffer[mcp_BlockSize];	// ChaCha20 block cache (cache-line aligned for optimal access)
 		alignas(32) uint8 mp_Key[32];					// 256-bit key from OS CSPRNG (32-byte aligned for SIMD)
 		uint8 mp_Nonce[12];								// 96-bit nonce from OS CSPRNG
 		uint32 mp_Counter = 0;							// Block counter
-		mint mp_BufferPos = mc_BlockSize;				// Current position in buffer (mc_BlockSize = empty)
+		mint mp_BufferPos = mcp_BlockSize;				// Current position in buffer (mc_BlockSize = empty)
 		mint mp_BytesGenerated = 0;						// Bytes generated (in whole blocks) since last reseed
 	};
 
