@@ -87,7 +87,7 @@ The Cryptography module provides comprehensive cryptographic functionality for t
 ### Running Module Tests
 ```bash
 # Build tests
-./mib build Tests macOS x86_64 Debug
+MalterlibBuildShowProgress=false ./mib build Tests macOS arm64 Debug
 
 # Run all cryptography tests
 /opt/Deploy/Tests/RunAllTests --paths '["Cryptography/*"]'
@@ -129,7 +129,7 @@ The Cryptography module provides comprehensive cryptographic functionality for t
 
 ### Platform Differences
 - **Windows**: Uses CryptoAPI for system certificate store
-- **macOS**: Uses Security framework for keychain integration  
+- **macOS**: Uses Security framework for keychain integration
 - **Linux**: Uses OpenSSL-compatible certificate paths
 - **Assembly**: Platform-specific optimizations (currently Windows x64 only)
 
