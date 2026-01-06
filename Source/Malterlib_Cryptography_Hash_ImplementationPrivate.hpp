@@ -1,4 +1,4 @@
-// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #pragma once
@@ -25,7 +25,7 @@ namespace NMib::NCryptography
 	{
 		mp_Implementation.f_Reset();
 	}
-	
+
 	template <typename t_CHashImpl>
 	auto TCHashImpl<t_CHashImpl>::fs_DigestFromData(void const *_pData, mint _Len) -> CMessageDigest
 	{

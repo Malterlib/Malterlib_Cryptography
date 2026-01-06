@@ -317,5 +317,5 @@ namespace NMib::NCryptography
 	uint32 CIncrementalEncrypt::f_FinalizePaddedDecrypt(uint8 *_pDest, uint32 _DestLen)
 	{
 		return mp_pInternal->f_FinalizePaddedDecrypt(_pDest, _DestLen);
-	}	
+	}
 }

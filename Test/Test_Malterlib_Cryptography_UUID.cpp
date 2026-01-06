@@ -1,4 +1,4 @@
-// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #include <Mib/Cryptography/UUID>
@@ -53,7 +53,7 @@ namespace
 						, DMibErrorInstance("EUniversallyUniqueIdentifierFormat_AlphaNum parsing of GUID not supported")
 					)
 				;
-				
+
 				DMibExpect(SecureRandom0, !=, SecureRandom1);
 				DMibExpect(Random0, !=, Random1);
 				DMibExpect(StringHash0, !=, StringHash1);

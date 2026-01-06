@@ -1,4 +1,4 @@
-// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #include <Mib/Core/Core>
@@ -40,13 +40,13 @@ public:
 			auto &ServerExtensionCritical = ServerOptions.m_Extensions["MalterlibTest"].f_Insert();
 			ServerExtensionCritical.m_Value = "Test1";
 			ServerExtensionCritical.m_bCritical = true;
-			
+
 			CCertificate::fs_GenerateSelfSignedCertAndKey(ServerOptions, ServerPublicCertificateData, ServerPrivateKeyData);
 
 			auto ServerHostNames = CCertificate::fs_GetCertificateHostnames(ServerPublicCertificateData, false);
 			auto ServerExtensions = CCertificate::fs_GetCertificateExtensions(ServerPublicCertificateData);
 			auto Info = CCertificate::fs_GetCertificateDescription(ServerPublicCertificateData);
-			
+
 			DMibExpect(ServerHostNames, ==, fg_CreateVector<CStr>("localhost1", "localhost2"));
 			DMibExpect(ServerExtensions["MalterlibTest"], ==, ServerOptions.m_Extensions["MalterlibTest"]);
 
@@ -64,14 +64,14 @@ public:
 				auto &ClientExtensionCritical = ClientOptions.m_Extensions["MalterlibTest"].f_Insert();
 				ClientExtensionCritical.m_Value = "Test3";
 				ClientExtensionCritical.m_bCritical = true;
-				
+
 				CByteVector CertificateRequestData;
 				CCertificate::fs_GenerateClientCertificateRequest(ClientOptions, CertificateRequestData, ClientPrivateKeyData);
 				CCertificate::fs_SignClientCertificate(ServerPublicCertificateData, ServerPrivateKeyData, CertificateRequestData, ClientPublicCertificateData);
-				
+
 				auto ClientHostNames = CCertificate::fs_GetCertificateHostnames(ClientPublicCertificateData, false);
 				auto ClientExtensions = CCertificate::fs_GetCertificateExtensions(ClientPublicCertificateData);
-				
+
 				DMibExpect(ClientHostNames, ==, fg_CreateVector<CStr>("localhost4", "localhost5"));
 				DMibExpect(ClientExtensions["MalterlibTest"], ==, ClientOptions.m_Extensions["MalterlibTest"]);
 			}
@@ -79,7 +79,7 @@ public:
 				DMibTestPath("Extensions only");
 				CByteVector ClientPublicCertificateData;
 				CSecureByteVector ClientPrivateKeyData;
-				
+
 				CCertificateOptions ClientOptions;
 				ClientOptions.m_CommonName = "localhost3";
 				ClientOptions.m_KeySetting = TestKeySetting;
@@ -89,13 +89,13 @@ public:
 				auto &ClientExtensionCritical = ClientOptions.m_Extensions["MalterlibTest"].f_Insert();
 				ClientExtensionCritical.m_Value = "Test3";
 				ClientExtensionCritical.m_bCritical = true;
-				
+
 				CByteVector CertificateRequestData;
 				CCertificate::fs_GenerateClientCertificateRequest(ClientOptions, CertificateRequestData, ClientPrivateKeyData);
 				CCertificate::fs_SignClientCertificate(ServerPublicCertificateData, ServerPrivateKeyData, CertificateRequestData, ClientPublicCertificateData);
-				
+
 				auto ClientExtensions = CCertificate::fs_GetCertificateExtensions(ClientPublicCertificateData);
-				
+
 				DMibExpect(ClientExtensions["MalterlibTest"], ==, ClientOptions.m_Extensions["MalterlibTest"]);
 			}
 		};

@@ -1,4 +1,4 @@
-// Copyright © 2015 Hansoft AB 
+// Copyright © 2015 Hansoft AB
 // Distributed under the MIT license, see license text in LICENSE.Malterlib
 
 #include <Mib/Core/Core>
@@ -30,25 +30,25 @@ public:
 		DMibTestSuite("EncryptAES")
 		{
 			CStrSecure Password("MalterlibPasswordTest");
-			
+
 			CSecureByteVector Salt = f_GetRandomBuffer(8, 1);
 
 			CEncryptAES EncryptAES(CEncryptKeyIV::fs_GenerateKeyIV(Password, Salt, CKeyDerivationSettings_PKCS5_Deprecated{}));
-			
+
 			CByteVector PlainText;
 			CByteVector Decrypted;
 			CByteVector Encrypted;
-			
+
 			PlainText = f_GetRandomBuffer(32, 7).f_ToInsecure();
 
 			uint32 EncryptedLen = EncryptAES.f_Encrypt(PlainText.f_GetArray(), PlainText.f_GetLen(), Encrypted.f_GetArray(32));
 			uint32 DecryptedLen = EncryptAES.f_Decrypt(Encrypted.f_GetArray(), Encrypted.f_GetLen(), Decrypted.f_GetArray(32));
-			
+
 			DMibExpect(EncryptedLen, ==, DecryptedLen);
 			DMibExpect(Decrypted, ==, PlainText);
 			DMibExpect(Encrypted, !=, PlainText);
 			DMibExpect(Decrypted, !=, Encrypted);
-			
+
 			{
 				DMibTestPath("IncorrectPassword");
 				CStrSecure IncorrectPassword("MalterlibPasswordTest2");
@@ -56,7 +56,7 @@ public:
 				EncryptAES1.f_Decrypt(Encrypted.f_GetArray(), Encrypted.f_GetLen(), Decrypted.f_GetArray());
 				DMibExpect(Decrypted, !=, PlainText);
 			}
-			
+
 			{
 				DMibTestPath("IncorrectSalt");
 				CSecureByteVector IncorrectSalt = f_GetRandomBuffer(8, 2);
@@ -65,14 +65,14 @@ public:
 				EncryptAES2.f_Decrypt(Encrypted.f_GetArray(), Encrypted.f_GetLen(), Decrypted.f_GetArray());
 				DMibExpect(Decrypted, !=, PlainText);
 			}
-			
+
 			{
 				DMibTestPath("Unaligned Plaintext");
 				CByteVector Unaligned;
 				Unaligned.f_SetLen(14);
-				
+
 				CEncryptAES EncryptAES3(CEncryptKeyIV::fs_GenerateKeyIV(Password, Salt, CKeyDerivationSettings_PKCS5_Deprecated{}));
-				
+
 				DMibTest
 					(
 						DMibExpr(TCThrowsException<NException::CException>())
@@ -80,25 +80,25 @@ public:
 					)
 				;
 			}
-			
+
 			{
 				DMibTestPath("Compare with OpenSSL enc");
-				
+
 				uint8 EncryptedByOpenSSL[] =
 					{
 						0x7e, 0x26, 0x44, 0x27, 0x23, 0x58, 0xfd, 0x32, 0xfa, 0x46, 0x80, 0xdc, 0xc0, 0x99, 0x45, 0x03,
 						0x0d, 0x87, 0x20, 0xfc, 0x40, 0x5e, 0xb9, 0xd6, 0xed, 0xb9, 0x61, 0xc3, 0x98, 0x63, 0x58, 0xe8
 					}
 				;
-				
+
 				CByteVector EncryptedOpenSSL;
 				EncryptedOpenSSL.f_SetLen(32);
 				NMemory::fg_MemCopy(EncryptedOpenSSL.f_GetArray(), EncryptedByOpenSSL, 32);
-				
+
 				CByteVector ToEncrypt;
 				ToEncrypt.f_SetLen(32);
 				NMemory::fg_MemClear(ToEncrypt.f_GetArray(), ToEncrypt.f_GetLen());
-				
+
 				NStr::CStrSecure OpenSSLPassword("ABCDEFGH");
 				CEncryptAES EncryptAES4
 					(
@@ -108,7 +108,7 @@ public:
 
 				EncryptAES4.f_Encrypt(ToEncrypt.f_GetArray(), ToEncrypt.f_GetLen(), Encrypted.f_GetArray());
 				DMibExpect(EncryptedOpenSSL, ==, Encrypted);
-				
+
 				EncryptAES4.f_Decrypt(EncryptedOpenSSL.f_GetArray(), EncryptedOpenSSL.f_GetLen(), Decrypted.f_GetArray());
 				DMibExpect(Decrypted, ==, ToEncrypt);
 			}

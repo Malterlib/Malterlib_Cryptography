@@ -5,7 +5,7 @@
 namespace NMib::NCryptography
 {
 	using namespace NBoringSSL;
-	
+
 	CEncryptKeyIV::CEncryptKeyIV(NContainer::CSecureByteVector const &_Key, NContainer::CSecureByteVector const &_IV, ECryptoType _Crypto)
 		: m_Key(_Key)
 		, m_IV(_IV)
@@ -256,5 +256,5 @@ namespace NMib::NCryptography
 				}
 			)
 		;
-	}	
+	}
 }
