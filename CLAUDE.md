@@ -87,13 +87,13 @@ The Cryptography module provides comprehensive cryptographic functionality for t
 ### Running Module Tests
 ```bash
 # Build tests
-MalterlibBuildShowProgress=false ./mib build Tests macOS arm64 Debug
+MalterlibBuildShowProgress=false ./mib build Tests
 
 # Run all cryptography tests
-/opt/Deploy/Tests/RunAllTests --paths '["Cryptography/*"]'
+/opt/Deploy/Tests/RunAllTests --paths '["Malterlib/Cryptography/*"]'
 
 # Run specific test
-/opt/Deploy/Tests/RunAllTests --paths '["Cryptography/Certificate"]'
+/opt/Deploy/Tests/RunAllTests --paths '["Malterlib/Cryptography/Certificate"]'
 ```
 
 ## Important Files
