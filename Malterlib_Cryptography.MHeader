@@ -78,7 +78,6 @@ Import "../Core/Lib_Malterlib.MTarget"
 		&
 		{
 			PlatformFamily "Linux"
-			!HostPlatformFamily "Linux"
 		}
 	}
 	Import.CMake_Variables =+ "OPENSSL_NO_ASM=ON"
@@ -285,7 +284,7 @@ Import
 			%File "Documentation/*"
 		}
 	}
-	
+
 	%Dependency "Lib_BoringSSL_crypto"
 	{
 		&
