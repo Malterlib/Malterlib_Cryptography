@@ -60,12 +60,12 @@ namespace
 							Digest2 = fg_Move(Hash).f_GetDigest();
 						}
 					}
-					DMibTrace("Malterlib{}: {}\n", t_pName << Digest2.f_GetString());
+					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
 
 					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
 					fp64 DigestsSec = (fp64(nTests) / TimerAlloc.f_GetTime());
 
-					DMibTrace("Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName << nTests << TimerAlloc.f_GetTime() << DigestsSec << MiBSec);
+					DMibTrace("Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName, nTests, TimerAlloc.f_GetTime(), DigestsSec, MiBSec);
 				}
 				{
 					int TestSize = 64; // 512 MB creation test
@@ -92,12 +92,12 @@ namespace
 							Digest2 = fg_Move(Hash).f_GetDigest();
 						}
 					}
-					DMibTrace("Malterlib{}: {}\n", t_pName << Digest2.f_GetString());
+					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
 
 					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
 					fp64 DigestsSec = (fp64(nTests) / TimerAlloc.f_GetTime());
 
-					DMibTrace("Reset Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName << nTests << TimerAlloc.f_GetTime() << DigestsSec << MiBSec);
+					DMibTrace("Reset Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName, nTests, TimerAlloc.f_GetTime(), DigestsSec, MiBSec);
 				}
 
 				{
@@ -121,11 +121,11 @@ namespace
 							Hash.f_AddData(Data.f_GetArray(), TestSize);
 						Digest2 = Hash;
 					}
-					DMibTrace("Malterlib{}: {}\n", t_pName << Digest2.f_GetString());
+					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
 
 					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
 
-					DMibTrace("Malterlib{} of {} MiB of data in {} seconds: Performance {} MiB/second\n", t_pName << (TestSize*nTests)/(1024*1024) << TimerAlloc.f_GetTime() << MiBSec);
+					DMibTrace("Malterlib{} of {} MiB of data in {} seconds: Performance {} MiB/second\n", t_pName, (TestSize*nTests)/(1024*1024), TimerAlloc.f_GetTime(), MiBSec);
 				}
 
 				{
@@ -152,11 +152,11 @@ namespace
 							Hash.f_AddData(Data.f_GetArray(), TestSize);
 						Digest2 = Hash;
 					}
-					DMibTrace("Malterlib{}: {}\n", t_pName << Digest2.f_GetString());
+					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
 
 					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
 
-					DMibTrace("Malterlib{} of {} MiB of cached data in {} seconds: Performance {} MiB/second\n", t_pName << (TestSize*nTests)/(1024*1024) << TimerAlloc.f_GetTime() << MiBSec);
+					DMibTrace("Malterlib{} of {} MiB of cached data in {} seconds: Performance {} MiB/second\n", t_pName, (TestSize*nTests)/(1024*1024), TimerAlloc.f_GetTime(), MiBSec);
 				}
 #endif
 			};
