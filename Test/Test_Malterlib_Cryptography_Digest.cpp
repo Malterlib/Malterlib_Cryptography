@@ -47,12 +47,12 @@ namespace
 
 					int nTests = 256 * 1024;
 
-					NMib::NTime::CTimerMin TimerAlloc;
+					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
 
 					CHashDigest Digest2;
 
 					{
-						DMibScopeTimerMin(TimerAlloc);
+						DMibScopePerfTimeMeasureMin(TimerAlloc);
 						for (int i = 0; i < nTests; ++i)
 						{
 							CHash Hash;
@@ -78,13 +78,13 @@ namespace
 
 					int nTests = 256 * 1024;
 
-					NMib::NTime::CTimerMin TimerAlloc;
+					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
 
 					CHashDigest Digest2;
 
 					{
 						CHash Hash;
-						DMibScopeTimerMin(TimerAlloc);
+						DMibScopePerfTimeMeasureMin(TimerAlloc);
 						for (int i = 0; i < nTests; ++i)
 						{
 							Hash.f_Reset();
@@ -111,11 +111,11 @@ namespace
 
 					int nTests = 1;
 
-					NMib::NTime::CTimerMin TimerAlloc;
+					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
 					CHashDigest Digest2;
 
 					{
-						DMibScopeTimerMin(TimerAlloc);
+						DMibScopePerfTimeMeasureMin(TimerAlloc);
 						Hash.f_Reset();
 						for (int i = 0; i < nTests; ++i)
 							Hash.f_AddData(Data.f_GetArray(), TestSize);
@@ -142,11 +142,11 @@ namespace
 					Hash.f_AddData(Data.f_GetArray(), TestSize);
 					int nTests = 128 * 1024;
 
-					NMib::NTime::CTimerMin TimerAlloc;
+					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
 					CHashDigest Digest2;
 
 					{
-						DMibScopeTimerMin(TimerAlloc);
+						DMibScopePerfTimeMeasureMin(TimerAlloc);
 						Hash.f_Reset();
 						for (int i = 0; i < nTests; ++i)
 							Hash.f_AddData(Data.f_GetArray(), TestSize);
