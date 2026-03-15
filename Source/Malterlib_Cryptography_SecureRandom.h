@@ -24,6 +24,12 @@ namespace NMib::NCryptography
 
 		void f_GetBytes(uint8 *_pOut, mint _nBytes);
 
+		// Reseed from OS CSPRNG
+		void f_Reseed();
+
+		// Reseed with a predetermined seed (for reproducible sequences, NOT cryptographically secure)
+		void f_InsecureDeterministicReseed(uint64 _Seed);
+
 		template <typename t_CInt>
 		t_CInt f_GetValue()
 		{
@@ -45,7 +51,7 @@ namespace NMib::NCryptography
 		uint8 mp_Nonce[12];								// 96-bit nonce from OS CSPRNG
 		uint32 mp_Counter = 0;							// Block counter
 		mint mp_BufferPos = mcp_BlockSize;				// Current position in buffer (mc_BlockSize = empty)
-		mint mp_BytesGenerated = 0;						// Bytes generated (in whole blocks) since last reseed
+		mint mp_BytesGenerated = 0;						// Bytes generated (in whole blocks) since last reseed, mcp_ReseedThreshold*2 = deterministic mode
 	};
 
 }
