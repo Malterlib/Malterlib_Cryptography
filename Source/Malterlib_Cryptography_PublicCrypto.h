@@ -24,29 +24,29 @@ namespace NMib::NCryptography
 		{
 		}
 
-		auto operator <=> (CPublicKeySettings_RSA const &_Right) const = default;
+		auto operator <=> (CPublicKeySettings_RSA const &_Right) const noexcept = default;
 
 		uint32 m_KeyLength = 4096;
 	};
 
 	struct CPublicKeySettings_EC_secp256r1
 	{
-		auto operator <=> (CPublicKeySettings_EC_secp256r1 const &_Right) const = default;
+		auto operator <=> (CPublicKeySettings_EC_secp256r1 const &_Right) const noexcept = default;
 	};
 
 	struct CPublicKeySettings_EC_secp384r1
 	{
-		auto operator <=> (CPublicKeySettings_EC_secp384r1 const &_Right) const = default;
+		auto operator <=> (CPublicKeySettings_EC_secp384r1 const &_Right) const noexcept = default;
 	};
 
 	struct CPublicKeySettings_EC_secp521r1
 	{
-		auto operator <=> (CPublicKeySettings_EC_secp521r1 const &_Right) const = default;
+		auto operator <=> (CPublicKeySettings_EC_secp521r1 const &_Right) const noexcept = default;
 	};
 
 	struct CPublicKeySettings_EC_X25519
 	{
-		auto operator <=> (CPublicKeySettings_EC_X25519 const &_Right) const = default;
+		auto operator <=> (CPublicKeySettings_EC_X25519 const &_Right) const noexcept = default;
 	};
 
 	using CPublicKeySetting = NStorage::TCStreamableVariant

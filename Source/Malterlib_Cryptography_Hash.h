@@ -36,10 +36,10 @@ namespace NMib::NCryptography
 		constexpr bool f_IsCleared() const;
 
 		constexpr aint f_Compare(TCMessageDigest const &_Other) const;
-		constexpr bool operator == (TCMessageDigest const &_Src) const;
-		constexpr bool operator == (t_CHash const &_Src) const;
-		constexpr COrdering_Strong operator <=> (TCMessageDigest const &_Src) const;
-		constexpr COrdering_Strong operator <=> (t_CHash const &_Src) const;
+		constexpr bool operator == (TCMessageDigest const &_Src) const noexcept;
+		constexpr bool operator == (t_CHash const &_Src) const noexcept;
+		constexpr COrdering_Strong operator <=> (TCMessageDigest const &_Src) const noexcept;
+		constexpr COrdering_Strong operator <=> (t_CHash const &_Src) const noexcept;
 
 		constexpr uint8 *f_GetData();
 		constexpr uint8 const *f_GetData() const;

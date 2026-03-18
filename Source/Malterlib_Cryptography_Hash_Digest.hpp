@@ -75,7 +75,7 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const TCMessageDigest &_Src) const
+	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const TCMessageDigest &_Src) const noexcept
 	{
 		if (NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size))
 			return false;
@@ -84,7 +84,7 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const t_CHash &_Src) const
+	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const t_CHash &_Src) const noexcept
 	{
 		TCMessageDigest Temp = _Src;
 
@@ -92,13 +92,13 @@ namespace NMib::NCryptography
 	}
 
 	template <mint t_Size, typename t_CHash>
-	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const TCMessageDigest &_Src) const
+	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const TCMessageDigest &_Src) const noexcept
 	{
 		return NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size) <=> 0;
 	}
 
 	template <mint t_Size, typename t_CHash>
-	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const t_CHash &_Src) const
+	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const t_CHash &_Src) const noexcept
 	{
 		TCMessageDigest Temp = _Src;
 

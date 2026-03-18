@@ -49,7 +49,7 @@ namespace NMib::NCryptography
 
 		static CUniversallyUniqueIdentifier fs_Empty();
 
-		auto operator <=> (CUniversallyUniqueIdentifier const &_Right) const = default;
+		auto operator <=> (CUniversallyUniqueIdentifier const &_Right) const noexcept = default;
 
 	private:
 		constexpr CUniversallyUniqueIdentifier();
