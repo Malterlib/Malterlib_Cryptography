@@ -4,7 +4,7 @@
 
 namespace NMib::NCryptography
 {
-	void fg_GenerateRandomData(uint8 *_pData, mint _nBytes)
+	void fg_GenerateRandomData(uint8 *_pData, umint _nBytes)
 	{
 		NMisc::fg_SecureRandomThreadLocal().f_GetBytes(_pData, _nBytes);
 	}

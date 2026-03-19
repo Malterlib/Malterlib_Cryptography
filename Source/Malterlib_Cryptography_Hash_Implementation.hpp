@@ -6,7 +6,7 @@
 namespace NMib::NCryptography
 {
 	template <typename t_CHashImpl>
-	inline_small void TCHashImpl<t_CHashImpl>::f_AddData(void const *_pData, mint _Len)
+	inline_small void TCHashImpl<t_CHashImpl>::f_AddData(void const *_pData, umint _Len)
 	{
 		mp_Implementation.f_AddData(_pData, _Len);
 	}

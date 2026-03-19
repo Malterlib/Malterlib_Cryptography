@@ -5,7 +5,7 @@
 
 namespace NMib::NCryptography
 {
-	NStr::CStrSecure fg_RandomID(ch8 const *_pCharacters, mint _Len);
+	NStr::CStrSecure fg_RandomID(ch8 const *_pCharacters, umint _Len);
 }
 
 namespace
@@ -18,7 +18,7 @@ namespace
 	struct CRandomID_Tests : public CTest
 	{
 		template <auto tf_fGetID>
-		void f_Test(CStr const &_Name, mint _nChars)
+		void f_Test(CStr const &_Name, umint _nChars)
 		{
 			DMibTestCategory(_Name)
 			{
@@ -35,9 +35,9 @@ namespace
 				};
 				DMibTestCategory("Distribution")
 				{
-					mint nIDs = _nChars * 100;
+					umint nIDs = _nChars * 100;
 					TCMap<CStrSecure, zmint> Distribution;
-					for (mint i = 0; i < nIDs; ++i)
+					for (umint i = 0; i < nIDs; ++i)
 						++Distribution[tf_fGetID(1)];
 					DMibExpect(Distribution.f_GetLen(), ==, _nChars);
 				};
@@ -50,7 +50,7 @@ namespace
 			{
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_RandomID(_Len);
 						}
@@ -58,7 +58,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_HighEntropyRandomID(_Len);
 						}
@@ -66,7 +66,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_RandomID("1234", _Len);
 						}
@@ -74,7 +74,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_RandomID("12345", _Len);
 						}
@@ -82,7 +82,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_HighEntropyRandomID("1234", _Len);
 						}
@@ -90,7 +90,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_HighEntropyRandomID("12345", _Len);
 						}
@@ -98,7 +98,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_FastRandomID(_Len);
 						}
@@ -106,7 +106,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_FastRandomID("1234", _Len);
 						}
@@ -114,7 +114,7 @@ namespace
 				;
 				f_Test
 					<
-						[](mint _Len)
+						[](umint _Len)
 						{
 							return fg_FastRandomID("12345", _Len);
 						}

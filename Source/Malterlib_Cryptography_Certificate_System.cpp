@@ -187,7 +187,7 @@ namespace NMib::NCryptography
 						}
 					;
 
-					for (mint i = 0; i < CFArrayGetCount(pTrustSettings); ++i)
+					for (umint i = 0; i < CFArrayGetCount(pTrustSettings); ++i)
 					{
 						CFDictionaryRef pTrustDictionary = reinterpret_cast<CFDictionaryRef>(const_cast<void*>(CFArrayGetValueAtIndex(pTrustSettings, i)));
 
@@ -219,7 +219,7 @@ namespace NMib::NCryptography
 
 			auto fAddTrustStore = [&](CFArrayRef pCerts, SecTrustSettingsDomain _Domain)
 				{
-					for (mint i = 0; i < CFArrayGetCount(pCerts); ++i)
+					for (umint i = 0; i < CFArrayGetCount(pCerts); ++i)
 					{
 						SecCertificateRef pCertRef = reinterpret_cast<SecCertificateRef>(const_cast<void*>(CFArrayGetValueAtIndex(pCerts, i)));
 						X509 *pCertificate;
@@ -231,7 +231,7 @@ namespace NMib::NCryptography
 
 							{
 								unsigned const char *pDERCert = CFDataGetBytePtr(DERCert);
-								mint DataLength = CFDataGetLength(DERCert);
+								umint DataLength = CFDataGetLength(DERCert);
 								pCertificate = d2i_X509(nullptr, &pDERCert, DataLength);
 							}
 							CFRelease(DERCert);
@@ -246,7 +246,7 @@ namespace NMib::NCryptography
 
 							{
 								unsigned const char *pDERCert = certCSSMData.Data;
-								mint DataLength = certCSSMData.Length;
+								umint DataLength = certCSSMData.Length;
 								pCertificate = d2i_X509(nullptr, &pDERCert, DataLength);
 							}
 							DMibDeprecatedSuppressStop;
@@ -443,7 +443,7 @@ namespace NMib::NCryptography
 
 		STACK_OF(X509_OBJECT) *certs = X509_STORE_get0_objects(Globals.m_pSystemCertStore);
 		/* Look for exact match */
-		for (mint i = 0; i < sk_X509_OBJECT_num(certs); i++)
+		for (umint i = 0; i < sk_X509_OBJECT_num(certs); i++)
 		{
 			X509_OBJECT const *pObject = sk_X509_OBJECT_value(certs, i);
 			if (X509_OBJECT_get_type(pObject) != X509_LU_X509)

@@ -8,9 +8,9 @@ namespace NMib::NCryptography
 	namespace
 	{
 		constexpr ch8 gc_UnmistakableChars[] = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
-		constexpr mint gc_nChars = fg_ArraySize(gc_UnmistakableChars) - 1;
+		constexpr umint gc_nChars = fg_ArraySize(gc_UnmistakableChars) - 1;
 
-		template <mint t_nBytesCache, typename t_CNewBytes>
+		template <umint t_nBytesCache, typename t_CNewBytes>
 		struct TCUniformIntDistribution
 		{
 			TCUniformIntDistribution(uint8 _Max)
@@ -44,7 +44,7 @@ namespace NMib::NCryptography
 			}
 
 			uint8 m_Bytes[t_nBytesCache];
-			mint m_iByte = t_nBytesCache;
+			umint m_iByte = t_nBytesCache;
 			uint8 m_Max;
 			uint8 m_Mask;
 		};
@@ -82,7 +82,7 @@ namespace NMib::NCryptography
 		using CUniformIntDistributionHighEntropy = TCUniformIntDistribution<8, CNewBytesHighEntropy>;
 	}
 
-	NStr::CStr fg_RandomID(mint _Len)
+	NStr::CStr fg_RandomID(umint _Len)
 	{
 		NStr::CStr Return;
 		{
@@ -90,30 +90,30 @@ namespace NMib::NCryptography
 
 			// Use ChaCha20-based secure random (fast and cryptographically secure)
 			CUniformIntDistributionSecure RandomDistribution(gc_nChars);
-			for (mint i = 0; i < _Len; ++i)
+			for (umint i = 0; i < _Len; ++i)
 				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
 		return Return;
 	}
 
-	NStr::CStr fg_HighEntropyRandomID(mint _Len)
+	NStr::CStr fg_HighEntropyRandomID(umint _Len)
 	{
 		NStr::CStr Return;
 		{
 			NStr::CStr::CAppender Appender(Return);
 
 			CUniformIntDistributionHighEntropy RandomDistribution(gc_nChars);
-			for (mint i = 0; i < _Len; ++i)
+			for (umint i = 0; i < _Len; ++i)
 				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
 		return Return;
 	}
 
-	NStr::CStrSecure fg_RandomID(ch8 const *_pCharacters, mint _Len)
+	NStr::CStrSecure fg_RandomID(ch8 const *_pCharacters, umint _Len)
 	{
-		mint nChars = NStr::fg_StrLen(_pCharacters);
+		umint nChars = NStr::fg_StrLen(_pCharacters);
 		DMibFastCheck(nChars > 0);
 
 		NStr::CStrSecure Return;
@@ -122,16 +122,16 @@ namespace NMib::NCryptography
 
 			// Use ChaCha20-based secure random (fast and cryptographically secure)
 			CUniformIntDistributionSecure RandomDistribution(nChars);
-			for (mint i = 0; i < _Len; ++i)
+			for (umint i = 0; i < _Len; ++i)
 				Appender += _pCharacters[RandomDistribution()];
 		}
 
 		return Return;
 	}
 
-	NStr::CStrSecure fg_HighEntropyRandomID(ch8 const *_pCharacters, mint _Len)
+	NStr::CStrSecure fg_HighEntropyRandomID(ch8 const *_pCharacters, umint _Len)
 	{
-		mint nChars = NStr::fg_StrLen(_pCharacters);
+		umint nChars = NStr::fg_StrLen(_pCharacters);
 		DMibFastCheck(nChars > 0);
 
 		NStr::CStrSecure Return;
@@ -139,14 +139,14 @@ namespace NMib::NCryptography
 			NStr::CStrSecure::CAppender Appender(Return);
 
 			CUniformIntDistributionHighEntropy RandomDistribution(nChars);
-			for (mint i = 0; i < _Len; ++i)
+			for (umint i = 0; i < _Len; ++i)
 				Appender += _pCharacters[RandomDistribution()];
 		}
 
 		return Return;
 	}
 
-	NStr::CStr fg_FastRandomID(mint _Len)
+	NStr::CStr fg_FastRandomID(umint _Len)
 	{
 		NStr::CStr Return;
 		{
@@ -154,16 +154,16 @@ namespace NMib::NCryptography
 
 			// Use fast XorShift RNG (not cryptographically secure, but very fast)
 			CUniformIntDistribution RandomDistribution(gc_nChars);
-			for (mint i = 0; i < _Len; ++i)
+			for (umint i = 0; i < _Len; ++i)
 				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
 		return Return;
 	}
 
-	NStr::CStrSecure fg_FastRandomID(ch8 const *_pCharacters, mint _Len)
+	NStr::CStrSecure fg_FastRandomID(ch8 const *_pCharacters, umint _Len)
 	{
-		mint nChars = NStr::fg_StrLen(_pCharacters);
+		umint nChars = NStr::fg_StrLen(_pCharacters);
 		DMibFastCheck(nChars > 0);
 
 		NStr::CStrSecure Return;
@@ -172,7 +172,7 @@ namespace NMib::NCryptography
 
 			// Use fast XorShift RNG (not cryptographically secure, but very fast)
 			CUniformIntDistribution RandomDistribution(nChars);
-			for (mint i = 0; i < _Len; ++i)
+			for (umint i = 0; i < _Len; ++i)
 				Appender += _pCharacters[RandomDistribution()];
 		}
 

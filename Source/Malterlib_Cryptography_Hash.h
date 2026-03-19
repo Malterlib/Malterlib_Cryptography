@@ -21,7 +21,7 @@ namespace NMib::NCryptography
 		, EDigestType_SHA256_16	// Use first 16 bytes of SHA256
 	};
 
-	template <mint t_Size, typename t_CHash>
+	template <umint t_Size, typename t_CHash>
 	struct TCMessageDigest
 	{
 		constexpr TCMessageDigest();
@@ -48,14 +48,14 @@ namespace NMib::NCryptography
 		constexpr tf_CIntType f_FoldToInt() const;
 
 		static TCMessageDigest fs_FromString(ch8 const *_pString);
-		static TCMessageDigest fs_FromBytes(uint8 const *_pData, mint _Len);
+		static TCMessageDigest fs_FromBytes(uint8 const *_pData, umint _Len);
 
 		NStr::CStr f_GetString() const;
 		template <typename tf_CStr>
 		void f_Format(tf_CStr &o_String) const;
 		void f_ParseString(ch8 const *_pStr);
 
-		constexpr static mint mc_Size = t_Size;
+		constexpr static umint mc_Size = t_Size;
 
 	private:
 		uint8 mp_Data[t_Size] = {0};
@@ -64,7 +64,7 @@ namespace NMib::NCryptography
 	template <typename t_CHashImpl>
 	struct TCHashImpl
 	{
-		constexpr static mint mc_DigestSize = t_CHashImpl::mc_DigestSize;
+		constexpr static umint mc_DigestSize = t_CHashImpl::mc_DigestSize;
 
 		using CMessageDigest = TCMessageDigest<mc_DigestSize, TCHashImpl>;
 
@@ -75,13 +75,13 @@ namespace NMib::NCryptography
 		TCHashImpl &operator = (TCHashImpl &&);
 
 		void f_Reset();
-		inline_small void f_AddData(void const *_pData, mint _Len);
+		inline_small void f_AddData(void const *_pData, umint _Len);
 		void f_GetDigest(CMessageDigest &_Digest) const &;
 		void f_GetDigest(CMessageDigest &_Digest) &&;
 		CMessageDigest f_GetDigest() const &;
 		CMessageDigest f_GetDigest() &&;
 
-		static CMessageDigest fs_DigestFromData(void const *_pData, mint _Len);
+		static CMessageDigest fs_DigestFromData(void const *_pData, umint _Len);
 		static CMessageDigest fs_DigestFromData(NContainer::CByteVector const &_Data);
 		static CMessageDigest fs_DigestFromData(NContainer::CSecureByteVector const &_Data);
 		static CMessageDigest fs_DigestFromStream(NStream::CBinaryStream &_Stream);

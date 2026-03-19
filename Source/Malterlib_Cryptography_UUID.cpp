@@ -132,7 +132,7 @@ namespace NMib::NCryptography
 		return fg_GetUUIDAsString<NStr::CFStr256>(*this, _Format);
 	}
 
-	void CUniversallyUniqueIdentifier::fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen)
+	void CUniversallyUniqueIdentifier::fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, umint _DataLen)
 	{
 		CUniversallyUniqueIdentifier BigEndianNamespace = _Namespace;
 
@@ -147,7 +147,7 @@ namespace NMib::NCryptography
 		fp_CreateFromHash(Digest.f_GetData(), 5);
 	}
 
-	void CUniversallyUniqueIdentifier::fp_CreateFromMD5(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen)
+	void CUniversallyUniqueIdentifier::fp_CreateFromMD5(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, umint _DataLen)
 	{
 		CUniversallyUniqueIdentifier BigEndianNamespace = _Namespace;
 

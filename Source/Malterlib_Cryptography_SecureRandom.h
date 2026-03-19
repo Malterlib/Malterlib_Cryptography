@@ -22,7 +22,7 @@ namespace NMib::NCryptography
 		CSecureRandom(CSecureRandom const &) = delete;
 		CSecureRandom &operator=(CSecureRandom const &) = delete;
 
-		void f_GetBytes(uint8 *_pOut, mint _nBytes);
+		void f_GetBytes(uint8 *_pOut, umint _nBytes);
 
 		// Reseed from OS CSPRNG
 		void f_Reseed();
@@ -39,8 +39,8 @@ namespace NMib::NCryptography
 		}
 
 	private:
-		static constexpr mint mcp_BlockSize = 64;                    // ChaCha20 block size (512 bits)
-		static constexpr mint mcp_ReseedThreshold = 1024 * 1024;     // Reseed every 1MB for forward secrecy
+		static constexpr umint mcp_BlockSize = 64;                    // ChaCha20 block size (512 bits)
+		static constexpr umint mcp_ReseedThreshold = 1024 * 1024;     // Reseed every 1MB for forward secrecy
 
 		void fp_Reseed();
 		void fp_GenerateBlock();
@@ -50,8 +50,8 @@ namespace NMib::NCryptography
 		alignas(32) uint8 mp_Key[32];					// 256-bit key from OS CSPRNG (32-byte aligned for SIMD)
 		uint8 mp_Nonce[12];								// 96-bit nonce from OS CSPRNG
 		uint32 mp_Counter = 0;							// Block counter
-		mint mp_BufferPos = mcp_BlockSize;				// Current position in buffer (mc_BlockSize = empty)
-		mint mp_BytesGenerated = 0;						// Bytes generated (in whole blocks) since last reseed, mcp_ReseedThreshold*2 = deterministic mode
+		umint mp_BufferPos = mcp_BlockSize;				// Current position in buffer (mc_BlockSize = empty)
+		umint mp_BytesGenerated = 0;						// Bytes generated (in whole blocks) since last reseed, mcp_ReseedThreshold*2 = deterministic mode
 	};
 
 }

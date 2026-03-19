@@ -37,7 +37,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	void TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_FeedBytes(void const *_pMem, mint _nBytes)
+	void TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_FeedBytes(void const *_pMem, umint _nBytes)
 	{
 		fp_CheckOpen();
 
@@ -45,7 +45,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	void TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_ConsumeBytes(void *_pMem, mint _nBytes)
+	void TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_ConsumeBytes(void *_pMem, umint _nBytes)
 	{
 		DMibError("Stream does not support reading");
 	}
@@ -63,7 +63,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	mint TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_ContainerLengthLimit() const
+	umint TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_ContainerLengthLimit() const
 	{
 		DMibError("Stream does not support reading");
 		return 0;
@@ -117,7 +117,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	void TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_SetCacheSize(mint _CacheSize)
+	void TCBinaryStreamHashRef<t_CHash, t_CStreamType>::f_SetCacheSize(umint _CacheSize)
 	{
 	}
 
@@ -143,13 +143,13 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	void TCBinaryStreamHash<t_CHash, t_CStreamType>::f_FeedBytes(void const *_pMem, mint _nBytes)
+	void TCBinaryStreamHash<t_CHash, t_CStreamType>::f_FeedBytes(void const *_pMem, umint _nBytes)
 	{
 		mp_Hash.f_AddData(_pMem, _nBytes);
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	void TCBinaryStreamHash<t_CHash, t_CStreamType>::f_ConsumeBytes(void *_pMem, mint _nBytes)
+	void TCBinaryStreamHash<t_CHash, t_CStreamType>::f_ConsumeBytes(void *_pMem, umint _nBytes)
 	{
 		DMibError("Stream does not support reading");
 	}
@@ -167,7 +167,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	mint TCBinaryStreamHash<t_CHash, t_CStreamType>::f_ContainerLengthLimit() const
+	umint TCBinaryStreamHash<t_CHash, t_CStreamType>::f_ContainerLengthLimit() const
 	{
 		DMibError("Stream does not support reading");
 		return 0;
@@ -221,7 +221,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHash, typename t_CStreamType>
-	void TCBinaryStreamHash<t_CHash, t_CStreamType>::f_SetCacheSize(mint _CacheSize)
+	void TCBinaryStreamHash<t_CHash, t_CStreamType>::f_SetCacheSize(umint _CacheSize)
 	{
 	}
 
@@ -235,7 +235,7 @@ namespace NMib::NCryptography
 
 namespace NMib::NStream
 {
-	template <typename t_CStream, mint t_Size, typename t_CHash>
+	template <typename t_CStream, umint t_Size, typename t_CHash>
 	class TCBinaryStreamTypeReference<t_CStream, NCryptography::TCMessageDigest<t_Size, t_CHash>>
 	{
 	public:

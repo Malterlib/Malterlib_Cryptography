@@ -34,7 +34,7 @@ namespace NMib::NCryptography
 		uint64 m_Workload = 1 << 15; // (N)
 		uint64 m_Ratio = 8; // (r)
 		uint64 m_Parallel = 1; // (p)
-		mint m_MaxMemory = 1024 * 1024 * 64;
+		umint m_MaxMemory = 1024 * 1024 * 64;
 	};
 
 	struct CKeyDerivationSettings_PKCS5_PBKDF2_HMAC
@@ -94,7 +94,7 @@ namespace NMib::NCryptography
 			NStr::CStrSecure const &_Password
 			, NContainer::CSecureByteVector const &_PasswordSalt
 			, CKeyDerivationSettings const &_Settings
-			, mint _KeyLen
+			, umint _KeyLen
 		)
 	;
 
@@ -121,7 +121,7 @@ namespace NMib::NCryptography
 		CEncryptKeyIV f_GetKeyIV(ECryptoType _Crypto = ECryptoType_AES_256_CBC) const;
 		NContainer::CSecureByteVector f_GetHMACKey(EDigestType _Digest = EDigestType_SHA512) const;
 
-		NContainer::CSecureByteVector f_GetKey(NStr::CStr const &_Label, mint _Length) const;
+		NContainer::CSecureByteVector f_GetKey(NStr::CStr const &_Label, umint _Length) const;
 
 	private:
 		EDigestType mp_Digest = EDigestType_None;

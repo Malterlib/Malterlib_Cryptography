@@ -27,7 +27,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CHashImpl>
-	auto TCHashImpl<t_CHashImpl>::fs_DigestFromData(void const *_pData, mint _Len) -> CMessageDigest
+	auto TCHashImpl<t_CHashImpl>::fs_DigestFromData(void const *_pData, umint _Len) -> CMessageDigest
 	{
 		CMessageDigest Ret;
 		TCHashImpl Hash;

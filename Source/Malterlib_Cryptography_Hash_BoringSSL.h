@@ -8,10 +8,10 @@
 
 namespace NMib::NCryptography
 {
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	struct TCHashImpl_BoringSSL
 	{
-		constexpr static mint mc_DigestSize = t_DigestSize;
+		constexpr static umint mc_DigestSize = t_DigestSize;
 
 		TCHashImpl_BoringSSL();
 		~TCHashImpl_BoringSSL();
@@ -22,7 +22,7 @@ namespace NMib::NCryptography
 		TCHashImpl_BoringSSL &operator = (TCHashImpl_BoringSSL const &_Other);
 		TCHashImpl_BoringSSL &operator = (TCHashImpl_BoringSSL &&_Other);
 
-		void f_AddData(void const *_pData, mint _Len);
+		void f_AddData(void const *_pData, umint _Len);
 
 		template <typename tf_CDigest>
 		void f_GetDigest(tf_CDigest &o_Digest) const &;

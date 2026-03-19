@@ -17,11 +17,11 @@ namespace NMib::NCryptography
 		void f_Reset();
 		void f_Open(t_CHash *_pHash);
 		void f_Open(t_CHash &_Hash);
-		void f_FeedBytes(void const *_pMem, mint _nBytes);
-		void f_ConsumeBytes(void *_pMem, mint _nBytes);
+		void f_FeedBytes(void const *_pMem, umint _nBytes);
+		void f_ConsumeBytes(void *_pMem, umint _nBytes);
 		bool f_IsValid() const;
 		bool f_IsAtEndOfStream() const;
-		mint f_ContainerLengthLimit() const;
+		umint f_ContainerLengthLimit() const;
 
 		NStream::CFilePos f_GetLength() const;
 		NStream::CFilePos f_GetPosition() const;
@@ -32,7 +32,7 @@ namespace NMib::NCryptography
 		bool f_IsValidReadPosition(NStream::CFilePos _Pos) const;
 		void f_SetLength(NStream::CFilePos _Length);
 		void f_Flush(bool _bLocalCacheOnly);
-		void f_SetCacheSize(mint _CacheSize);
+		void f_SetCacheSize(umint _CacheSize);
 
 		CDigest f_GetDigest();
 
@@ -54,11 +54,11 @@ namespace NMib::NCryptography
 		TCBinaryStreamHash();
 
 		void f_Reset();
-		void f_FeedBytes(void const *_pMem, mint _nBytes);
-		void f_ConsumeBytes(void *_pMem, mint _nBytes);
+		void f_FeedBytes(void const *_pMem, umint _nBytes);
+		void f_ConsumeBytes(void *_pMem, umint _nBytes);
 		bool f_IsValid() const;
 		bool f_IsAtEndOfStream() const;
-		mint f_ContainerLengthLimit() const;
+		umint f_ContainerLengthLimit() const;
 
 		NStream::CFilePos f_GetLength() const;
 		NStream::CFilePos f_GetPosition() const;
@@ -69,7 +69,7 @@ namespace NMib::NCryptography
 		bool f_IsValidReadPosition(NStream::CFilePos _Pos) const;
 		void f_SetLength(NStream::CFilePos _Length);
 		void f_Flush(bool _bLocalCacheOnly);
-		void f_SetCacheSize(mint _CacheSize);
+		void f_SetCacheSize(umint _CacheSize);
 
 		CDigest f_GetDigest();
 

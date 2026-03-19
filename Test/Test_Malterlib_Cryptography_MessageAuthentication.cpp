@@ -15,7 +15,7 @@ using namespace NMib::NCryptography;
 class CMessageAuthentication_Tests : public NMib::NTest::CTest
 {
 public:
-	CSecureByteVector f_GetRandomBuffer(mint _Len, uint32 _Seed)
+	CSecureByteVector f_GetRandomBuffer(umint _Len, uint32 _Seed)
 	{
 		CSecureByteVector Buffer;
 		Buffer.f_SetLen(_Len);

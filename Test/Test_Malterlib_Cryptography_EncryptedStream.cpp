@@ -32,7 +32,7 @@ namespace
 			DMibTestSuite("Encrypted Stream")
 			{
 				static uint8 const *KeyBytes = (uint8 const *)"abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
-				mint KeyBytesLen = fg_StrLen(KeyBytes);
+				umint KeyBytesLen = fg_StrLen(KeyBytes);
 				CStr ClearText = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
 				CByteVector Buffer;
 				CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
@@ -365,7 +365,7 @@ namespace
 							DecryptStream >> Result;
 							DecryptStream.f_SetPosition(4 + 22);
 							CStr PartialResult;
-							mint nPartialChars = ClearText.f_GetLen() - 22;
+							umint nPartialChars = ClearText.f_GetLen() - 22;
 							if (bCanChangePosition)
 							{
 								DecryptStream.f_ConsumeBytes(PartialResult.f_GetStr(nPartialChars + 1), nPartialChars);

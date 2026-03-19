@@ -16,8 +16,8 @@ namespace NMib::NCryptography
 					{
 						DMibCheck(_KeyIV.m_Key.f_GetLen() == 32);
 						DMibCheck(_KeyIV.m_IV.f_GetLen() == 16);
-						NMemory::fg_MemCopy(m_Key, _KeyIV.m_Key.f_GetArray(), fg_Min(_KeyIV.m_Key.f_GetLen(), (mint)EVP_MAX_KEY_LENGTH));
-						NMemory::fg_MemCopy(m_IV, _KeyIV.m_IV.f_GetArray(), fg_Min(_KeyIV.m_IV.f_GetLen(), (mint)EVP_MAX_IV_LENGTH));
+						NMemory::fg_MemCopy(m_Key, _KeyIV.m_Key.f_GetArray(), fg_Min(_KeyIV.m_Key.f_GetLen(), (umint)EVP_MAX_KEY_LENGTH));
+						NMemory::fg_MemCopy(m_IV, _KeyIV.m_IV.f_GetArray(), fg_Min(_KeyIV.m_IV.f_GetLen(), (umint)EVP_MAX_IV_LENGTH));
 					}
 				)
 			;

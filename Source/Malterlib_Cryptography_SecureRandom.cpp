@@ -73,14 +73,14 @@ namespace NMib::NCryptography
 		mp_BytesGenerated += mcp_BlockSize;
 	}
 
-	void CSecureRandom::f_GetBytes(uint8 *_pOut, mint _nBytes)
+	void CSecureRandom::f_GetBytes(uint8 *_pOut, umint _nBytes)
 	{
 		while (_nBytes > 0)
 		{
 			if (mp_BufferPos >= mcp_BlockSize)
 				fp_GenerateBlock();
 
-			mint nCopy = fg_Min(_nBytes, mcp_BlockSize - mp_BufferPos);
+			umint nCopy = fg_Min(_nBytes, mcp_BlockSize - mp_BufferPos);
 			NMemory::fg_MemCopy(_pOut, mp_Buffer + mp_BufferPos, nCopy);
 			mp_BufferPos += nCopy;
 			_pOut += nCopy;

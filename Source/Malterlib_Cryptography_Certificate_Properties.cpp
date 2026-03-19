@@ -138,7 +138,7 @@ namespace NMib::NCryptography
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to calculate certificate digest"));
 
 					NStr::CStr Fingerprint;
-					for (mint iByte = 0; iByte < DigestSize; ++iByte)
+					for (umint iByte = 0; iByte < DigestSize; ++iByte)
 						Fingerprint += NStr::CStr::CFormat("{nh,sf0,sf2}") << Digest[iByte];
 
 					return Fingerprint;
@@ -225,9 +225,9 @@ namespace NMib::NCryptography
 								GENERAL_NAMES_free(pSubjectAltNames);
 							}
 						;
-						mint nAltEntries = sk_GENERAL_NAME_num(pSubjectAltNames);
+						umint nAltEntries = sk_GENERAL_NAME_num(pSubjectAltNames);
 
-						for (mint iEntry = 0; iEntry < nAltEntries; ++iEntry)
+						for (umint iEntry = 0; iEntry < nAltEntries; ++iEntry)
 						{
 							GENERAL_NAME const* pName = sk_GENERAL_NAME_value(pSubjectAltNames, iEntry);
 							if (!pName)

@@ -9,9 +9,9 @@
 namespace NMib::NCryptography
 {
 #if defined(DMibDebug) || defined(DMibSanitizerEnabled)
-	static constexpr mint mc_nIterations = 10'000;
+	static constexpr umint mc_nIterations = 10'000;
 #else
-	static constexpr mint mc_nIterations = 100'000;
+	static constexpr umint mc_nIterations = 100'000;
 #endif
 
 	namespace
@@ -23,10 +23,10 @@ namespace NMib::NCryptography
 		struct CRandomIDPerformance_Tests : public CTest
 		{
 			template <typename tf_FGenerator>
-			inline_never void fp_MeasureGenerator(CTestPerformanceMeasure &_Measure, tf_FGenerator const &_fGenerator, mint _nIterations)
+			inline_never void fp_MeasureGenerator(CTestPerformanceMeasure &_Measure, tf_FGenerator const &_fGenerator, umint _nIterations)
 			{
 				DMibTestScopeMeasure(_Measure, _nIterations);
-				for (mint i = 0; i < _nIterations; ++i)
+				for (umint i = 0; i < _nIterations; ++i)
 					_fGenerator();
 			}
 

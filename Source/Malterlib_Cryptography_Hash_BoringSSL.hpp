@@ -17,14 +17,14 @@ namespace NMib::NCryptography
 		return static_cast<EVP_MD_CTX const *>(_pContext);
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::TCHashImpl_BoringSSL()
 		: mp_pContext(nullptr)
 	{
 		fp_Init();
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::fp_Init()
 	{
 		auto &pContext = fg_Context(mp_pContext);
@@ -45,7 +45,7 @@ namespace NMib::NCryptography
 		Cleanup.f_Clear();
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_Reset()
 	{
 		auto &pContext = fg_Context(mp_pContext);
@@ -54,7 +54,7 @@ namespace NMib::NCryptography
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to init digest (reset)"));
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::fp_Destroy()
 	{
 		auto &pContext = fg_Context(mp_pContext);
@@ -65,13 +65,13 @@ namespace NMib::NCryptography
 		}
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::~TCHashImpl_BoringSSL()
 	{
 		fp_Destroy();
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::TCHashImpl_BoringSSL(TCHashImpl_BoringSSL const &_Other)
 		: mp_pContext(nullptr)
 	{
@@ -87,14 +87,14 @@ namespace NMib::NCryptography
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to copy digest context"));
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::TCHashImpl_BoringSSL(TCHashImpl_BoringSSL &&_Other)
 		: mp_pContext(fg_Exchange(_Other.mp_pContext, nullptr))
 	{
 
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	auto TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::operator = (TCHashImpl_BoringSSL const &_Other) -> TCHashImpl_BoringSSL &
 	{
 		auto pOtherContext = fg_Context(_Other.mp_pContext);
@@ -114,7 +114,7 @@ namespace NMib::NCryptography
 		return *this;
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	auto TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::operator = (TCHashImpl_BoringSSL &&_Other) -> TCHashImpl_BoringSSL &
 	{
 		fp_Destroy();
@@ -122,8 +122,8 @@ namespace NMib::NCryptography
 		return *this;
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
-	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_AddData(void const *_pData, mint _Len)
+	template <EDigestType t_DigestType, umint t_DigestSize>
+	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_AddData(void const *_pData, umint _Len)
 	{
 		auto &pContext = fg_Context(mp_pContext);
 		DMibFastCheck(pContext);
@@ -132,7 +132,7 @@ namespace NMib::NCryptography
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to update context"));
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	template <typename tf_CDigest>
 	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_GetDigest(tf_CDigest &o_Digest) const &
 	{
@@ -166,7 +166,7 @@ namespace NMib::NCryptography
 		}
 	}
 
-	template <EDigestType t_DigestType, mint t_DigestSize>
+	template <EDigestType t_DigestType, umint t_DigestSize>
 	template <typename tf_CDigest>
 	void TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::f_GetDigest(tf_CDigest &o_Digest) &&
 	{

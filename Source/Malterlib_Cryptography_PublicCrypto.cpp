@@ -35,13 +35,13 @@ namespace NMib::NCryptography
 			}
 		;
 
-		mint ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
+		umint ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
 
 		auto fConvertBigNum = [&](BIGNUM const *_pBigNum, bool _bPad) -> NContainer::CSecureByteVector
 			{
 				NContainer::CSecureByteVector Output;
 
-				mint nBytes = BN_num_bytes(_pBigNum);
+				umint nBytes = BN_num_bytes(_pBigNum);
 
 				if (_bPad)
 				{
@@ -50,7 +50,7 @@ namespace NMib::NCryptography
 
 					Output.f_SetLen(ExpectedBytes);
 
-					for (mint i = 0; i < (ExpectedBytes - nBytes); ++i)
+					for (umint i = 0; i < (ExpectedBytes - nBytes); ++i)
 						Output[i] = 0;
 
 					BN_bn2bin(_pBigNum, Output.f_GetArray() + (ExpectedBytes - nBytes));
@@ -182,7 +182,7 @@ namespace NMib::NCryptography
 
 					if (EC_KEY *pECKey = EVP_PKEY_get0_EC_KEY(pKey))
 					{
-						mint ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
+						umint ExpectedBytes = (EVP_PKEY_bits(pKey) + 7) / 8;
 
 						ERR_clear_error();
 						NContainer::CSecureByteVector Digest;
@@ -207,8 +207,8 @@ namespace NMib::NCryptography
 						const BIGNUM *pComponentR, *pComponentS;
 						ECDSA_SIG_get0(pSignature, &pComponentR, &pComponentS);
 
-						mint nBytesComporentR = BN_num_bytes(pComponentR);
-						mint nBytesComporentS = BN_num_bytes(pComponentS);
+						umint nBytesComporentR = BN_num_bytes(pComponentR);
+						umint nBytesComporentS = BN_num_bytes(pComponentS);
 
 						if (nBytesComporentR > ExpectedBytes || nBytesComporentS > ExpectedBytes)
 							DMibErrorCryptography("Invalid number of bytes in EC signature component");

@@ -21,8 +21,8 @@ namespace NMib::NCryptography
 		template <typename tf_CParentStream>
 		void f_Open(tf_CParentStream &&_pStream, NFile::EFileOpen _OpenFlags);
 		void f_Close();
-		void f_FeedBytes(const void *_pMem, mint _nBytes);
-		void f_ConsumeBytes(void *_pMem, mint _nBytes);
+		void f_FeedBytes(const void *_pMem, umint _nBytes);
+		void f_ConsumeBytes(void *_pMem, umint _nBytes);
 		bool f_IsValid() const;
 		bool f_IsAtEndOfStream() const;
 		NStream::CFilePos f_GetPosition() const;
@@ -31,11 +31,11 @@ namespace NMib::NCryptography
 		void f_AddPosition(NStream::CFilePos _Pos);
 		bool f_IsValidReadPosition(NStream::CFilePos _Pos) const;
 		void f_Flush(bool _bLocalCacheOnly);
-		void f_SetCacheSize(mint _CacheSize);
+		void f_SetCacheSize(umint _CacheSize);
 		NStream::CFilePos f_GetLength() const;
-		mint f_ContainerLengthLimit() const;
+		umint f_ContainerLengthLimit() const;
 		void f_SetLength(NStream::CFilePos _Length);
-		void f_SetBufferSize(mint _BufferSize); // For testing only
+		void f_SetBufferSize(umint _BufferSize); // For testing only
 
 		DMibStreamImplementOperators(TCBinaryStream_Encrypted);
 
@@ -44,7 +44,7 @@ namespace NMib::NCryptography
 
 	private:
 		void fp_WriteDirty(bool _bFinalize);
-		mint fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite);
+		umint fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite);
 		decltype(auto) fp_GetParentStream() const;
 
 		enum
@@ -66,8 +66,8 @@ namespace NMib::NCryptography
 		NStream::CFilePos mp_LastLoaded = 0;
 		NStream::CFilePos mp_FileLen = 0;
 		NStream::CFilePos mp_EncryptedFileLen = 0;
-		mint mp_BufferSize = EDefaultBufferSize;
-		mint mp_BlockSize;
+		umint mp_BufferSize = EDefaultBufferSize;
+		umint mp_BlockSize;
 
 		EDigestType mp_HMAC = EDigestType_None;
 		NFile::EFileOpen mp_OpenFlags = NFile::EFileOpen_None;

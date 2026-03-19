@@ -116,7 +116,7 @@ namespace NMib::NCryptography
 			mp_FileLen = mp_EncryptedFileLen;
 
 			mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, mp_KeyIV);
-			mint HMACSize = 0;
+			umint HMACSize = 0;
 			if (mp_HMAC != EDigestType_None)
 			{
 				mp_pHMACContext = fg_Construct(mp_HMAC, mp_HMACKey);
@@ -141,7 +141,7 @@ namespace NMib::NCryptography
 					// Check the HMAC.
 					while (mp_FilePos < mp_EncryptedFileLen)
 					{
-						mint ThisTime = mint(fg_Min(mp_EncryptedFileLen - mp_FilePos, NStream::CFilePos(mp_BufferSize)));
+						umint ThisTime = umint(fg_Min(mp_EncryptedFileLen - mp_FilePos, NStream::CFilePos(mp_BufferSize)));
 						DMibCheck(ThisTime <= mp_DecryptedBlock.f_GetLen());
 						ParentStream.f_ConsumeBytes(mp_DecryptedBlock.f_GetArray(), ThisTime);
 						mp_pHMACContext->f_Update(mp_DecryptedBlock.f_GetArray(), ThisTime);
@@ -262,7 +262,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	mint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite)
+	umint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite)
 	{
 		if (mp_CurrentLoaded >= 0 && _Pos >=  mp_CurrentLoaded && _Pos < (mp_CurrentLoaded + NStream::CFilePos(mp_BufferSize)))
 		{
@@ -287,8 +287,8 @@ namespace NMib::NCryptography
 		}
 		else if (mp_EncryptedFileLen > 0)
 		{
-			mint ThisTime = mint(fg_Min(mp_EncryptedFileLen - mp_CurrentLoaded, NStream::CFilePos(mp_BufferSize)));
-			mint DecryptedBytes = 0;
+			umint ThisTime = umint(fg_Min(mp_EncryptedFileLen - mp_CurrentLoaded, NStream::CFilePos(mp_BufferSize)));
+			umint DecryptedBytes = 0;
 
 			if (mp_CurrentLoaded != mp_LastLoaded)
 			{
@@ -326,7 +326,7 @@ namespace NMib::NCryptography
 
 			if (ThisTime != mp_BufferSize && mp_BlockSize > 1)
 			{
-				mint nRemainingBytes = ThisTime - DecryptedBytes;
+				umint nRemainingBytes = ThisTime - DecryptedBytes;
 				DMibCheck((ThisTime + nRemainingBytes) <= mp_DecryptedBlock.f_GetLen());
 				DecryptedBytes += mp_pEncryptContext->f_FinalizePaddedDecrypt(mp_DecryptedBlock.f_GetArray() + DecryptedBytes, nRemainingBytes);
 			}
@@ -338,7 +338,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_FeedBytes(const void *_pMem, mint _nBytes)
+	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_FeedBytes(const void *_pMem, umint _nBytes)
 	{
 		if (!(mp_OpenFlags & NFile::EFileOpen_Write))
 			DMibErrorCryptography("Stream not opened for write");
@@ -346,8 +346,8 @@ namespace NMib::NCryptography
 		const uint8 *pMem = (const uint8 *)_pMem;
 		while (_nBytes)
 		{
-			mint Pos = fp_PrepareBlock(mp_FilePos, true);
-			mint ThisTime = fg_Min(_nBytes, mp_BufferSize - Pos);
+			umint Pos = fp_PrepareBlock(mp_FilePos, true);
+			umint ThisTime = fg_Min(_nBytes, mp_BufferSize - Pos);
 			DMibCheck(Pos + ThisTime <= mp_DecryptedBlock.f_GetLen());
 			NMemory::fg_MemCopy(mp_DecryptedBlock.f_GetArray() + Pos, pMem, ThisTime);
 			mp_bCurrentDirty = true;
@@ -361,7 +361,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_ConsumeBytes(void *_pMem, mint _nBytes)
+	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_ConsumeBytes(void *_pMem, umint _nBytes)
 	{
 		if (!(mp_OpenFlags & NFile::EFileOpen_Read))
 			DMibErrorCryptography("Stream not opened for read");
@@ -372,8 +372,8 @@ namespace NMib::NCryptography
 		uint8 *pMem = (uint8 *)_pMem;
 		while (_nBytes)
 		{
-			mint Pos = fp_PrepareBlock(mp_FilePos, false);
-			mint ThisTime = fg_Min(_nBytes, mp_BufferSize - Pos);
+			umint Pos = fp_PrepareBlock(mp_FilePos, false);
+			umint ThisTime = fg_Min(_nBytes, mp_BufferSize - Pos);
 			DMibCheck(Pos + ThisTime <= mp_DecryptedBlock.f_GetLen());
 			NMemory::fg_MemCopy(pMem, mp_DecryptedBlock.f_GetArray() + Pos, ThisTime);
 
@@ -461,7 +461,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_SetCacheSize(mint _CacheSize)
+	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_SetCacheSize(umint _CacheSize)
 	{
 		auto &ParentStream = fp_GetParentStream();
 		return ParentStream.f_SetCacheSize(_CacheSize);
@@ -478,7 +478,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	mint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_ContainerLengthLimit() const
+	umint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_ContainerLengthLimit() const
 	{
 		return NStream::fg_CapLengthLimit(f_GetLength() - f_GetPosition());
 	}
@@ -503,7 +503,7 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_SetBufferSize(mint _BufferSize)
+	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_SetBufferSize(umint _BufferSize)
 	{
 		if (mp_OpenFlags != NFile::EFileOpen_None)
 			DMibErrorCryptography("Cannot resize buffer on an open stream");

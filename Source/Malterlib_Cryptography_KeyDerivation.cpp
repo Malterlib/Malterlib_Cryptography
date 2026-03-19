@@ -107,7 +107,7 @@ namespace NMib::NCryptography
 			NStr::CStrSecure const &_Password
 			, NContainer::CSecureByteVector const &_PasswordSalt
 			, CKeyDerivationSettings const &_Settings
-			, mint _KeyLen
+			, umint _KeyLen
 		)
 	{
 		return fg_RunProtectRegisters
@@ -202,7 +202,7 @@ namespace NMib::NCryptography
 				[&]()
 				{
 					EVP_MD const *pDigest = fg_GetDigest(_Digest);
-					mint ExpectedKeySize = EVP_MD_size(pDigest);
+					umint ExpectedKeySize = EVP_MD_size(pDigest);
 					mp_PseudoRandomKey.f_SetLen(ExpectedKeySize);
 					size_t KeySize = 0;
 					if (!HKDF_extract(mp_PseudoRandomKey.f_GetArray(), &KeySize, pDigest, _Key.f_GetArray(), _Key.f_GetLen(), _ExpansionSalt.f_GetArray(), _ExpansionSalt.f_GetLen()))
@@ -227,7 +227,7 @@ namespace NMib::NCryptography
 		return f_GetKey("HMACKey", EVP_MD_size(pDigest));
 	}
 
-	NContainer::CSecureByteVector CKeyExpansion::f_GetKey(NStr::CStr const &_Label, mint _Length) const
+	NContainer::CSecureByteVector CKeyExpansion::f_GetKey(NStr::CStr const &_Label, umint _Length) const
 	{
 		return fg_RunProtectRegisters
 			(

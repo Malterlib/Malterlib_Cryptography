@@ -53,8 +53,8 @@ namespace NMib::NCryptography
 
 	private:
 		constexpr CUniversallyUniqueIdentifier();
-		void fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen);
-		void fp_CreateFromMD5(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, mint _DataLen);
+		void fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, umint _DataLen);
+		void fp_CreateFromMD5(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, umint _DataLen);
 		void fp_CreateFromHash(uint8 *_pHash, int32 _Version);
 
 	};

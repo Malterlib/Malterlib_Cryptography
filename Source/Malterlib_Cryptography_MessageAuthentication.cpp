@@ -13,7 +13,7 @@ namespace NMib::NCryptography
 		CInternal(EDigestType _Digest, NContainer::CSecureByteVector const &_Key)
 		{
 			const EVP_MD *Md = fg_GetDigest(_Digest);
-			mint const RequiredKeyLength = EVP_MD_size(Md);
+			umint const RequiredKeyLength = EVP_MD_size(Md);
 			if (_Key.f_GetLen() < RequiredKeyLength)
 				DMibErrorCryptography(NStr::fg_Format("HMAC key should be at least {} bytes", RequiredKeyLength));
 
@@ -120,7 +120,7 @@ namespace NMib::NCryptography
 		return mp_pInternal->f_GetHMACSize();
 	}
 
-	NCryptography::CHashDigest_SHA256 fg_MessageAuthenication_HMAC_SHA256(uint8 const *_pData, mint _DataLen, uint8 const *_pKey, mint _KeyLen)
+	NCryptography::CHashDigest_SHA256 fg_MessageAuthenication_HMAC_SHA256(uint8 const *_pData, umint _DataLen, uint8 const *_pKey, umint _KeyLen)
 	{
 		NCryptography::CHashDigest_SHA256 Return;
 		unsigned int Size = Return.mc_Size;
@@ -147,7 +147,7 @@ namespace NMib::NCryptography
 		return Return;
 	}
 
-	NCryptography::CHashDigest_SHA1 fg_MessageAuthenication_HMAC_SHA1(uint8 const *_pData, mint _DataLen, uint8 const *_pKey, mint _KeyLen)
+	NCryptography::CHashDigest_SHA1 fg_MessageAuthenication_HMAC_SHA1(uint8 const *_pData, umint _DataLen, uint8 const *_pKey, umint _KeyLen)
 	{
 		NCryptography::CHashDigest_SHA1 Return;
 		unsigned int Size = Return.mc_Size;

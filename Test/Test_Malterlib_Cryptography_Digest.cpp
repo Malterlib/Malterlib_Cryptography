@@ -10,7 +10,7 @@ namespace
 	using namespace NMib::NMisc;
 	using namespace NMib;
 
-	template <typename t_CHash, const ch8 t_pName[], const ch8 *t_pTests[], const ch8 *t_pTestDigests[], mint t_pTestRepeat[], mint t_nTests>
+	template <typename t_CHash, const ch8 t_pName[], const ch8 *t_pTests[], const ch8 *t_pTestDigests[], umint t_pTestRepeat[], umint t_nTests>
 	class TCTestHash : public NMib::NTest::CTest
 	{
 	public:
@@ -24,11 +24,11 @@ namespace
 				CHash Hash;
 				CHashDigest Digest;
 
-				for (mint i = 0; i < t_nTests; ++i)
+				for (umint i = 0; i < t_nTests; ++i)
 				{
 					Hash.f_Reset();
-					mint Len = NMib::NStr::fg_StrLen(t_pTests[i]);
-					for (mint j = 0; j < t_pTestRepeat[i]; ++j)
+					umint Len = NMib::NStr::fg_StrLen(t_pTests[i]);
+					for (umint j = 0; j < t_pTestRepeat[i]; ++j)
 						Hash.f_AddData(t_pTests[i], Len);
 
 					Digest = CHashDigest(Hash);
@@ -166,7 +166,7 @@ namespace
 	extern const ch8 g_pNameMD5[];
 	extern const ch8 *g_pTestsMD5[];
 	extern const ch8 *g_pTestsDigestsMD5[];
-	extern mint g_pTestRepeatMD5[];
+	extern umint g_pTestRepeatMD5[];
 
 	const ch8 g_pNameMD5[] = "MD5";
 	const ch8 *g_pTestsMD5[] = {
@@ -187,7 +187,7 @@ namespace
 		"d174ab98d277d9f5a5611c2c9f419d9f",
 		"57edf4a22be3c955ac49da2e2107b67a",
 	};
-	mint g_pTestRepeatMD5[] = {1,1,1,1,1,1,1};
+	umint g_pTestRepeatMD5[] = {1,1,1,1,1,1,1};
 
 	using CDigestMD5_Tests = TCTestHash<NMib::NCryptography::CHash_MD5, g_pNameMD5, g_pTestsMD5, g_pTestsDigestsMD5, g_pTestRepeatMD5, fg_ArraySize(g_pTestsMD5)>;
 	DMibTestRegister(CDigestMD5_Tests, Malterlib::Crytpography);
@@ -195,7 +195,7 @@ namespace
 	extern const ch8 g_pNameSHA1[];
 	extern const ch8 *g_pTestsSHA1[];
 	extern const ch8 *g_pTestsDigestsSHA1[];
-	extern mint g_pTestRepeatSHA1[];
+	extern umint g_pTestRepeatSHA1[];
 
 	const ch8 g_pNameSHA1[] = "SHA1";
 	const ch8 *g_pTestsSHA1[] = {
@@ -208,7 +208,7 @@ namespace
 		"84983e441c3bd26ebaae4aa1f95129e5e54670f1",
 		"34aa973cd4c4daa4f61eeb2bdbad27316534016f",
 	};
-	mint g_pTestRepeatSHA1[] = {1,1,15625};
+	umint g_pTestRepeatSHA1[] = {1,1,15625};
 
 	using CDigestSHA1_Tests = TCTestHash<NMib::NCryptography::CHash_SHA1, g_pNameSHA1, g_pTestsSHA1, g_pTestsDigestsSHA1, g_pTestRepeatSHA1, fg_ArraySize(g_pTestsSHA1)>;
 	DMibTestRegister(CDigestSHA1_Tests, Malterlib::Crytpography);
@@ -216,7 +216,7 @@ namespace
 	extern const ch8 g_pNameSHA256[];
 	extern const ch8 *g_pTestsSHA256[];
 	extern const ch8 *g_pTestsDigestsSHA256[];
-	extern mint g_pTestRepeatSHA256[];
+	extern umint g_pTestRepeatSHA256[];
 
 	const ch8 g_pNameSHA256[] = "SHA256";
 	const ch8 *g_pTestsSHA256[] = {
@@ -227,7 +227,7 @@ namespace
 		"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
 		"248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1",
 	};
-	mint g_pTestRepeatSHA256[] = {1,1};
+	umint g_pTestRepeatSHA256[] = {1,1};
 
 	using CDigestSHA256_Tests = TCTestHash<NMib::NCryptography::CHash_SHA256, g_pNameSHA256, g_pTestsSHA256, g_pTestsDigestsSHA256, g_pTestRepeatSHA256, fg_ArraySize(g_pTestsSHA256)>;
 	DMibTestRegister(CDigestSHA256_Tests, Malterlib::Crytpography);
@@ -235,7 +235,7 @@ namespace
 	extern const ch8 g_pNameSHA384[];
 	extern const ch8 *g_pTestsSHA384[];
 	extern const ch8 *g_pTestsDigestsSHA384[];
-	extern mint g_pTestRepeatSHA384[];
+	extern umint g_pTestRepeatSHA384[];
 
 	const ch8 g_pNameSHA384[] = "SHA384";
 	const ch8 *g_pTestsSHA384[] = {
@@ -246,7 +246,7 @@ namespace
 		"cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7",
 		"09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa08086e3b0f712fcc7c71a557e2db966c3e9fa91746039",
 	};
-	mint g_pTestRepeatSHA384[] = {1,1};
+	umint g_pTestRepeatSHA384[] = {1,1};
 
 	using CDigestSHA384_Tests = TCTestHash<NMib::NCryptography::CHash_SHA384, g_pNameSHA384, g_pTestsSHA384, g_pTestsDigestsSHA384, g_pTestRepeatSHA384, fg_ArraySize(g_pTestsSHA384)>;
 	DMibTestRegister(CDigestSHA384_Tests, Malterlib::Crytpography);
@@ -254,7 +254,7 @@ namespace
 	extern const ch8 g_pNameSHA512[];
 	extern const ch8 *g_pTestsSHA512[];
 	extern const ch8 *g_pTestsDigestsSHA512[];
-	extern mint g_pTestRepeatSHA512[];
+	extern umint g_pTestRepeatSHA512[];
 
 	const ch8 g_pNameSHA512[] = "SHA512";
 	const ch8 *g_pTestsSHA512[] = {
@@ -265,7 +265,7 @@ namespace
 		"ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f",
 		"8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa17299aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329eeb6dd26545e96e55b874be909",
 	};
-	mint g_pTestRepeatSHA512[] = {1,1};
+	umint g_pTestRepeatSHA512[] = {1,1};
 
 	using CDigestSHA512_Tests = TCTestHash<NMib::NCryptography::CHash_SHA512, g_pNameSHA512, g_pTestsSHA512, g_pTestsDigestsSHA512, g_pTestRepeatSHA512, fg_ArraySize(g_pTestsSHA512)>;
 	DMibTestRegister(CDigestSHA512_Tests, Malterlib::Crytpography);

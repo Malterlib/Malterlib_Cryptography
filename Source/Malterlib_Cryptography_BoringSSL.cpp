@@ -18,7 +18,7 @@ extern "C"
 		if (!_pPtr)
 			return;
 
-		mint Size = NMib::NMemory::CAllocator_NonTrackedHeap::f_Size(_pPtr);
+		umint Size = NMib::NMemory::CAllocator_NonTrackedHeap::f_Size(_pPtr);
 		OPENSSL_cleanse(_pPtr, Size);
 
 		return NMib::NMemory::CAllocator_NonTrackedHeap::f_Free(_pPtr, Size);
@@ -55,7 +55,7 @@ extern "C"
 		if (!_pPtr)
 			return;
 
-		mint Size = NMib::NMemory::fg_Size(_pPtr);
+		umint Size = NMib::NMemory::fg_Size(_pPtr);
 		OPENSSL_cleanse(_pPtr, Size);
 
 		return NMib::NMemory::fg_Free(_pPtr, Size);
