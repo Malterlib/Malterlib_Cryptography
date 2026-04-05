@@ -1,3 +1,6 @@
+// Copyright © Unbroken AB
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 #pragma once
 
 #if defined(DPlatformFamily_Windows) && defined(DArchitecture_x64)

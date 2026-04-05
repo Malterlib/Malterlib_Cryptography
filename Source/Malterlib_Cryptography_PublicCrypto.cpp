@@ -1,3 +1,6 @@
+// Copyright © Unbroken AB
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 #include "Malterlib_Cryptography_PublicCrypto.h"
 #include "Malterlib_Cryptography_Certificate.h"
 

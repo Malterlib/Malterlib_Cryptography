@@ -1,3 +1,6 @@
+// Copyright © Unbroken AB
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 #include "Malterlib_Cryptography_MessageAuthentication.h"
 
 #include <Mib/Cryptography/BoringSSL>
