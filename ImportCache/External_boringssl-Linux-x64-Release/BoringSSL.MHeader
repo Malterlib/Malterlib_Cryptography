@@ -24,7 +24,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/macOS/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Experimental -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/Linux/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Experimental -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -62,7 +62,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/macOS/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Nightly -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/Linux/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Nightly -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -100,7 +100,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/macOS/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Continuous -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/Linux/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Continuous -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -3622,36 +3622,17 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `MToolCMake -E echo Running\\ Go\\ tests && go test ./ssl/test/runner/hpke ./util/ar ./util/fipstools/acvp/acvptool/testmodulewrapper ./util/fipstools/delocate && MToolCMake -E echo && MToolCMake -E echo Running\\ unit\\ tests && go run util/all_tests.go -build-dir @(`@('.'->MakeAbsolute())`->MakeAbsolute()->EscapeHost()) && MToolCMake -E echo && MToolCMake -E echo Running\\ SSL\\ tests && cd ssl/test/runner && go test -shim-path @(`@('.'->MakeAbsolute())/ssl/test/bssl_shim`->MakeAbsolute()->EscapeHost()) -handshaker-path @(`@('.'->MakeAbsolute())/ssl/test/handshaker`->MakeAbsolute()->EscapeHost())`
+							Custom_CommandLine `MToolCMake -E echo Running\\ tests\\ requires\\ Go && MToolCMake -E false`
 							AllowNonExisting true
 							Disabled false
-							Custom_WorkingDirectory `@('../../../../External/boringssl'->MakeAbsolute())`->MakeAbsolute()
+							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
 							Custom_Outputs []
-							Custom_Inputs [
-								`@('.'->MakeAbsolute())/ssl/test/bssl_shim`->MakeAbsolute(),
-								`@('.'->MakeAbsolute())/ssl/test/handshaker`->MakeAbsolute()
-							]
+							Custom_Inputs []
 						}
 					}
 				}
 			}
 		}
-	}
-	%Dependency "Tool_BoringSSL_boringssl_all_tests"
-	{
-		Dependency.Link false
-	}
-	%Dependency "Com_BoringSSL_bssl_shim"
-	{
-		Dependency.Link false
-	}
-	%Dependency "Tool_BoringSSL_fips_specific_tests_if_any"
-	{
-		Dependency.Link false
-	}
-	%Dependency "Com_BoringSSL_handshaker"
-	{
-		Dependency.Link false
 	}
 }
 %Target "Com_BoringSSL_bssl_shim"
