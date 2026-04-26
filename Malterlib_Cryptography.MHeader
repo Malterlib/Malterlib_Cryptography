@@ -10,6 +10,9 @@ Import "../Core/Lib_Malterlib.MTarget"
 		Type "External"
 		DefaultUpstreamBranch "main"
 		Remotes =+ {Name: "upstream", URL: "https://github.com/google/boringssl.git"}
+		{
+			!!MalterlibAddUpstreams true
+		}
 	}
 }
 
