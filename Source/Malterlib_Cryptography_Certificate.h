@@ -83,6 +83,7 @@ namespace NMib::NCryptography
 		static NStr::CStr fs_GetIssuerName(NContainer::CByteVector const &_CertificateData);
 		static bool fs_IsRoot(NContainer::CByteVector const &_CertificateData);
 		static NStr::CStr fs_GetCertificateFingerprint(NContainer::CByteVector const &_CertificateData);
+		static NContainer::CByteVector fs_GetCertificateFingerprintData(NContainer::CByteVector const &_CertificateData, EDigestType _Digest = EDigestType_SHA256);
 		static NContainer::TCVector<NStr::CStr> fs_GetCertificateHostnames(NContainer::CByteVector const &_CertificateData, bool _bCheckCommonName = true);
 		static NContainer::TCVector<NStr::CStr> fs_GetSortedHostnames(NContainer::TCVector<NStr::CStr> const &_Unsorted);
 		static NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> fs_GetCertificateExtensions(NContainer::CByteVector const &_CertificateData);

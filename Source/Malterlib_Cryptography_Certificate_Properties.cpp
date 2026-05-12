@@ -124,6 +124,12 @@ namespace NMib::NCryptography
 
 	NStr::CStr CCertificate::fs_GetCertificateFingerprint(NContainer::CByteVector const &_CertificateData)
 	{
+		NContainer::CByteVector Digest = fs_GetCertificateFingerprintData(_CertificateData);
+		return NStr::CStr::fs_ToStr(NStr::CStrFormatBinaryWrapper(Digest.f_GetArray(), Digest.f_GetLen()));
+	}
+
+	NContainer::CByteVector CCertificate::fs_GetCertificateFingerprintData(NContainer::CByteVector const &_CertificateData, EDigestType _Digest)
+	{
 		return fg_RunProtectRegisters
 			(
 				[&]() -> decltype(auto)
@@ -136,15 +142,11 @@ namespace NMib::NCryptography
 					;
 
 					unsigned int DigestSize = 0;
-					unsigned char Digest[EVP_MAX_MD_SIZE];
-					if (!X509_digest(pCertificate, EVP_sha256(), Digest, &DigestSize))
+					uint8 Digest[EVP_MAX_MD_SIZE];
+					if (!X509_digest(pCertificate, fg_GetDigest(_Digest), Digest, &DigestSize))
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to calculate certificate digest"));
 
-					NStr::CStr Fingerprint;
-					for (umint iByte = 0; iByte < DigestSize; ++iByte)
-						Fingerprint += NStr::CStr::CFormat("{nh,sf0,sf2}") << Digest[iByte];
-
-					return Fingerprint;
+					return NContainer::CByteVector(Digest, DigestSize);
 				}
 			)
 		;
