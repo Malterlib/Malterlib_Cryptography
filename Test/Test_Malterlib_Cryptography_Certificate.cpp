@@ -48,11 +48,13 @@ public:
 			auto Info = CCertificate::fs_GetCertificateDescription(ServerPublicCertificateData);
 			auto Fingerprint = CCertificate::fs_GetCertificateFingerprint(ServerPublicCertificateData);
 			auto FingerprintData = CCertificate::fs_GetCertificateFingerprintData(ServerPublicCertificateData);
+			auto TLSServerEndPointData = CCertificate::fs_GetCertificateTLSServerEndPointData(ServerPublicCertificateData);
 
 			DMibExpect(ServerHostNames, ==, fg_CreateVector<CStr>("localhost1", "localhost2"));
 			DMibExpect(ServerExtensions["MalterlibTest"], ==, ServerOptions.m_Extensions["MalterlibTest"]);
 			DMibExpect(Fingerprint.f_GetLen(), ==, FingerprintData.f_GetLen() * 2);
 			DMibExpect(FingerprintData.f_GetLen(), ==, umint(32));
+			DMibExpect(TLSServerEndPointData, ==, FingerprintData);
 
 			{
 				CByteVector ClientPublicCertificateData;

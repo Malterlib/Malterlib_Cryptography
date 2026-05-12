@@ -10,6 +10,89 @@ namespace NMib::NCryptography
 {
 	using namespace NBoringSSL;
 
+	namespace
+	{
+		int fg_GetDigestNIDFromAlgorithm(X509_ALGOR const *_pAlgorithm)
+		{
+			if (!_pAlgorithm)
+				return NID_undef;
+
+			ASN1_OBJECT const *pObject = nullptr;
+			X509_ALGOR_get0(&pObject, nullptr, nullptr, _pAlgorithm);
+			if (!pObject)
+				return NID_undef;
+
+			return OBJ_obj2nid(pObject);
+		}
+
+		int fg_GetTLSServerEndPointDigestNIDFromRSAPSS(X509 const *_pCertificate)
+		{
+			X509_ALGOR const *pSignatureAlgorithm = nullptr;
+			X509_get0_signature(nullptr, &pSignatureAlgorithm, _pCertificate);
+			if (!pSignatureAlgorithm)
+				DMibErrorCryptography("Failed to read certificate signature algorithm");
+
+			int ParameterType = V_ASN1_UNDEF;
+			void const *pParameterValue = nullptr;
+			X509_ALGOR_get0(nullptr, &ParameterType, &pParameterValue, pSignatureAlgorithm);
+			if (ParameterType == V_ASN1_UNDEF)
+				return NID_sha1;
+			if (ParameterType != V_ASN1_SEQUENCE || !pParameterValue)
+				DMibErrorCryptography("Invalid RSASSA-PSS certificate signature parameters");
+
+			ASN1_STRING const *pParameterString = (ASN1_STRING const *)pParameterValue;
+			uint8 const *pParameterData = ASN1_STRING_get0_data(pParameterString);
+			long ParameterLength = ASN1_STRING_length(pParameterString);
+			RSA_PSS_PARAMS *pPSSParameters = d2i_RSA_PSS_PARAMS(nullptr, &pParameterData, ParameterLength);
+			if (!pPSSParameters)
+				DMibErrorCryptography(fg_GetExceptionStr("Failed to parse RSASSA-PSS certificate signature parameters"));
+			auto Cleanup = g_OnScopeExit / [&]
+				{
+					RSA_PSS_PARAMS_free(pPSSParameters);
+				}
+			;
+
+			if (pParameterData != ASN1_STRING_get0_data(pParameterString) + ParameterLength)
+				DMibErrorCryptography("Trailing data in RSASSA-PSS certificate signature parameters");
+
+			if (!pPSSParameters->hashAlgorithm)
+				return NID_sha1;
+
+			return fg_GetDigestNIDFromAlgorithm(pPSSParameters->hashAlgorithm);
+		}
+
+		EVP_MD const *fg_GetTLSServerEndPointDigestFromNID(int _DigestNID)
+		{
+			switch (_DigestNID)
+			{
+			case NID_sha224: return EVP_sha224();
+			case NID_sha384: return EVP_sha384();
+			case NID_sha512: return EVP_sha512();
+			case NID_sha256:
+			case NID_md5:
+			case NID_sha1:
+			default:
+				return EVP_sha256();
+			}
+		}
+
+		EVP_MD const *fg_GetTLSServerEndPointDigest(X509 const *_pCertificate)
+		{
+			int DigestNID = NID_undef;
+			int SignatureNID = X509_get_signature_nid(_pCertificate);
+			if (SignatureNID == NID_rsassaPss)
+			{
+				DigestNID = fg_GetTLSServerEndPointDigestNIDFromRSAPSS(_pCertificate);
+				if (DigestNID == NID_undef)
+					DMibErrorCryptography("Unsupported RSASSA-PSS certificate signature digest algorithm");
+			}
+			else if (!OBJ_find_sigid_algs(SignatureNID, &DigestNID, nullptr))
+				DigestNID = NID_sha256;
+
+			return fg_GetTLSServerEndPointDigestFromNID(DigestNID);
+		}
+	}
+
 	NStr::CStr CCertificate::fs_GetCertificateDescription(NContainer::CByteVector const &_CertificateData)
 	{
 		return fg_RunProtectRegisters
@@ -145,6 +228,30 @@ namespace NMib::NCryptography
 					uint8 Digest[EVP_MAX_MD_SIZE];
 					if (!X509_digest(pCertificate, fg_GetDigest(_Digest), Digest, &DigestSize))
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to calculate certificate digest"));
+
+					return NContainer::CByteVector(Digest, DigestSize);
+				}
+			)
+		;
+	}
+
+	NContainer::CByteVector CCertificate::fs_GetCertificateTLSServerEndPointData(NContainer::CByteVector const &_CertificateData)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_free(pCertificate);
+						}
+					;
+
+					unsigned int DigestSize = 0;
+					uint8 Digest[EVP_MAX_MD_SIZE];
+					if (!X509_digest(pCertificate, fg_GetTLSServerEndPointDigest(pCertificate), Digest, &DigestSize))
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to calculate TLS server endpoint certificate digest"));
 
 					return NContainer::CByteVector(Digest, DigestSize);
 				}
