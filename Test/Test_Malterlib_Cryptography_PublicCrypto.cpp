@@ -66,6 +66,30 @@ public:
 				}
 			}
 		};
+
+		// Reconstructing an RSA public key from its raw modulus/exponent (as a JWK 'n'/'e' carries it) must verify
+		// exactly like the original DER key. This is the primitive the OIDC ID-token RS256 path relies on.
+		DMibTestSuite("RSA public key from parameters round-trip")
+		{
+			static const char *Text = "header.payload";
+			CSecureByteVector Message;
+			NMemory::fg_MemCopy(Message.f_GetArray(fg_StrLen(Text)), Text, fg_StrLen(Text));
+
+			NContainer::CSecureByteVector PrivateKey;
+			NContainer::CSecureByteVector PublicKey;
+			CPublicCrypto::fs_GenerateKeys(PrivateKey, PublicKey, CPublicKeySettings_RSA{});
+
+			CPublicCrypto::CPublicKeyParameters Parameters = CPublicCrypto::fs_GetPublicKeyParameters(PublicKey);
+			DMibExpectTrue(Parameters.f_IsOfType<CPublicCrypto::CPublicKeyParameters_RSA>());
+
+			NContainer::CSecureByteVector RebuiltPublicKey = CPublicCrypto::fs_GetPublicKeyDataFromParameters(Parameters);
+
+			NContainer::CSecureByteVector Signature = CPublicCrypto::fs_SignMessage(Message, PrivateKey, EDigestType_SHA256);
+			DMibExpectTrue(CPublicCrypto::fs_VerifySignature(Message, RebuiltPublicKey, Signature, EDigestType_SHA256));
+
+			Signature[0] ^= 0x1;
+			DMibExpectFalse(CPublicCrypto::fs_VerifySignature(Message, RebuiltPublicKey, Signature, EDigestType_SHA256));
+		};
 	}
 };
 
