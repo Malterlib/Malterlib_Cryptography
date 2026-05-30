@@ -133,6 +133,54 @@ void CPublicCrypto_Tests::f_DoTests()
 			DMibExpect(nFailed, ==, 0);
 		}
 	};
+
+	DMibTestSuite("RSA public key from parameters round-trip")
+	{
+		static char const *s_pText = "header.payload";
+		CSecureByteVector Message;
+		NMemory::fg_MemCopy(Message.f_GetArray(fg_StrLen(s_pText)), s_pText, fg_StrLen(s_pText));
+
+		NContainer::CSecureByteVector PrivateKey;
+		NContainer::CSecureByteVector PublicKey;
+		CPublicCrypto::fs_GenerateKeys(PrivateKey, PublicKey, CPublicKeySettings_RSA{});
+
+		CPublicCrypto::CPublicKeyParameters Parameters = CPublicCrypto::fs_GetPublicKeyParameters(PublicKey);
+		DMibExpectTrue(Parameters.f_IsOfType<CPublicCrypto::CPublicKeyParameters_RSA>());
+
+		NContainer::CSecureByteVector RebuiltPublicKey = CPublicCrypto::fs_GetPublicKeyDataFromParameters(Parameters);
+
+		NContainer::CSecureByteVector Signature = CPublicCrypto::fs_SignMessage(Message, PrivateKey, EDigestType_SHA256);
+		DMibExpectTrue(CPublicCrypto::fs_VerifySignature(Message, RebuiltPublicKey, Signature, EDigestType_SHA256));
+
+		Signature[0] ^= 0x1;
+		DMibExpectFalse(CPublicCrypto::fs_VerifySignature(Message, RebuiltPublicKey, Signature, EDigestType_SHA256));
+	};
+
+	DMibTestSuite("RSA public key from invalid parameters")
+	{
+		NContainer::CSecureByteVector PrivateKey;
+		NContainer::CSecureByteVector PublicKey;
+		CPublicCrypto::fs_GenerateKeys(PrivateKey, PublicKey, CPublicKeySettings_RSA{});
+
+		auto ValidParameters = CPublicCrypto::fs_GetPublicKeyParameters(PublicKey).f_GetAsType<CPublicCrypto::CPublicKeyParameters_RSA>();
+
+		{
+			DMibTestPath("Empty modulus");
+			CPublicCrypto::CPublicKeyParameters_RSA Parameters = ValidParameters;
+			Parameters.m_Modulus.f_Clear();
+			DMibExpectExceptionType(CPublicCrypto::fs_GetPublicKeyDataFromParameters(Parameters), CExceptionCryptography);
+		}
+
+		{
+			DMibTestPath("Even exponent");
+			CPublicCrypto::CPublicKeyParameters_RSA Parameters = ValidParameters;
+			Parameters.m_Exponent.f_Clear();
+			Parameters.m_Exponent.f_Insert(uint8(0x01));
+			Parameters.m_Exponent.f_Insert(uint8(0x00));
+			Parameters.m_Exponent.f_Insert(uint8(0x00));
+			DMibExpectExceptionType(CPublicCrypto::fs_GetPublicKeyDataFromParameters(Parameters), CExceptionCryptography);
+		}
+	};
 }
 
 DMibTestRegister(CPublicCrypto_Tests, Malterlib::Cryptography);
