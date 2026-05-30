@@ -107,6 +107,71 @@ namespace NMib::NCryptography
 			DMibErrorCryptography("Unsupported key type");
 	}
 
+	NContainer::CSecureByteVector CPublicCrypto::fs_GetPublicKeyDataFromParameters(CPublicKeyParameters const &_Parameters)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					if (!_Parameters.f_IsOfType<CPublicKeyParameters_RSA>())
+						DMibErrorCryptography("fs_GetPublicKeyDataFromParameters only supports RSA parameters");
+
+					auto const &RsaParams = _Parameters.f_GetAsType<CPublicKeyParameters_RSA>();
+
+					// Each BoringSSL resource gets a scope guard right after creation; on successful ownership
+					// transfer the pointer is nulled so the guard becomes a no-op (BN_free/RSA_free/EVP_PKEY_free
+					// all accept null). This keeps cleanup correct on every error path without manual frees.
+					ERR_clear_error();
+					BIGNUM *pModulus = BN_bin2bn(RsaParams.m_Modulus.f_GetArray(), aint(RsaParams.m_Modulus.f_GetLen()), nullptr);
+					auto CleanupModulus = g_OnScopeExit / [&]
+						{
+							BN_free(pModulus);
+						}
+					;
+					BIGNUM *pExponent = BN_bin2bn(RsaParams.m_Exponent.f_GetArray(), aint(RsaParams.m_Exponent.f_GetLen()), nullptr);
+					auto CleanupExponent = g_OnScopeExit / [&]
+						{
+							BN_free(pExponent);
+						}
+					;
+					if (!pModulus || !pExponent)
+						DMibErrorCryptography(fg_GetExceptionStr("Error parsing RSA modulus/exponent"));
+
+					RSA *pRSA = RSA_new();
+					auto CleanupRSA = g_OnScopeExit / [&]
+						{
+							RSA_free(pRSA);
+						}
+					;
+					if (!pRSA)
+						DMibErrorCryptography(fg_GetExceptionStr("RSA_new failed"));
+
+					// RSA_set0_key takes ownership of the BIGNUMs on success.
+					if (!RSA_set0_key(pRSA, pModulus, pExponent, nullptr))
+						DMibErrorCryptography(fg_GetExceptionStr("RSA_set0_key failed"));
+					pModulus = nullptr;
+					pExponent = nullptr;
+
+					EVP_PKEY *pKey = EVP_PKEY_new();
+					auto CleanupKey = g_OnScopeExit / [&]
+						{
+							EVP_PKEY_free(pKey);
+						}
+					;
+					if (!pKey)
+						DMibErrorCryptography(fg_GetExceptionStr("EVP_PKEY_new failed"));
+
+					// EVP_PKEY_assign_RSA takes ownership of pRSA on success.
+					if (!EVP_PKEY_assign_RSA(pKey, pRSA))
+						DMibErrorCryptography(fg_GetExceptionStr("EVP_PKEY_assign_RSA failed"));
+					pRSA = nullptr;
+
+					return fg_ConvertPublicKeyToDER(pKey);
+				}
+			)
+		;
+	}
+
 	NContainer::CSecureByteVector CPublicCrypto::fs_SignMessage(NContainer::CSecureByteVector const &_Message, NContainer::CSecureByteVector const &_KeyData, EDigestType _Digest)
 	{
 		return fg_RunProtectRegisters

@@ -97,6 +97,11 @@ namespace NMib::NCryptography
 
 		static NContainer::CSecureByteVector fs_GetPublicKeyFromPrivateKey(NContainer::CSecureByteVector const &_PrivateKey);
 		static CPublicKeyParameters fs_GetPublicKeyParameters(NContainer::CSecureByteVector const &_Key);
+		// Builds DER (SubjectPublicKeyInfo) public key data from raw parameters - the inverse of
+		// fs_GetPublicKeyParameters. The result is suitable for fs_VerifySignature. Currently supports RSA
+		// (modulus/exponent, as delivered by a JWK 'n'/'e'); EC is rejected since the curve is not carried in the
+		// parameters.
+		static NContainer::CSecureByteVector fs_GetPublicKeyDataFromParameters(CPublicKeyParameters const &_Parameters);
 		static CPublicKeySetting fs_PublicKeySettingsFromPrivateKey(NContainer::CSecureByteVector const &_Key);
 
 		static bool fs_VerifySignature
