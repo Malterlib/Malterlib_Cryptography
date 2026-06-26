@@ -1,0 +1,6 @@
+../../../../External/boringssl/CMakeLists.txt
+../../../../External/boringssl/cmake/go.cmake
+../../../../External/boringssl/cmake/paths.cmake
+../../../../External/boringssl/gen/sources.cmake
+../../../../External/boringssl/ssl/test/CMakeLists.txt
+../../../../External/boringssl/util/go_tests.txt
