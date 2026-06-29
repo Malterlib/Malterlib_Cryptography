@@ -29,6 +29,25 @@ namespace NMib::NCryptography
 		;
 	}
 
+	NContainer::CSecureByteVector CPublicCrypto::fs_ConvertPrivateKeyPemToDer(NContainer::CSecureByteVector const &_PrivateKeyPem)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					EVP_PKEY *pKey = fg_LoadPrivateKey(_PrivateKeyPem);
+					auto Cleanup1 = g_OnScopeExit / [&]
+						{
+							EVP_PKEY_free(pKey);
+						}
+					;
+
+					return fg_ConvertPrivateKeyToDER(pKey);
+				}
+			)
+		;
+	}
+
 	CPublicCrypto::CPublicKeyParameters CPublicCrypto::fs_GetPublicKeyParameters(NContainer::CSecureByteVector const &_Key)
 	{
 		EVP_PKEY *pKey = fg_LoadPublicKeyFromDER(_Key);
