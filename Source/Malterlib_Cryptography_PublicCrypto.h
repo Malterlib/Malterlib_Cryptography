@@ -96,6 +96,9 @@ namespace NMib::NCryptography
 		;
 
 		static NContainer::CSecureByteVector fs_GetPublicKeyFromPrivateKey(NContainer::CSecureByteVector const &_PrivateKey);
+		// Converts a PEM-encoded private key (PKCS#1 or PKCS#8) to DER. The DER result is what fs_SignMessage and the
+		// other key functions here expect. Throws if the PEM cannot be parsed.
+		static NContainer::CSecureByteVector fs_ConvertPrivateKeyPemToDer(NContainer::CSecureByteVector const &_PrivateKeyPem);
 		static CPublicKeyParameters fs_GetPublicKeyParameters(NContainer::CSecureByteVector const &_Key);
 		// Builds DER (SubjectPublicKeyInfo) public key data from raw parameters - the inverse of
 		// fs_GetPublicKeyParameters. The result is suitable for fs_VerifySignature. Currently supports RSA
