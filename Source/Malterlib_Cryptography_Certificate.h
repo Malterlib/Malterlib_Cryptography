@@ -37,6 +37,14 @@ namespace NMib::NCryptography
 		, EExtendedKeyUsage_Timestamping = DMibBit(4)
 	};
 
+	// Role-restricted leaves must support signatures. Missing EKU permits either role; present EKU must include the exact role.
+	enum EVerificationPurpose
+	{
+		EVerificationPurpose_Any = 0 // No extended-key-usage restriction
+		, EVerificationPurpose_ServerAuth
+		, EVerificationPurpose_ClientAuth
+	};
+
 	struct CCertificateExtension
 	{
 		auto operator <=> (CCertificateExtension const &_Right) const noexcept = default;
@@ -53,7 +61,7 @@ namespace NMib::NCryptography
 
 	struct CCertificateOptions
 	{
-		void f_AddExtension_BasicConstraints(bool _bCA, bool _bCritical = true);
+		void f_AddExtension_BasicConstraints(bool _bCA, bool _bCritical = true, int32 _PathLength = -1);
 		void f_AddExtension_KeyUsage(EKeyUsage _KeyUsage, bool _bCritical = true);
 		void f_AddExtension_ExtendedKeyUsage(EExtendedKeyUsage _KeyUsage, bool _bCritical = true);
 		void f_MakeCA();
@@ -65,6 +73,15 @@ namespace NMib::NCryptography
 		CPublicKeySetting m_KeySetting;
 	};
 
+	// Restricted roles replace requested usage and CA extensions with a non-CA leaf of the selected role.
+	// Unrestricted permits request extensions subject to the extension whitelist; use only with trusted requests.
+	enum ECertificateLeafRole
+	{
+		ECertificateLeafRole_Unrestricted = 0
+		, ECertificateLeafRole_ServerAuth
+		, ECertificateLeafRole_ClientAuth
+	};
+
 	struct CCertificateSignOptions
 	{
 		void f_AddExtension_SubjectKeyIdentifier(bool _bCritical = false);
@@ -74,6 +91,18 @@ namespace NMib::NCryptography
 		int32 m_Serial = 1;
 		int32 m_Days = 365;
 		NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> m_Extensions;
+		ECertificateLeafRole m_LeafRole = ECertificateLeafRole_Unrestricted;
+		NContainer::TCVector<CPublicKeySetting> m_AllowedKeyTypes; // Empty permits any key; EC entries require the exact curve and RSA entries specify a minimum bit length.
+		NContainer::TCVector<EDigestType> m_AllowedRequestDigests; // Allowed request-signature digests; empty permits any digest.
+		NStr::CStr m_OverrideSubjectCommonName; // Nonempty replaces the requested subject with this common name.
+		NContainer::TCVector<NStr::CStr> m_AllowedRequestExtensions; // Numeric OIDs allowed from the request; empty copies all requested extensions.
+	};
+
+	// Empty whitelists leave their respective key or digest restriction disabled.
+	struct CCertificateVerifyOptions
+	{
+		NContainer::TCVector<CPublicKeySetting> m_AllowedLeafKeyTypes; // RSA entries specify a minimum bit length.
+		NContainer::TCVector<EDigestType> m_AllowedSignatureDigests; // Applies to the leaf and every intermediate on the built path, not to the anchor's own signature.
 	};
 
 	struct CCertificate
@@ -82,6 +111,7 @@ namespace NMib::NCryptography
 		static NStr::CStr fs_GetCertificateDistinguishedName_RFC2253(NContainer::CByteVector const &_CertificateData);
 		static NStr::CStr fs_GetIssuerName(NContainer::CByteVector const &_CertificateData);
 		static bool fs_IsRoot(NContainer::CByteVector const &_CertificateData);
+		static EDigestType fs_GetSignatureDigestType(NContainer::CByteVector const &_CertificateData);
 		static NStr::CStr fs_GetCertificateFingerprint(NContainer::CByteVector const &_CertificateData);
 		static NContainer::CByteVector fs_GetCertificateFingerprintData(NContainer::CByteVector const &_CertificateData, EDigestType _Digest = EDigestType_SHA256);
 		static NContainer::CByteVector fs_GetCertificateTLSServerEndPointData(NContainer::CByteVector const &_CertificateData);
@@ -89,6 +119,19 @@ namespace NMib::NCryptography
 		static NContainer::TCVector<NStr::CStr> fs_GetSortedHostnames(NContainer::TCVector<NStr::CStr> const &_Unsorted);
 		static NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> fs_GetCertificateExtensions(NContainer::CByteVector const &_CertificateData);
 		static NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> fs_GetCertificateRequestExtensions(NContainer::CByteVector const &_CertificateData);
+		static NContainer::CSecureByteVector fs_GetCertificatePublicKey(NContainer::CByteVector const &_CertificateData);
+
+		static bool fs_VerifyCertificateChain
+			(
+				NContainer::TCVector<NContainer::CByteVector> const &_CertificateChain
+				, NContainer::CByteVector const &_CACertificateData
+				, bool _bUseSystemStoreIfNoCA
+				, EVerificationPurpose _RequiredPurpose
+				, CCertificateVerifyOptions const &_VerifyOptions
+				, NContainer::TCVector<NContainer::CByteVector> *o_pVerifiedChain
+				, NStr::CStr &o_Error
+			)
+		;
 
 		static NStr::CStr fs_GetCertificateHostnamesStr(NContainer::CByteVector const &_CertificateData);
 		static NTime::CTime fs_GetCertificateExpirationTime(NContainer::CByteVector const &_CertificateData);
@@ -129,6 +172,7 @@ namespace NMib::NCryptography
 		static void fs_VerifyCertificateRequestSameKeyAsCertificate(NContainer::CByteVector const &_CertRequestData, NContainer::CByteVector const &_CertData);
 
 		static void fs_GetSystemCertificates(X509_STORE *_pCertificateStoreStore);
+		static bool fs_SystemStoreCertificatesAreAnchors();
 
 		static NContainer::CByteVector fs_ConvertToDer_CertificateSigningRequest(NContainer::CByteVector const &_Pem);
 		static NContainer::CByteVector fs_ConvertToDer_Certificate(NContainer::CByteVector const &_Pem);

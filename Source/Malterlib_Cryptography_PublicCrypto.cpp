@@ -345,7 +345,9 @@ namespace NMib::NCryptography
 			(
 				[&]() -> CPublicKeySetting
 				{
-					EVP_PKEY *pKey = fg_LoadPrivateKeyFromDER(_Key);
+					// Keys arrive both as DER (CPublicCrypto's own format) and as PEM (trust manager
+					// storage); DER always starts with an ASN.1 SEQUENCE octet
+					EVP_PKEY *pKey = !_Key.f_IsEmpty() && _Key[0] == 0x30 ? fg_LoadPrivateKeyFromDER(_Key) : fg_LoadPrivateKey(_Key);
 					auto Cleanup1 = g_OnScopeExit / [&]
 						{
 							EVP_PKEY_free(pKey);
@@ -377,5 +379,28 @@ namespace NMib::NCryptography
 				}
 			)
 		;
+	}
+
+	EDigestType fg_GetAutomaticDigestType(CPublicKeySetting const &_KeySetting)
+	{
+		switch (_KeySetting.f_GetTypeID())
+		{
+		case EPublicKeyType::mc_RSA:
+			{
+				// Match RSA_size rounding before applying digest thresholds.
+				auto KeyLength = ((_KeySetting.f_Get<EPublicKeyType::mc_RSA>().m_KeyLength + 7) / 8) * 8;
+				if (KeyLength >= 12288)
+					return EDigestType_SHA512;
+				else if (KeyLength >= 4096)
+					return EDigestType_SHA384;
+				else
+					return EDigestType_SHA256;
+			}
+		case EPublicKeyType::mc_EC_secp521r1: return EDigestType_SHA512;
+		case EPublicKeyType::mc_EC_secp384r1: return EDigestType_SHA384;
+		case EPublicKeyType::mc_EC_secp256r1: return EDigestType_SHA256;
+		case EPublicKeyType::mc_EC_X25519: return EDigestType_SHA256;
+		}
+		DMibErrorCryptography("Unsupported key setting");
 	}
 }

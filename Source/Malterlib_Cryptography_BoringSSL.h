@@ -67,6 +67,10 @@ namespace NMib::NCryptography::NBoringSSL
 	NContainer::CByteVector fg_ConvertX509ToBinary(X509 *_pCertificate);
 	NTime::CTime fg_GetX509ExpireTime(X509 *_pCertificate);
 	EVP_PKEY *fg_LoadPrivateKey(NContainer::CSecureByteVector const &_Data);
+
+	bool fg_KeyMatchesAllowedSetting(EVP_PKEY *_pKey, NContainer::TCVector<CPublicKeySetting> const &_Allowed);
+	bool fg_DigestNIDMatchesAllowed(int _DigestNID, NContainer::TCVector<EDigestType> const &_Allowed);
+	int fg_GetSignatureDigestNID(X509_ALGOR const *_pSignatureAlgorithm);
 }
 
 #ifndef DMibPNoShortCuts

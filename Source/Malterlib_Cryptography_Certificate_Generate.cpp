@@ -65,6 +65,21 @@ namespace NMib::NCryptography
 				DMibErrorCryptography(fg_GetExceptionStr("Error adding x509 extension"));
 		}
 
+		void fg_RemoveExtensionsByNID(X509 *_pCert, int _nID)
+		{
+			for (int Location = X509_get_ext_by_NID(_pCert, _nID, -1); Location >= 0; Location = X509_get_ext_by_NID(_pCert, _nID, -1))
+				X509_EXTENSION_free(X509_delete_ext(_pCert, Location));
+		}
+
+		bool fg_RequestDigestMatchesAllowed(X509_REQ *_pRequest, NContainer::TCVector<EDigestType> const &_Allowed)
+		{
+			ASN1_BIT_STRING const *pSignature = nullptr;
+			X509_ALGOR const *pSignatureAlgorithm = nullptr;
+			X509_REQ_get0_signature(_pRequest, &pSignature, &pSignatureAlgorithm);
+
+			return fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _Allowed);
+		}
+
 		void fg_AddExtension(X509V3_CTX &_Context, X509_EXTENSIONS *&_pExtensions, int _nID, CCertificateExtension _Extension)
 		{
 			X509_EXTENSION *pExtension = fg_CreateExtension(_Context, _nID, _Extension);
@@ -329,6 +344,12 @@ namespace NMib::NCryptography
 							DMibErrorCryptography(fg_GetExceptionStr("Signature verification error"));
 						else if (VerifyResult == 0)
 							DMibErrorCryptography("Certificate request signature mismatch");
+
+						if (!_SignOptions.m_AllowedKeyTypes.f_IsEmpty() && !fg_KeyMatchesAllowedSetting(pPublicKey, _SignOptions.m_AllowedKeyTypes))
+							DMibErrorCryptography("Certificate request key type is not permitted by the signer");
+
+						if (!_SignOptions.m_AllowedRequestDigests.f_IsEmpty() && !fg_RequestDigestMatchesAllowed(pCertificateRequest, _SignOptions.m_AllowedRequestDigests))
+							DMibErrorCryptography("Certificate request digest is not permitted by the signer");
 					}
 
 					ERR_clear_error();
@@ -352,9 +373,32 @@ namespace NMib::NCryptography
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 issuer"));
 
 
-					ERR_clear_error();
-					if (!X509_set_subject_name(pCertificate, X509_REQ_get_subject_name(pCertificateRequest)))
-						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 subject name"));
+					if (!_SignOptions.m_OverrideSubjectCommonName.f_IsEmpty())
+					{
+						ERR_clear_error();
+						if
+						(
+							!X509_NAME_add_entry_by_txt
+							(
+								X509_get_subject_name(pCertificate)
+								, "CN"
+								, MBSTRING_UTF8
+								, (unsigned char const *)_SignOptions.m_OverrideSubjectCommonName.f_GetStr()
+								, -1
+								, -1
+								, 0
+							)
+						)
+						{
+							DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 subject common name"));
+						}
+					}
+					else
+					{
+						ERR_clear_error();
+						if (!X509_set_subject_name(pCertificate, X509_REQ_get_subject_name(pCertificateRequest)))
+							DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 subject name"));
+					}
 
 					{
 						ERR_clear_error();
@@ -409,6 +453,34 @@ namespace NMib::NCryptography
 								auto *pExtension = X509v3_get_ext(pExtensions, iExtension);
 								if (!pExtension)
 									DMibErrorCryptography(fg_GetExceptionStr("Failed to get extension from certificate request"));
+
+								if (!_SignOptions.m_AllowedRequestExtensions.f_IsEmpty())
+								{
+									// Do not propagate unapproved extensions from an untrusted request.
+									char OidText[128] = {};
+									OBJ_obj2txt(OidText, sizeof(OidText), X509_EXTENSION_get_object(pExtension), 1);
+
+									bool bAllowed = false;
+									for (auto &Allowed : _SignOptions.m_AllowedRequestExtensions)
+									{
+										if (Allowed == OidText)
+										{
+											bAllowed = true;
+											break;
+										}
+									}
+
+									if (!bAllowed)
+										continue;
+								}
+								else if (_SignOptions.m_LeafRole != ECertificateLeafRole_Unrestricted)
+								{
+									// Discard requester-controlled usage and CA extensions before applying the signer's role.
+									int ExtensionNID = OBJ_obj2nid(X509_EXTENSION_get_object(pExtension));
+									if (ExtensionNID == NID_basic_constraints || ExtensionNID == NID_key_usage || ExtensionNID == NID_ext_key_usage)
+										continue;
+								}
+
 								ERR_clear_error();
 								if (!X509_add_ext(pCertificate, pExtension, -1))
 									DMibErrorCryptography(fg_GetExceptionStr("Failed to add extension to certificate"));
@@ -422,6 +494,34 @@ namespace NMib::NCryptography
 						X509V3_set_ctx_nodb(&Context);
 						X509V3_set_ctx(&Context, pCACertificate, pCertificate, nullptr, nullptr, 0);
 						fg_AddExtensions(Context, pCertificate, _SignOptions.m_Extensions);
+					}
+
+					// Apply the role last, replacing even signer-supplied usage extensions; duplicates would invalidate the certificate.
+					if (_SignOptions.m_LeafRole != ECertificateLeafRole_Unrestricted)
+					{
+						X509V3_CTX Context;
+						X509V3_set_ctx_nodb(&Context);
+						X509V3_set_ctx(&Context, pCACertificate, pCertificate, nullptr, nullptr, 0);
+
+						fg_RemoveExtensionsByNID(pCertificate, NID_basic_constraints);
+						fg_RemoveExtensionsByNID(pCertificate, NID_ext_key_usage);
+						fg_RemoveExtensionsByNID(pCertificate, NID_key_usage);
+
+						CCertificateExtension BasicConstraints;
+						BasicConstraints.m_bCritical = true;
+						BasicConstraints.m_Value = "CA:FALSE";
+						fg_AddExtension(Context, pCertificate, NID_basic_constraints, BasicConstraints);
+
+						CCertificateExtension ExtendedKeyUsage;
+						ExtendedKeyUsage.m_bCritical = false;
+						ExtendedKeyUsage.m_Value = _SignOptions.m_LeafRole == ECertificateLeafRole_ServerAuth ? "serverAuth" : "clientAuth";
+						fg_AddExtension(Context, pCertificate, NID_ext_key_usage, ExtendedKeyUsage);
+
+						// Handshake authentication requires digitalSignature, not just key-exchange usage.
+						CCertificateExtension KeyUsage;
+						KeyUsage.m_bCritical = true;
+						KeyUsage.m_Value = "digitalSignature";
+						fg_AddExtension(Context, pCertificate, NID_key_usage, KeyUsage);
 					}
 
 					ERR_clear_error();

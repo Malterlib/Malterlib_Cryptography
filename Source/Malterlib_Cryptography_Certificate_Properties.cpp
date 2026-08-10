@@ -286,6 +286,40 @@ namespace NMib::NCryptography
 		;
 	}
 
+	// Returns EDigestType_None when the certificate's signature digest is not recognized.
+	EDigestType CCertificate::fs_GetSignatureDigestType(NContainer::CByteVector const &_CertificateData)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_free(pCertificate);
+						}
+					;
+
+					ASN1_BIT_STRING const *pSignature = nullptr;
+					X509_ALGOR const *pSignatureAlgorithm = nullptr;
+					X509_get0_signature(&pSignature, &pSignatureAlgorithm, pCertificate);
+					if (!pSignatureAlgorithm)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to read certificate signature algorithm"));
+
+					int DigestNID = fg_GetSignatureDigestNID(pSignatureAlgorithm);
+					for (EDigestType Digest : {EDigestType_SHA512, EDigestType_SHA384, EDigestType_SHA256, EDigestType_SHA224, EDigestType_SHA1, EDigestType_MD5})
+					{
+						EVP_MD const *pDigest = fg_GetDigest(Digest);
+						if (pDigest && EVP_MD_type(pDigest) == DigestNID)
+							return Digest;
+					}
+
+					return EDigestType_None;
+				}
+			)
+		;
+	}
+
 	NStr::CStr CCertificate::fs_GetIssuerName(NContainer::CByteVector const &_CertificateData)
 	{
 		return fg_RunProtectRegisters
@@ -590,5 +624,325 @@ namespace NMib::NCryptography
 		}
 
 		return NStr::CStr();
+	}
+
+	// Returns DER SubjectPublicKeyInfo, accepted by CPublicCrypto::fs_VerifySignature.
+	NContainer::CSecureByteVector CCertificate::fs_GetCertificatePublicKey(NContainer::CByteVector const &_CertificateData)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_free(pCertificate);
+						}
+					;
+
+					ERR_clear_error();
+					EVP_PKEY *pKey = X509_get_pubkey(pCertificate);
+					if (!pKey)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to read certificate public key"));
+					auto Cleanup1 = g_OnScopeExit / [&]
+						{
+							EVP_PKEY_free(pKey);
+						}
+					;
+
+					return fg_ConvertPublicKeyToDER(pKey);
+				}
+			)
+		;
+	}
+
+	// An explicit CA is a trust anchor even if not self-signed. System-store anchor policy is platform dependent.
+	// Input and verified output chains are leaf-first; a non-null o_pVerifiedChain receives the built path on success.
+	bool CCertificate::fs_VerifyCertificateChain
+		(
+			NContainer::TCVector<NContainer::CByteVector> const &_CertificateChain
+			, NContainer::CByteVector const &_CACertificateData
+			, bool _bUseSystemStoreIfNoCA
+			, EVerificationPurpose _RequiredPurpose
+			, CCertificateVerifyOptions const &_VerifyOptions
+			, NContainer::TCVector<NContainer::CByteVector> *o_pVerifiedChain
+			, NStr::CStr &o_Error
+		)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> bool
+				{
+					o_Error.f_Clear();
+
+					if (_CertificateChain.f_IsEmpty())
+					{
+						o_Error = "Empty certificate chain";
+						return false;
+					}
+
+					ERR_clear_error();
+					X509_STORE *pStore = X509_STORE_new();
+					if (!pStore)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to create certificate store"));
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_STORE_free(pStore);
+						}
+					;
+
+					if (!_CACertificateData.f_IsEmpty())
+					{
+						X509 *pCACertificate = fg_LoadCertificate(_CACertificateData);
+						auto Cleanup1 = g_OnScopeExit / [&]
+							{
+								X509_free(pCACertificate);
+							}
+						;
+
+						ERR_clear_error();
+						if (!X509_STORE_add_cert(pStore, pCACertificate))
+							DMibErrorCryptography(fg_GetExceptionStr("Failed to add CA certificate to store"));
+					}
+					else if (_bUseSystemStoreIfNoCA)
+						fs_GetSystemCertificates(pStore);
+					else
+					{
+						o_Error = "No certificate authority to verify against";
+						return false;
+					}
+
+					X509 *pLeafCertificate = fg_LoadCertificate(_CertificateChain[0]);
+					auto Cleanup2 = g_OnScopeExit / [&]
+						{
+							X509_free(pLeafCertificate);
+						}
+					;
+
+					// The store skips anchor extensions; check the leaf even when it is its own anchor or the requested purpose is Any.
+					if (X509_get_extension_flags(pLeafCertificate) & EXFLAG_CRITICAL)
+					{
+						o_Error = "Certificate contains an unsupported critical extension";
+						return false;
+					}
+
+					// Malformed recognized extensions are also skipped for a leaf used as its own anchor.
+					if (X509_get_extension_flags(pLeafCertificate) & EXFLAG_INVALID)
+					{
+						o_Error = "Certificate contains an invalid extension";
+						return false;
+					}
+
+					if (_RequiredPurpose != EVerificationPurpose_Any)
+					{
+						// The store purpose check skips a leaf substituted by its trusted anchor copy.
+						int Purpose = _RequiredPurpose == EVerificationPurpose_ServerAuth ? X509_PURPOSE_SSL_SERVER : X509_PURPOSE_SSL_CLIENT;
+
+						ERR_clear_error();
+						if (X509_check_purpose(pLeafCertificate, Purpose, 0) != 1)
+						{
+							o_Error = _RequiredPurpose == EVerificationPurpose_ServerAuth
+								? "Certificate is not valid for server authentication"
+								: "Certificate is not valid for client authentication"
+							;
+							return false;
+						}
+
+						// Require the exact EKU; X509_check_purpose also accepts legacy server-gated-crypto equivalents.
+						if (X509_get_extension_flags(pLeafCertificate) & EXFLAG_XKUSAGE)
+						{
+							uint32_t RequiredUsage = _RequiredPurpose == EVerificationPurpose_ServerAuth ? XKU_SSL_SERVER : XKU_SSL_CLIENT;
+							if (!(X509_get_extended_key_usage(pLeafCertificate) & RequiredUsage))
+							{
+								o_Error = _RequiredPurpose == EVerificationPurpose_ServerAuth
+									? "Certificate extended key usage does not include server authentication"
+									: "Certificate extended key usage does not include client authentication"
+								;
+								return false;
+							}
+						}
+
+						// Both roles sign; TLS purpose checks alone also accept key-exchange-only usage. Missing keyUsage reports all bits set.
+						if (!(X509_get_key_usage(pLeafCertificate) & X509v3_KU_DIGITAL_SIGNATURE))
+						{
+							o_Error = "Certificate key usage does not allow digital signatures";
+							return false;
+						}
+
+						// Without keyUsage, verify the algorithm can sign; key-agreement-only algorithms cannot authenticate.
+						EVP_PKEY *pLeafSigningKey = X509_get0_pubkey(pLeafCertificate);
+						int LeafKeyType = pLeafSigningKey ? EVP_PKEY_id(pLeafSigningKey) : NID_undef;
+						if (LeafKeyType != EVP_PKEY_RSA && LeafKeyType != EVP_PKEY_EC && LeafKeyType != EVP_PKEY_ED25519)
+						{
+							o_Error = "Certificate public key type cannot produce signatures";
+							return false;
+						}
+					}
+
+					if (!_VerifyOptions.m_AllowedLeafKeyTypes.f_IsEmpty())
+					{
+						EVP_PKEY *pLeafPublicKey = X509_get0_pubkey(pLeafCertificate);
+						if (!pLeafPublicKey || !fg_KeyMatchesAllowedSetting(pLeafPublicKey, _VerifyOptions.m_AllowedLeafKeyTypes))
+						{
+							o_Error = "Certificate public key type is not allowed";
+							return false;
+						}
+					}
+
+					if (!_VerifyOptions.m_AllowedSignatureDigests.f_IsEmpty())
+					{
+						ASN1_BIT_STRING const *pSignature = nullptr;
+						X509_ALGOR const *pSignatureAlgorithm = nullptr;
+						X509_get0_signature(&pSignature, &pSignatureAlgorithm, pLeafCertificate);
+
+						if (!fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _VerifyOptions.m_AllowedSignatureDigests))
+						{
+							o_Error = "Certificate signature digest is not allowed";
+							return false;
+						}
+					}
+
+					ERR_clear_error();
+					STACK_OF(X509) *pUntrusted = sk_X509_new_null();
+					if (!pUntrusted)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to create certificate stack"));
+					auto Cleanup3 = g_OnScopeExit / [&]
+						{
+							sk_X509_pop_free(pUntrusted, X509_free);
+						}
+					;
+
+					for (umint i = 1; i < _CertificateChain.f_GetLen(); ++i)
+					{
+						X509 *pIntermediate = fg_LoadCertificate(_CertificateChain[i]);
+
+						ERR_clear_error();
+						if (!sk_X509_push(pUntrusted, pIntermediate))
+						{
+							X509_free(pIntermediate);
+							DMibErrorCryptography(fg_GetExceptionStr("Failed to add certificate to stack"));
+						}
+					}
+
+					ERR_clear_error();
+					X509_STORE_CTX *pContext = X509_STORE_CTX_new();
+					if (!pContext)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to create certificate store context"));
+					auto Cleanup4 = g_OnScopeExit / [&]
+						{
+							X509_STORE_CTX_free(pContext);
+						}
+					;
+
+					ERR_clear_error();
+					if (!X509_STORE_CTX_init(pContext, pStore, pLeafCertificate, pUntrusted))
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to initialize certificate store context"));
+
+					// Explicit CAs and system trust-as-root entries may terminate a partial chain.
+					// Stores containing untrusted intermediates must still reach a root.
+					if (!_CACertificateData.f_IsEmpty() || fs_SystemStoreCertificatesAreAnchors())
+						X509_STORE_CTX_set_flags(pContext, X509_V_FLAG_PARTIAL_CHAIN);
+
+					// Apply the role to the rest of the path; the leaf-as-anchor case was checked directly.
+					if (_RequiredPurpose != EVerificationPurpose_Any)
+					{
+						int Purpose = _RequiredPurpose == EVerificationPurpose_ServerAuth ? X509_PURPOSE_SSL_SERVER : X509_PURPOSE_SSL_CLIENT;
+
+						ERR_clear_error();
+						if (!X509_STORE_CTX_set_purpose(pContext, Purpose))
+							DMibErrorCryptography(fg_GetExceptionStr("Failed to set certificate verification purpose"));
+					}
+
+					ERR_clear_error();
+					if (X509_verify_cert(pContext) != 1)
+					{
+						o_Error = X509_verify_cert_error_string(X509_STORE_CTX_get_error(pContext));
+
+						return false;
+					}
+
+					// BoringSSL skips the anchor's pathlen. Enforce it explicitly, excluding self-issued intermediates as required by the definition.
+					{
+						STACK_OF(X509) *pBuiltChain = X509_STORE_CTX_get0_chain(pContext);
+						size_t nChain = sk_X509_num(pBuiltChain);
+						if (nChain >= 2)
+						{
+							X509 *pAnchor = sk_X509_value(pBuiltChain, nChain - 1);
+
+							// BoringSSL skips anchor extensions; enforce critical and malformed-extension constraints explicitly (RFC 5937).
+							if (X509_get_extension_flags(pAnchor) & EXFLAG_CRITICAL)
+							{
+								o_Error = "Trust anchor contains an unsupported critical extension";
+								return false;
+							}
+
+							if (X509_get_extension_flags(pAnchor) & EXFLAG_INVALID)
+							{
+								o_Error = "Trust anchor contains an invalid extension";
+								return false;
+							}
+
+							long nIntermediates = 0;
+							for (size_t i = 1; i + 1 < nChain; ++i)
+							{
+								if (!(X509_get_extension_flags(sk_X509_value(pBuiltChain, i)) & EXFLAG_SI))
+									++nIntermediates;
+							}
+
+							long AnchorPathLen = X509_get_pathlen(pAnchor);
+							if (AnchorPathLen >= 0 && nIntermediates > AnchorPathLen)
+							{
+								o_Error = "Certificate chain is longer than the trust anchor's path length constraint allows";
+								return false;
+							}
+
+							// BoringSSL leaves the anchor's extended key usage unchecked too; an intermediate handed
+							// over as the trust anchor keeps the restriction it carries on the full path. Only the
+							// usage is checked: an anchor is trusted as such without basic constraints
+							if (_RequiredPurpose != EVerificationPurpose_Any)
+							{
+								uint32 AnchorUsage = X509_get_extended_key_usage(pAnchor);
+								uint32 RequiredUsage = _RequiredPurpose == EVerificationPurpose_ServerAuth ? XKU_SSL_SERVER : XKU_SSL_CLIENT;
+								if (AnchorUsage != TCLimitsInt<uint32>::mc_Max && !(AnchorUsage & RequiredUsage))
+								{
+									o_Error = "Trust anchor is not valid for the verification purpose";
+									return false;
+								}
+							}
+						}
+
+						// The leaf was checked before the path was built; the intermediates the path uses answer to the same
+						// restriction. The anchor's own signature vouches for nothing and is left out
+						if (!_VerifyOptions.m_AllowedSignatureDigests.f_IsEmpty())
+						{
+							for (size_t i = 1; i + 1 < nChain; ++i)
+							{
+								ASN1_BIT_STRING const *pSignature = nullptr;
+								X509_ALGOR const *pSignatureAlgorithm = nullptr;
+								X509_get0_signature(&pSignature, &pSignatureAlgorithm, sk_X509_value(pBuiltChain, i));
+
+								if (!fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _VerifyOptions.m_AllowedSignatureDigests))
+								{
+									o_Error = "Certificate chain signature digest is not allowed";
+									return false;
+								}
+							}
+						}
+					}
+
+					if (o_pVerifiedChain)
+					{
+						// Return the built path, which can differ from the supplied chain.
+						o_pVerifiedChain->f_Clear();
+
+						STACK_OF(X509) *pVerifiedChain = X509_STORE_CTX_get0_chain(pContext);
+						for (size_t i = 0; i < sk_X509_num(pVerifiedChain); ++i)
+							o_pVerifiedChain->f_Insert(fg_ConvertX509ToBinary(sk_X509_value(pVerifiedChain, i)));
+					}
+
+					return true;
+				}
+			)
+		;
 	}
 }

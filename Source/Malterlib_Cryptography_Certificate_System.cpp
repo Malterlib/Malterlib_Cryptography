@@ -433,12 +433,28 @@ namespace NMib::NCryptography
 #endif
 	}
 
+	// Whether every system-store certificate is independently trusted, allowing partial-chain termination.
+	bool CCertificate::fs_SystemStoreCertificatesAreAnchors()
+	{
+#if defined(DPlatformFamily_Windows)
+		// The merged ROOT/CA store includes intermediates, so partial-chain trust is unsafe.
+		// Without source-store metadata, self-signed CA-store entries can anchor and non-self-signed ROOT entries cannot.
+		return false;
+#elif defined(DPlatformFamily_macOS)
+		// Keychain trust-root and trust-as-root entries are explicit anchors; non-self-signed entries need partial-chain handling.
+		return true;
+#else
+		// Do not independently trust every bundle entry; an added intermediate must still chain to a root.
+		return false;
+#endif
+	}
+
 	void CCertificate::fs_GetSystemCertificates(X509_STORE *_pCertificateStoreStore)
 	{
 		auto &Globals = *g_CertificateGlobals;
 
-		if (!Globals.m_pSystemCertStore)
 		{
+			// Every reader must take the lock to observe a fully initialized immutable store.
 			DMibLock(Globals.m_SystemCertStoreLock);
 			if (!Globals.m_pSystemCertStore)
 				Globals.m_pSystemCertStore = fg_ExtractSystemCertificates();

@@ -116,6 +116,8 @@ namespace NMib::NCryptography
 			)
 		;
 	};
+
+	EDigestType fg_GetAutomaticDigestType(CPublicKeySetting const &_KeySetting);
 }
 
 #ifndef DMibPNoShortCuts
