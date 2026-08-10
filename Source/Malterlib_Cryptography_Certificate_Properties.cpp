@@ -591,4 +591,325 @@ namespace NMib::NCryptography
 
 		return NStr::CStr();
 	}
+
+	NContainer::CSecureByteVector CCertificate::fs_GetCertificatePublicKey(NContainer::CByteVector const &_CertificateData)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_free(pCertificate);
+						}
+					;
+
+					ERR_clear_error();
+					EVP_PKEY *pKey = X509_get_pubkey(pCertificate);
+					if (!pKey)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to read certificate public key"));
+					auto Cleanup1 = g_OnScopeExit / [&]
+						{
+							EVP_PKEY_free(pKey);
+						}
+					;
+
+					return fg_ConvertPublicKeyToDER(pKey);
+				}
+			)
+		;
+	}
+
+	bool CCertificate::fs_VerifyCertificateChain
+		(
+			NContainer::TCVector<NContainer::CByteVector> const &_CertificateChain
+			, NContainer::CByteVector const &_CACertificateData
+			, bool _bUseSystemStoreIfNoCA
+			, EVerificationPurpose _RequiredPurpose
+			, CCertificateVerifyOptions const &_VerifyOptions
+			, NContainer::TCVector<NContainer::CByteVector> *o_pVerifiedChain
+			, NStr::CStr &o_Error
+		)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> bool
+				{
+					// Never leave a stale message from a previous call behind a success result
+					o_Error.f_Clear();
+
+					if (_CertificateChain.f_IsEmpty())
+					{
+						o_Error = "Empty certificate chain";
+						return false;
+					}
+
+					ERR_clear_error();
+					X509_STORE *pStore = X509_STORE_new();
+					if (!pStore)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to create certificate store"));
+					auto Cleanup0 = g_OnScopeExit / [&]
+						{
+							X509_STORE_free(pStore);
+						}
+					;
+
+					if (!_CACertificateData.f_IsEmpty())
+					{
+						X509 *pCACertificate = fg_LoadCertificate(_CACertificateData);
+						auto Cleanup1 = g_OnScopeExit / [&]
+							{
+								X509_free(pCACertificate);
+							}
+						;
+
+						ERR_clear_error();
+						if (!X509_STORE_add_cert(pStore, pCACertificate))
+							DMibErrorCryptography(fg_GetExceptionStr("Failed to add CA certificate to store"));
+					}
+					else if (_bUseSystemStoreIfNoCA)
+						fs_GetSystemCertificates(pStore);
+					else
+					{
+						o_Error = "No certificate authority to verify against";
+						return false;
+					}
+
+					X509 *pLeafCertificate = fg_LoadCertificate(_CertificateChain[0]);
+					auto Cleanup2 = g_OnScopeExit / [&]
+						{
+							X509_free(pLeafCertificate);
+						}
+					;
+
+					// A critical extension the library does not implement must fail verification per
+					// X.509. The store context only applies this check to the untrusted part of the
+					// path, so a leaf that is its own trust anchor (pinned directly as the CA) would
+					// skip it; check the leaf here for every purpose including Any
+					if (X509_get_extension_flags(pLeafCertificate) & EXFLAG_CRITICAL)
+					{
+						o_Error = "Certificate contains an unsupported critical extension";
+						return false;
+					}
+
+					// A recognized extension that fails to decode marks the certificate invalid and is
+					// skipped by the store context in the same leaf-as-anchor case, so it is checked
+					// directly as well
+					if (X509_get_extension_flags(pLeafCertificate) & EXFLAG_INVALID)
+					{
+						o_Error = "Certificate contains an invalid extension";
+						return false;
+					}
+
+					if (_RequiredPurpose != EVerificationPurpose_Any)
+					{
+						// Check the leaf directly: the store context purpose check does not cover a leaf
+						// that is its own trust anchor, because path building substitutes the trusted
+						// store copy and only applies the purpose to the remaining chain entries
+						int Purpose = _RequiredPurpose == EVerificationPurpose_ServerAuth ? X509_PURPOSE_SSL_SERVER : X509_PURPOSE_SSL_CLIENT;
+
+						ERR_clear_error();
+						if (X509_check_purpose(pLeafCertificate, Purpose, 0) != 1)
+						{
+							o_Error = _RequiredPurpose == EVerificationPurpose_ServerAuth
+								? "Certificate is not valid for server authentication"
+								: "Certificate is not valid for client authentication"
+							;
+							return false;
+						}
+
+						// A present extended key usage extension must include the exact role usage.
+						// X509_check_purpose alone also accepts legacy equivalents (for example the
+						// Netscape/Microsoft server-gated-crypto usages for the server purpose), which
+						// this contract does not
+						if (X509_get_extension_flags(pLeafCertificate) & EXFLAG_XKUSAGE)
+						{
+							uint32_t RequiredUsage = _RequiredPurpose == EVerificationPurpose_ServerAuth ? XKU_SSL_SERVER : XKU_SSL_CLIENT;
+							if (!(X509_get_extended_key_usage(pLeafCertificate) & RequiredUsage))
+							{
+								o_Error = _RequiredPurpose == EVerificationPurpose_ServerAuth
+									? "Certificate extended key usage does not include server authentication"
+									: "Certificate extended key usage does not include client authentication"
+								;
+								return false;
+							}
+						}
+
+						// Both roles authenticate by producing a signature, so a key usage extension
+						// must include digitalSignature; the TLS purposes alone also accept key
+						// exchange only usages (keyEncipherment/keyAgreement), which cannot sign.
+						// X509_get_key_usage returns all bits set when no extension is present
+						if (!(X509_get_key_usage(pLeafCertificate) & X509v3_KU_DIGITAL_SIGNATURE))
+						{
+							o_Error = "Certificate key usage does not allow digital signatures";
+							return false;
+						}
+
+						// An absent key usage extension reports all usages, so the key algorithm is
+						// also checked directly: only algorithms that can produce signatures qualify
+						// (X25519 is key agreement only)
+						EVP_PKEY *pLeafSigningKey = X509_get0_pubkey(pLeafCertificate);
+						int LeafKeyType = pLeafSigningKey ? EVP_PKEY_id(pLeafSigningKey) : NID_undef;
+						if (LeafKeyType != EVP_PKEY_RSA && LeafKeyType != EVP_PKEY_EC && LeafKeyType != EVP_PKEY_ED25519)
+						{
+							o_Error = "Certificate public key type cannot produce signatures";
+							return false;
+						}
+					}
+
+					// The verification whitelists mirror the issuance whitelists: the caller states
+					// which key types and signature digests its protocol issues, and any other leaf is
+					// rejected regardless of who signed it
+					if (!_VerifyOptions.m_AllowedLeafKeyTypes.f_IsEmpty())
+					{
+						EVP_PKEY *pLeafPublicKey = X509_get0_pubkey(pLeafCertificate);
+						if (!pLeafPublicKey || !fg_KeyMatchesAllowedSetting(pLeafPublicKey, _VerifyOptions.m_AllowedLeafKeyTypes))
+						{
+							o_Error = "Certificate public key type is not allowed";
+							return false;
+						}
+					}
+
+					if (!_VerifyOptions.m_AllowedSignatureDigests.f_IsEmpty())
+					{
+						ASN1_BIT_STRING const *pSignature = nullptr;
+						X509_ALGOR const *pSignatureAlgorithm = nullptr;
+						X509_get0_signature(&pSignature, &pSignatureAlgorithm, pLeafCertificate);
+
+						if (!fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _VerifyOptions.m_AllowedSignatureDigests))
+						{
+							o_Error = "Certificate signature digest is not allowed";
+							return false;
+						}
+					}
+
+					ERR_clear_error();
+					STACK_OF(X509) *pUntrusted = sk_X509_new_null();
+					if (!pUntrusted)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to create certificate stack"));
+					auto Cleanup3 = g_OnScopeExit / [&]
+						{
+							sk_X509_pop_free(pUntrusted, X509_free);
+						}
+					;
+
+					for (umint i = 1; i < _CertificateChain.f_GetLen(); ++i)
+					{
+						X509 *pIntermediate = fg_LoadCertificate(_CertificateChain[i]);
+
+						ERR_clear_error();
+						if (!sk_X509_push(pUntrusted, pIntermediate))
+						{
+							X509_free(pIntermediate);
+							DMibErrorCryptography(fg_GetExceptionStr("Failed to add certificate to stack"));
+						}
+					}
+
+					ERR_clear_error();
+					X509_STORE_CTX *pContext = X509_STORE_CTX_new();
+					if (!pContext)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to create certificate store context"));
+					auto Cleanup4 = g_OnScopeExit / [&]
+						{
+							X509_STORE_CTX_free(pContext);
+						}
+					;
+
+					ERR_clear_error();
+					if (!X509_STORE_CTX_init(pContext, pStore, pLeafCertificate, pUntrusted))
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to initialize certificate store context"));
+
+					// A caller-supplied CA is an explicit trust anchor even when it is a CA-issued leaf
+					// or intermediate pinned directly, so path building may stop at the store match
+					// instead of requiring a self-signed root. For the system store this depends on
+					// the platform: on macOS every loaded certificate is an anchor by keychain trust
+					// settings (including trust-as-root entries that are not self-signed and need
+					// partial chain handling to anchor at all), while the Windows store also carries
+					// chain-building intermediates from its CA store, which are not independently
+					// trusted and must still chain to a root
+					if (!_CACertificateData.f_IsEmpty() || fs_SystemStoreCertificatesAreAnchors())
+						X509_STORE_CTX_set_flags(pContext, X509_V_FLAG_PARTIAL_CHAIN);
+
+					// Constrain the rest of the path to the requested role; the leaf itself was already
+					// checked directly above (the store context skips a leaf that is its own anchor)
+					if (_RequiredPurpose != EVerificationPurpose_Any)
+					{
+						int Purpose = _RequiredPurpose == EVerificationPurpose_ServerAuth ? X509_PURPOSE_SSL_SERVER : X509_PURPOSE_SSL_CLIENT;
+
+						ERR_clear_error();
+						if (!X509_STORE_CTX_set_purpose(pContext, Purpose))
+							DMibErrorCryptography(fg_GetExceptionStr("Failed to set certificate verification purpose"));
+					}
+
+					ERR_clear_error();
+					if (X509_verify_cert(pContext) != 1)
+					{
+						o_Error = X509_verify_cert_error_string(X509_STORE_CTX_get_error(pContext));
+
+						return false;
+					}
+
+					// BoringSSL's path length checking iterates only the untrusted certificates, so a
+					// pathlen constraint on the trust anchor itself is never consulted there; enforce
+					// it here so a pathlen:0 anchor really forbids intermediates below it. Following
+					// the pathlen definition (and BoringSSL's own check for non-anchor constraints),
+					// self-issued intermediates do not count toward the limit
+					{
+						STACK_OF(X509) *pBuiltChain = X509_STORE_CTX_get0_chain(pContext);
+						size_t nChain = sk_X509_num(pBuiltChain);
+						if (nChain >= 2)
+						{
+							X509 *pAnchor = sk_X509_value(pBuiltChain, nChain - 1);
+
+							// The store context also never examines the anchor's extensions, so a
+							// trust anchor carrying an unrecognized critical extension or one that
+							// fails to decode must be rejected here, per the trust anchor constraint
+							// processing in RFC 5937 (the leaf-as-anchor case is checked directly at
+							// the top of this function)
+							if (X509_get_extension_flags(pAnchor) & EXFLAG_CRITICAL)
+							{
+								o_Error = "Trust anchor contains an unsupported critical extension";
+								return false;
+							}
+
+							if (X509_get_extension_flags(pAnchor) & EXFLAG_INVALID)
+							{
+								o_Error = "Trust anchor contains an invalid extension";
+								return false;
+							}
+
+							long nIntermediates = 0;
+							for (size_t i = 1; i + 1 < nChain; ++i)
+							{
+								if (!(X509_get_extension_flags(sk_X509_value(pBuiltChain, i)) & EXFLAG_SI))
+									++nIntermediates;
+							}
+
+							long AnchorPathLen = X509_get_pathlen(pAnchor);
+							if (AnchorPathLen >= 0 && nIntermediates > AnchorPathLen)
+							{
+								o_Error = "Certificate chain is longer than the trust anchor's path length constraint allows";
+								return false;
+							}
+						}
+					}
+
+					if (o_pVerifiedChain)
+					{
+						// Return the path that verification actually built (leaf first, up to the trust
+						// anchor); it may differ from the input when the store supplied the path or the
+						// input carried extra certificates
+						o_pVerifiedChain->f_Clear();
+
+						STACK_OF(X509) *pVerifiedChain = X509_STORE_CTX_get0_chain(pContext);
+						for (size_t i = 0; i < sk_X509_num(pVerifiedChain); ++i)
+							o_pVerifiedChain->f_Insert(fg_ConvertX509ToBinary(sk_X509_value(pVerifiedChain, i)));
+					}
+
+					return true;
+				}
+			)
+		;
+	}
 }

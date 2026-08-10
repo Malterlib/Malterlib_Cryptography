@@ -433,12 +433,42 @@ namespace NMib::NCryptography
 #endif
 	}
 
+	bool CCertificate::fs_SystemStoreCertificatesAreAnchors()
+	{
+#if defined(DPlatformFamily_Windows)
+		// The Windows store loads both ROOT (anchors) and CA (chain-building intermediates), so its
+		// members are not individually trusted and verification must still reach a root. This
+		// preserves the long-standing merged-store behavior, which deviates from Windows trust
+		// semantics in two known pre-existing ways: a self-signed certificate that is only in the
+		// CA store still anchors (any self-signed store member is a root to BoringSSL), and a
+		// non-self-signed certificate installed in ROOT does not anchor without partial chain
+		// handling. Fixing either requires the extraction to track each certificate's source store
+		// and verification to feed CA-store members as untrusted chain material instead of one
+		// merged trusted store; that reshapes committed platform code beyond this property, which
+		// only describes the store that exists
+		return false;
+#elif defined(DPlatformFamily_macOS)
+		// The macOS store is built exclusively from keychain entries whose trust settings evaluate
+		// to trust-root or trust-as-root, so every member is an anchor by explicit system policy.
+		// Trust-as-root entries are not self-signed and only function as anchors when partial
+		// chain handling is enabled, which is what this property exists to allow
+		return true;
+#else
+		// The Linux bundle contains the distribution's trusted roots, which are self-signed and
+		// anchor without partial chain handling. Not claiming anchor status for every member keeps
+		// a stray intermediate copied into the certificate directory from becoming a trust anchor
+		return false;
+#endif
+	}
+
 	void CCertificate::fs_GetSystemCertificates(X509_STORE *_pCertificateStoreStore)
 	{
 		auto &Globals = *g_CertificateGlobals;
 
-		if (!Globals.m_pSystemCertStore)
 		{
+			// The lock is taken unconditionally: an unlocked fast-path read of the pointer would race
+			// the initializing write. Passing through the lock also guarantees every reader sees the
+			// fully constructed store, which is immutable afterwards and iterated without the lock
 			DMibLock(Globals.m_SystemCertStoreLock);
 			if (!Globals.m_pSystemCertStore)
 				Globals.m_pSystemCertStore = fg_ExtractSystemCertificates();

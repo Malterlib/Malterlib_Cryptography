@@ -592,4 +592,100 @@ namespace NMib::NCryptography::NBoringSSL
 
 		return pKey;
 	}
+
+	bool fg_KeyMatchesAllowedSetting(EVP_PKEY *_pKey, NContainer::TCVector<CPublicKeySetting> const &_Allowed)
+	{
+		int KeyType = EVP_PKEY_id(_pKey);
+
+		int CurveNID = NID_undef;
+		if (KeyType == EVP_PKEY_EC)
+		{
+			EC_KEY *pECKey = EVP_PKEY_get0_EC_KEY(_pKey);
+			if (pECKey)
+				CurveNID = EC_GROUP_get_curve_name(EC_KEY_get0_group(pECKey));
+		}
+
+		for (auto &Setting : _Allowed)
+		{
+			switch (Setting.f_GetTypeID())
+			{
+			case EPublicKeyType::mc_RSA:
+				// The RSA entry's key length is a minimum, not an exact size
+				if (KeyType == EVP_PKEY_RSA && uint32(EVP_PKEY_bits(_pKey)) >= Setting.f_Get<EPublicKeyType::mc_RSA>().m_KeyLength)
+					return true;
+				break;
+			case EPublicKeyType::mc_EC_secp256r1:
+				if (KeyType == EVP_PKEY_EC && CurveNID == NID_X9_62_prime256v1)
+					return true;
+				break;
+			case EPublicKeyType::mc_EC_secp384r1:
+				if (KeyType == EVP_PKEY_EC && CurveNID == NID_secp384r1)
+					return true;
+				break;
+			case EPublicKeyType::mc_EC_secp521r1:
+				if (KeyType == EVP_PKEY_EC && CurveNID == NID_secp521r1)
+					return true;
+				break;
+			case EPublicKeyType::mc_EC_X25519:
+				if (KeyType == EVP_PKEY_X25519)
+					return true;
+				break;
+			}
+		}
+
+		return false;
+	}
+
+	bool fg_DigestNIDMatchesAllowed(int _DigestNID, NContainer::TCVector<EDigestType> const &_Allowed)
+	{
+		if (_DigestNID == NID_undef)
+			return false;
+
+		for (auto Digest : _Allowed)
+		{
+			EVP_MD const *pDigest = fg_GetDigest(Digest);
+			if (pDigest && EVP_MD_type(pDigest) == _DigestNID)
+				return true;
+		}
+
+		return false;
+	}
+
+	int fg_GetSignatureDigestNID(X509_ALGOR const *_pSignatureAlgorithm)
+	{
+		int SignatureNID = OBJ_obj2nid(_pSignatureAlgorithm->algorithm);
+
+		if (SignatureNID == NID_rsassaPss)
+		{
+			// RSASSA-PSS names only "rsassaPss" in the signature OID; the actual hash lives in the
+			// RSASSA-PSS-params (RFC 4055) carried as the algorithm parameter
+			int ParameterType = 0;
+			void const *pParameterValue = nullptr;
+			X509_ALGOR_get0(nullptr, &ParameterType, &pParameterValue, _pSignatureAlgorithm);
+			if (ParameterType != V_ASN1_SEQUENCE || !pParameterValue)
+				return NID_undef;
+
+			ASN1_STRING const *pParameters = (ASN1_STRING const *)pParameterValue;
+			uint8 const *pData = ASN1_STRING_get0_data(pParameters);
+			RSA_PSS_PARAMS *pPssParameters = d2i_RSA_PSS_PARAMS(nullptr, &pData, ASN1_STRING_length(pParameters));
+			if (!pPssParameters)
+				return NID_undef;
+			auto Cleanup = g_OnScopeExit / [&]
+				{
+					RSA_PSS_PARAMS_free(pPssParameters);
+				}
+			;
+
+			// An omitted hashAlgorithm means the RSASSA-PSS default, SHA-1 (RFC 4055)
+			if (!pPssParameters->hashAlgorithm)
+				return NID_sha1;
+
+			return OBJ_obj2nid(pPssParameters->hashAlgorithm->algorithm);
+		}
+
+		int DigestNID = NID_undef;
+		int KeyNID = NID_undef;
+		OBJ_find_sigid_algs(SignatureNID, &DigestNID, &KeyNID);
+		return DigestNID;
+	}
 }

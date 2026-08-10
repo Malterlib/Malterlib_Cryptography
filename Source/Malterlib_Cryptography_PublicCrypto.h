@@ -116,6 +116,10 @@ namespace NMib::NCryptography
 			)
 		;
 	};
+
+	// The digest EDigestType_Automatic selects when signing with a key of this setting; used to
+	// build digest whitelists that match what keys of the setting produce
+	EDigestType fg_GetAutomaticDigestType(CPublicKeySetting const &_KeySetting);
 }
 
 #ifndef DMibPNoShortCuts
