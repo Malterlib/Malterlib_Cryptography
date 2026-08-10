@@ -15,12 +15,15 @@ namespace NMib::NCryptography
 		f_AddExtension_KeyUsage(EKeyUsage_CertificateSign | EKeyUsage_CRLSign);
 	}
 
-	void CCertificateOptions::f_AddExtension_BasicConstraints(bool _bCA, bool _bCritical)
+	void CCertificateOptions::f_AddExtension_BasicConstraints(bool _bCA, bool _bCritical, int32 _PathLength)
 	{
 		using namespace NMib::NStr;
 		auto &Extension = m_Extensions["2.5.29.19"].f_Insert();
 		Extension.m_bCritical = _bCritical;
-		Extension.m_Value = "CA:{}"_f << (_bCA ? "TRUE" : "FALSE");
+		if (_bCA && _PathLength >= 0)
+			Extension.m_Value = "CA:TRUE,pathlen:{}"_f << _PathLength;
+		else
+			Extension.m_Value = "CA:{}"_f << (_bCA ? "TRUE" : "FALSE");
 	}
 
 	void CCertificateSignOptions::f_AddExtension_SubjectKeyIdentifier(bool _bCritical)

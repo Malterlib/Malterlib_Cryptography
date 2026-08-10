@@ -65,6 +65,21 @@ namespace NMib::NCryptography
 				DMibErrorCryptography(fg_GetExceptionStr("Error adding x509 extension"));
 		}
 
+		void fg_RemoveExtensionsByNID(X509 *_pCert, int _nID)
+		{
+			for (int Location = X509_get_ext_by_NID(_pCert, _nID, -1); Location >= 0; Location = X509_get_ext_by_NID(_pCert, _nID, -1))
+				X509_EXTENSION_free(X509_delete_ext(_pCert, Location));
+		}
+
+		bool fg_RequestDigestMatchesAllowed(X509_REQ *_pRequest, NContainer::TCVector<EDigestType> const &_Allowed)
+		{
+			ASN1_BIT_STRING const *pSignature = nullptr;
+			X509_ALGOR const *pSignatureAlgorithm = nullptr;
+			X509_REQ_get0_signature(_pRequest, &pSignature, &pSignatureAlgorithm);
+
+			return fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _Allowed);
+		}
+
 		void fg_AddExtension(X509V3_CTX &_Context, X509_EXTENSIONS *&_pExtensions, int _nID, CCertificateExtension _Extension)
 		{
 			X509_EXTENSION *pExtension = fg_CreateExtension(_Context, _nID, _Extension);
@@ -329,6 +344,20 @@ namespace NMib::NCryptography
 							DMibErrorCryptography(fg_GetExceptionStr("Signature verification error"));
 						else if (VerifyResult == 0)
 							DMibErrorCryptography("Certificate request signature mismatch");
+
+						// A signer that pins an acceptable key policy rejects a request whose key does not
+						// match rather than issue a certificate outside the policy. For the distributed
+						// actors this is secp521r1 only: RSA is intentionally not used, Ed25519 is not
+						// supported by CPublicCrypto's streaming digest signing path, and X25519 is key
+						// agreement only and can never sign
+						if (!_SignOptions.m_AllowedKeyTypes.f_IsEmpty() && !fg_KeyMatchesAllowedSetting(pPublicKey, _SignOptions.m_AllowedKeyTypes))
+							DMibErrorCryptography("Certificate request key type is not permitted by the signer");
+
+						// When the signer whitelists request digests, reject a request whose self-signature
+						// uses a digest not on the list, so the proof of possession cannot rest on a weak
+						// (forgeable) digest such as MD5 or SHA-1
+						if (!_SignOptions.m_AllowedRequestDigests.f_IsEmpty() && !fg_RequestDigestMatchesAllowed(pCertificateRequest, _SignOptions.m_AllowedRequestDigests))
+							DMibErrorCryptography("Certificate request digest is not permitted by the signer");
 					}
 
 					ERR_clear_error();
@@ -352,9 +381,34 @@ namespace NMib::NCryptography
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 issuer"));
 
 
-					ERR_clear_error();
-					if (!X509_set_subject_name(pCertificate, X509_REQ_get_subject_name(pCertificateRequest)))
-						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 subject name"));
+					if (!_SignOptions.m_OverrideSubjectCommonName.f_IsEmpty())
+					{
+						// Set a signer-controlled subject instead of trusting the request's, so an
+						// untrusted requester cannot place arbitrary content in the certificate subject
+						ERR_clear_error();
+						if
+						(
+							!X509_NAME_add_entry_by_txt
+							(
+								X509_get_subject_name(pCertificate)
+								, "CN"
+								, MBSTRING_UTF8
+								, (unsigned char const *)_SignOptions.m_OverrideSubjectCommonName.f_GetStr()
+								, -1
+								, -1
+								, 0
+							)
+						)
+						{
+							DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 subject common name"));
+						}
+					}
+					else
+					{
+						ERR_clear_error();
+						if (!X509_set_subject_name(pCertificate, X509_REQ_get_subject_name(pCertificateRequest)))
+							DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 subject name"));
+					}
 
 					{
 						ERR_clear_error();
@@ -409,6 +463,40 @@ namespace NMib::NCryptography
 								auto *pExtension = X509v3_get_ext(pExtensions, iExtension);
 								if (!pExtension)
 									DMibErrorCryptography(fg_GetExceptionStr("Failed to get extension from certificate request"));
+
+								if (!_SignOptions.m_AllowedRequestExtensions.f_IsEmpty())
+								{
+									// Copy only the request extensions the signer explicitly whitelisted; a
+									// certificate authority must not propagate arbitrary requester-supplied
+									// extensions. This subsumes the role-restricted drop below whenever a
+									// whitelist that omits those OIDs is supplied
+									char OidText[128] = {};
+									OBJ_obj2txt(OidText, sizeof(OidText), X509_EXTENSION_get_object(pExtension), 1);
+
+									bool bAllowed = false;
+									for (auto &Allowed : _SignOptions.m_AllowedRequestExtensions)
+									{
+										if (Allowed == OidText)
+										{
+											bAllowed = true;
+											break;
+										}
+									}
+
+									if (!bAllowed)
+										continue;
+								}
+								else if (_SignOptions.m_LeafRole != ECertificateLeafRole_Unrestricted)
+								{
+									// A role-restricted leaf does not inherit the requester's copy of the
+									// security critical extensions: the signer stamps basicConstraints and
+									// extendedKeyUsage itself below, so copying them here would both leave a
+									// requester-controlled elevation in place and produce a duplicate extension
+									int ExtensionNID = OBJ_obj2nid(X509_EXTENSION_get_object(pExtension));
+									if (ExtensionNID == NID_basic_constraints || ExtensionNID == NID_key_usage || ExtensionNID == NID_ext_key_usage)
+										continue;
+								}
+
 								ERR_clear_error();
 								if (!X509_add_ext(pCertificate, pExtension, -1))
 									DMibErrorCryptography(fg_GetExceptionStr("Failed to add extension to certificate"));
@@ -422,6 +510,42 @@ namespace NMib::NCryptography
 						X509V3_set_ctx_nodb(&Context);
 						X509V3_set_ctx(&Context, pCACertificate, pCertificate, nullptr, nullptr, 0);
 						fg_AddExtensions(Context, pCertificate, _SignOptions.m_Extensions);
+					}
+
+					// Stamp the signer-enforced non-CA leaf role last so it is authoritative over any
+					// extension carried by the request (skipped above) or supplied through
+					// _SignOptions.m_Extensions. Remove any basicConstraints/extendedKeyUsage that the
+					// signer's own extension map added before stamping so exactly one copy of each
+					// remains: a duplicate standard extension is marked EXFLAG_INVALID and would fail
+					// verification of the certificate this call just issued
+					if (_SignOptions.m_LeafRole != ECertificateLeafRole_Unrestricted)
+					{
+						X509V3_CTX Context;
+						X509V3_set_ctx_nodb(&Context);
+						X509V3_set_ctx(&Context, pCACertificate, pCertificate, nullptr, nullptr, 0);
+
+						fg_RemoveExtensionsByNID(pCertificate, NID_basic_constraints);
+						fg_RemoveExtensionsByNID(pCertificate, NID_ext_key_usage);
+						fg_RemoveExtensionsByNID(pCertificate, NID_key_usage);
+
+						CCertificateExtension BasicConstraints;
+						BasicConstraints.m_bCritical = true;
+						BasicConstraints.m_Value = "CA:FALSE";
+						fg_AddExtension(Context, pCertificate, NID_basic_constraints, BasicConstraints);
+
+						CCertificateExtension ExtendedKeyUsage;
+						ExtendedKeyUsage.m_bCritical = false;
+						ExtendedKeyUsage.m_Value = _SignOptions.m_LeafRole == ECertificateLeafRole_ServerAuth ? "serverAuth" : "clientAuth";
+						fg_AddExtension(Context, pCertificate, NID_ext_key_usage, ExtendedKeyUsage);
+
+						// The leaf authenticates by signing the handshake transcript, so constrain its key
+						// usage to digitalSignature. Without an explicit extension the verifier treats the
+						// key as usable for everything; stamping it makes the intent explicit and matches
+						// what the peer role verification requires
+						CCertificateExtension KeyUsage;
+						KeyUsage.m_bCritical = true;
+						KeyUsage.m_Value = "digitalSignature";
+						fg_AddExtension(Context, pCertificate, NID_key_usage, KeyUsage);
 					}
 
 					ERR_clear_error();

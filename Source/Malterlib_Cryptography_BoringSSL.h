@@ -67,6 +67,18 @@ namespace NMib::NCryptography::NBoringSSL
 	NContainer::CByteVector fg_ConvertX509ToBinary(X509 *_pCertificate);
 	NTime::CTime fg_GetX509ExpireTime(X509 *_pCertificate);
 	EVP_PKEY *fg_LoadPrivateKey(NContainer::CSecureByteVector const &_Data);
+
+	// True when the key matches one of the allowed settings; an RSA entry's key length is a
+	// minimum, not an exact size
+	bool fg_KeyMatchesAllowedSetting(EVP_PKEY *_pKey, NContainer::TCVector<CPublicKeySetting> const &_Allowed);
+
+	// True when the digest NID (from OBJ_find_sigid_algs) matches one of the allowed digest types
+	bool fg_DigestNIDMatchesAllowed(int _DigestNID, NContainer::TCVector<EDigestType> const &_Allowed);
+
+	// Resolves the message digest NID from a signature algorithm identifier. For RSASSA-PSS the
+	// digest is carried in the algorithm parameters rather than the signature OID, so it is decoded
+	// from the RSA_PSS_PARAMS; returns NID_undef when it cannot be determined
+	int fg_GetSignatureDigestNID(X509_ALGOR const *_pSignatureAlgorithm);
 }
 
 #ifndef DMibPNoShortCuts
