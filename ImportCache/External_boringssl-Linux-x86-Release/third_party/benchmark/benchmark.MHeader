@@ -1,0 +1,256 @@
+Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeAbsolute()
+%Target "Lib_benchmark_benchmark"
+{
+	Compile
+	{
+		!!Compile.Type "C++"
+		SearchPath += [
+			`@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/include`->MakeAbsolute(),
+			`@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src`->MakeAbsolute()
+		]
+		PreprocessorDefines += [
+			"BENCHMARK_HAS_PTHREAD_AFFINITY",
+			"BENCHMARK_STATIC_DEFINE",
+			"HAVE_PTHREAD_AFFINITY",
+			"HAVE_STD_REGEX",
+			"HAVE_STEADY_CLOCK",
+			"HAVE_THREAD_SAFETY_ATTRIBUTES",
+			"_FILE_OFFSET_BITS=64",
+			"_LARGEFILE64_SOURCE",
+			"_LARGEFILE_SOURCE"
+		]
+	}
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Target.Group "External/benchmark"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "StaticLibrary"
+	Target.BaseName "benchmark_benchmark"
+	Target.BaseFileName "benchmark"
+	%Group "third_party"
+	{
+		%Group "benchmark"
+		{
+			%Group "include"
+			{
+				%Group "benchmark"
+				{
+					%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/include/benchmark/benchmark.h`
+					{
+						Compile.Disabled true
+					}
+					%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/include/benchmark/export.h`
+					{
+						Compile.Disabled true
+					}
+				}
+			}
+			%Group "src"
+			{
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/arraysize.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark.cc`
+				{
+					Compile.Type "C++"
+					Compile.PreprocessorDefines += [
+						"BENCHMARK_VERSION=\"v1.9.5\""
+					]
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_api_internal.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_api_internal.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_name.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_register.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_register.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_runner.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_runner.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/check.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/check.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/colorprint.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/colorprint.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/commandlineflags.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/commandlineflags.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/complexity.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/complexity.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/console_reporter.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/counter.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/counter.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/csv_reporter.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/cycleclock.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/internal_macros.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/json_reporter.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/log.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/mutex.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/perf_counters.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/perf_counters.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/re.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/reporter.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/statistics.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/statistics.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/string_util.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/string_util.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/sysinfo.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/thread_manager.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/thread_timer.h`
+				{
+					Compile.Disabled true
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/timers.cc`
+				{
+					Compile.Type "C++"
+				}
+				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/timers.h`
+				{
+					Compile.Disabled true
+				}
+			}
+		}
+	}
+}
+%Target "Lib_benchmark_benchmark_main"
+{
+	Compile
+	{
+		!!Compile.Type "C++"
+		SearchPath += [
+			`@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/include`->MakeAbsolute(),
+			`@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src`->MakeAbsolute()
+		]
+		PreprocessorDefines += [
+			"BENCHMARK_STATIC_DEFINE",
+			"HAVE_PTHREAD_AFFINITY",
+			"HAVE_STD_REGEX",
+			"HAVE_STEADY_CLOCK",
+			"HAVE_THREAD_SAFETY_ATTRIBUTES",
+			"_FILE_OFFSET_BITS=64",
+			"_LARGEFILE64_SOURCE",
+			"_LARGEFILE_SOURCE"
+		]
+	}
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Target.Group "External/benchmark"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "StaticLibrary"
+	Target.BaseName "benchmark_benchmark_main"
+	Target.BaseFileName "benchmark_main"
+	%Group "third_party"
+	{
+		%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark_main.cc`
+		{
+			Compile.Type "C++"
+		}
+	}
+	%Dependency "Lib_benchmark_benchmark"
+	{
+		Dependency.Indirect true
+		Dependency.IndirectOrdered true
+	}
+}
