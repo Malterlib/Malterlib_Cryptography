@@ -64,7 +64,7 @@ UpdateType: git
 
 # Compiler info
 Compiler: c++
-CompilerVersion: 17.0.0.17000404
+CompilerVersion: 21.0.0.21000101
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 
