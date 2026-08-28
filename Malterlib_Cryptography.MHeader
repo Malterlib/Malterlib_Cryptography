@@ -131,6 +131,14 @@ Import "../Core/Lib_Malterlib.MTarget"
 		!!CompileDialect "C"
 		PrefixHeader undefined
 
+		// crypto/internal.h declares the Malterlib locks backing StaticMutex and
+		// Mutex, and Malterlib_Core.h has to be the first include of a translation
+		// unit because it overrides the global operator new.
+		PrefixHeader "../Core/Source/PrefixHeader/PCH.h"->MakeAbsolute()
+		{
+			!!Compile.Type "C++"
+		}
+
 		Analyzer false
 
 		PreprocessorDefines =+ "OPENSSL_C11_ATOMIC=1"
