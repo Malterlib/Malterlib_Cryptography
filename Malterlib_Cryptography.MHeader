@@ -131,6 +131,12 @@ Import "../Core/Lib_Malterlib.MTarget"
 		!!CompileDialect "C"
 		PrefixHeader undefined
 
+		// The prefix header must precede BoringSSL's Malterlib locks because Core overrides global operator new.
+		PrefixHeader "../Core/Source/PrefixHeader/PCH.h"->MakeAbsolute()
+		{
+			!!Compile.Type "C++"
+		}
+
 		Analyzer false
 
 		PreprocessorDefines =+ "OPENSSL_C11_ATOMIC=1"
