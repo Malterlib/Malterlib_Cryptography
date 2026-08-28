@@ -115,7 +115,9 @@ namespace NMib::NCryptography
 			mp_EncryptedFileLen = ParentStream.f_GetLength();
 			mp_FileLen = mp_EncryptedFileLen;
 
-			mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, mp_KeyIV);
+			// The read path is block addressed, so it cannot use padding: a padded context withholds the most recently decrypted block until finalization,
+			// which only happens at the end of the stream. The padding is instead accounted for in mp_FileLen below.
+			mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt, mp_KeyIV);
 			umint HMACSize = 0;
 			if (mp_HMAC != EDigestType_None)
 			{
@@ -185,7 +187,8 @@ namespace NMib::NCryptography
 							)
 						;
 
-						TempDecryptionContext.f_Decrypt(LastBlock.f_GetArray(), mp_BlockSize, Decrypted.f_GetArray(mp_BlockSize));
+						// A padded decrypt may write mp_BlockSize bytes beyond the length it reports, so the destination needs room for two blocks.
+						TempDecryptionContext.f_Decrypt(LastBlock.f_GetArray(), mp_BlockSize, Decrypted.f_GetArray(mp_BlockSize * 2));
 						auto nUsedBytes = TempDecryptionContext.f_FinalizePaddedDecrypt(Decrypted.f_GetArray(), mp_BlockSize);
 						mp_FileLen = mp_EncryptedFileLen - (mp_BlockSize - nUsedBytes);
 					}
@@ -242,10 +245,12 @@ namespace NMib::NCryptography
 				auto nBytes = mp_pEncryptContext->f_FinalizePaddedEncrypt(mp_TempBlock.f_GetArray(), mp_BlockSize * 2);
 				ParentStream.f_FeedBytes(mp_TempBlock.f_GetArray(), nBytes);
 				if (mp_HMAC != EDigestType_None)
-				{
 					mp_pHMACContext->f_Update(mp_TempBlock.f_GetArray(), nBytes);
-					mp_EncryptedFileLen += nBytes;
-				}
+
+				// Counted whether or not there is a HMAC: the padded tail is part of the encrypted
+				// length a read past the last full block needs, and without it that read would
+				// decrypt nothing and hand back the previous block's leftovers
+				mp_EncryptedFileLen += nBytes;
 			}
 
 			if (mp_HMAC != EDigestType_None)
@@ -304,32 +309,25 @@ namespace NMib::NCryptography
 						NContainer::CSecureByteVector IV;
 						ParentStream.f_ConsumeBytes(IV.f_GetArray(mp_BlockSize), mp_BlockSize);
 						CEncryptKeyIV KeyIV{mp_KeyIV.m_Key, IV, mp_KeyIV.m_Crypto};
-						mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, KeyIV);
+						mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt, KeyIV);
 					}
 					else
 					{
 						ParentStream.f_SetPosition(mp_CurrentLoaded);
-						mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, mp_KeyIV);
+						mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt, mp_KeyIV);
 					}
 				}
 				else if (mp_LastLoaded != 0)
 				{
 					// SetPosition must have rewinded the file, restart with original IV
 					ParentStream.f_SetPosition(0);
-					mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, mp_KeyIV);
+					mp_pEncryptContext = fg_Construct(ECryptoFlags_Decrypt, mp_KeyIV);
 				}
 			}
 			mp_TempBlock.f_SetAtLeastLen(ThisTime + mp_BlockSize);
 			ParentStream.f_ConsumeBytes(mp_TempBlock.f_GetArray(), ThisTime);
 			DMibCheck(ThisTime <= mp_DecryptedBlock.f_GetLen());
 			DecryptedBytes = mp_pEncryptContext->f_Decrypt(mp_TempBlock.f_GetArray(), ThisTime, mp_DecryptedBlock.f_GetArray());
-
-			if (ThisTime != mp_BufferSize && mp_BlockSize > 1)
-			{
-				umint nRemainingBytes = ThisTime - DecryptedBytes;
-				DMibCheck((ThisTime + nRemainingBytes) <= mp_DecryptedBlock.f_GetLen());
-				DecryptedBytes += mp_pEncryptContext->f_FinalizePaddedDecrypt(mp_DecryptedBlock.f_GetArray() + DecryptedBytes, nRemainingBytes);
-			}
 
 			mp_LastLoaded = mp_CurrentLoaded + DecryptedBytes;
 		}
