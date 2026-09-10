@@ -42,4 +42,4 @@ public:
 	}
 };
 
-DMibTestRegister(CScram_Tests, Malterlib::Crytpography);
+DMibTestRegister(CScram_Tests, Malterlib::Cryptography);

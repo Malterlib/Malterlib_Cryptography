@@ -69,4 +69,4 @@ public:
 	}
 };
 
-DMibTestRegister(CPublicCrypto_Tests, Malterlib::Crytpography);
+DMibTestRegister(CPublicCrypto_Tests, Malterlib::Cryptography);

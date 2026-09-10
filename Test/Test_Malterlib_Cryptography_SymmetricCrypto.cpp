@@ -308,4 +308,4 @@ public:
 	}
 };
 
-DMibTestRegister(CSymmetricCrypto_Tests, Malterlib::Crytpography);
+DMibTestRegister(CSymmetricCrypto_Tests, Malterlib::Cryptography);

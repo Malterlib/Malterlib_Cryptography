@@ -76,4 +76,4 @@ public:
 	}
 };
 
-DMibTestRegister(CMessageAuthentication_Tests, Malterlib::Crytpography);
+DMibTestRegister(CMessageAuthentication_Tests, Malterlib::Cryptography);

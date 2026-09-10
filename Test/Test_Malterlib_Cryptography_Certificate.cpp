@@ -901,4 +901,4 @@ public:
 	}
 };
 
-DMibTestRegister(CCertificate_Tests, Malterlib::Crytpography);
+DMibTestRegister(CCertificate_Tests, Malterlib::Cryptography);
