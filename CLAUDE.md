@@ -9,6 +9,7 @@ The Cryptography module provides comprehensive cryptographic functionality for t
 ### Core Cryptographic Functions
 - **Hash Functions**: MD5, SHA family (SHA1, SHA256, SHA384, SHA512)
 - **Symmetric Cryptography**: AES encryption/decryption with various modes
+- **Strength** - Shared equivalent symmetric strength levels (`ECryptoStrength`, `<Mib/Cryptography/Strength>`)
 - **Public Key Cryptography**: RSA, Elliptic Curve (secp256r1, secp384r1, secp521r1, X25519)
 - **Message Authentication**: HMAC implementations
 - **Key Derivation**: PBKDF2 and other key derivation functions
