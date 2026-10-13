@@ -29,6 +29,26 @@ namespace NMib::NCryptography
 		;
 	}
 
+	/// Converts a PEM private key, PKCS #1 or PKCS #8, to the DER form the other functions take. Throws for an encrypted or invalid key.
+	NContainer::CSecureByteVector CPublicCrypto::fs_ConvertToDer_PrivateKey(NContainer::CSecureByteVector const &_PemPrivateKey)
+	{
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					EVP_PKEY *pKey = fg_LoadPrivateKey(_PemPrivateKey);
+					auto Cleanup = g_OnScopeExit / [&]
+						{
+							EVP_PKEY_free(pKey);
+						}
+					;
+
+					return fg_ConvertPrivateKeyToDER(pKey);
+				}
+			)
+		;
+	}
+
 	CPublicCrypto::CPublicKeyParameters CPublicCrypto::fs_GetPublicKeyParameters(NContainer::CSecureByteVector const &_Key)
 	{
 		EVP_PKEY *pKey = fg_LoadPublicKeyFromDER(_Key);

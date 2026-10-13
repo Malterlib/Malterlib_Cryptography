@@ -96,6 +96,7 @@ namespace NMib::NCryptography
 		;
 
 		static NContainer::CSecureByteVector fs_GetPublicKeyFromPrivateKey(NContainer::CSecureByteVector const &_PrivateKey);
+		static NContainer::CSecureByteVector fs_ConvertToDer_PrivateKey(NContainer::CSecureByteVector const &_PemPrivateKey);
 		static CPublicKeyParameters fs_GetPublicKeyParameters(NContainer::CSecureByteVector const &_Key);
 		static CPublicKeySetting fs_PublicKeySettingsFromPrivateKey(NContainer::CSecureByteVector const &_Key);
 
