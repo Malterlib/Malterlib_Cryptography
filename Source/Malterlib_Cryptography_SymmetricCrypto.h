@@ -19,7 +19,6 @@ namespace NMib::NCryptography
 	class CEncryptAES
 	{
 	public:
-
 		CEncryptAES(CEncryptKeyIV const &_KeyIV);
 		~CEncryptAES();
 

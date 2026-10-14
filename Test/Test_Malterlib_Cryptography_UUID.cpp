@@ -12,7 +12,6 @@ namespace
 	class CMisc_Tests : public CTest
 	{
 	public:
-
 		CMisc_Tests()
 		{
 		}
@@ -22,7 +21,12 @@ namespace
 			DMibTestSuite("Computer name")
 			{
 				DMibExpect(NMib::NProcess::NPlatform::fg_Process_GetUserName(), !=, "");
-				DMibTest(DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerDomain()) != DMibExpr("") || DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerDomain()) == DMibExpr(""));
+				DMibTest
+					(
+						DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerDomain()) != DMibExpr("")
+						|| DMibExpr(NMib::NProcess::NPlatform::fg_Process_GetComputerDomain()) == DMibExpr("")
+					)
+				;
 				DMibExpect(NMib::NProcess::NPlatform::fg_Process_GetComputerName(), !=, "");
 				DMibExpect(NMib::NProcess::NPlatform::fg_Process_GetComputerAddress(), !=, "");
 			};
@@ -62,6 +66,5 @@ namespace
 	};
 
 	DMibTestRegister(CMisc_Tests, Malterlib::Cryptography);
-
 }
 

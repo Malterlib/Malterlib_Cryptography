@@ -23,7 +23,6 @@ extern "C"
 #ifdef DPlatformFamily_macOS
 	#include <Security/Security.h>
 #endif
-
 };
 
 #if defined(DPlatformFamily_Windows)

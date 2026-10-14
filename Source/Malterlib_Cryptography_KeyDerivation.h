@@ -14,11 +14,11 @@ namespace NMib::NCryptography
 	{
 		ECryptoType_AES_256_CBC
 		, ECryptoType_AES_128_CBC
-		, ECryptoType_AES_256_OFB	// Be careful (stream cipher)
-		, ECryptoType_AES_128_OFB	// Be careful (stream cipher)
-		, ECryptoType_DES_EDE3_CBC	// Be careful, only to be used for compatibility with legacy systems (weak croypto)
-		, ECryptoType_AES_256_ECB	// Be careful, only to be used for compatibility with legacy systems (ECB mode)
-		, ECryptoType_AES_128_ECB	// Be careful, only to be used for compatibility with legacy systems (ECB mode)
+		, ECryptoType_AES_256_OFB // Be careful (stream cipher)
+		, ECryptoType_AES_128_OFB // Be careful (stream cipher)
+		, ECryptoType_DES_EDE3_CBC // Be careful, only to be used for compatibility with legacy systems (weak croypto)
+		, ECryptoType_AES_256_ECB // Be careful, only to be used for compatibility with legacy systems (ECB mode)
+		, ECryptoType_AES_128_ECB // Be careful, only to be used for compatibility with legacy systems (ECB mode)
 //			, ECryptoType_AES_128_CTR // Needs to have interface for specifying counter
 //			, ECryptoType_AES_256_CTR // Needs to have interface for specifying counter
 //			, ECryptoType_AES_256_XTS // Needs to have interface for specifying counter
@@ -62,13 +62,7 @@ namespace NMib::NCryptography
 
 	struct CEncryptKeyIV
 	{
-		CEncryptKeyIV
-			(
-				NContainer::CSecureByteVector const &_Key
-				, NContainer::CSecureByteVector const &_IV
-				, ECryptoType _Crypto = ECryptoType_AES_256_CBC
-			)
-		;
+		CEncryptKeyIV(NContainer::CSecureByteVector const &_Key, NContainer::CSecureByteVector const &_IV, ECryptoType _Crypto = ECryptoType_AES_256_CBC);
 
 		static CEncryptKeyIV fs_GenerateKeyIV
 			(
@@ -92,14 +86,7 @@ namespace NMib::NCryptography
 		ECryptoType m_Crypto;
 	};
 
-	NContainer::CSecureByteVector fg_DeriveKey
-		(
-			NStr::CStrSecure const &_Password
-			, NContainer::CSecureByteVector const &_PasswordSalt
-			, CKeyDerivationSettings const &_Settings
-			, umint _KeyLen
-		)
-	;
+	NContainer::CSecureByteVector fg_DeriveKey(NStr::CStrSecure const &_Password, NContainer::CSecureByteVector const &_PasswordSalt, CKeyDerivationSettings const &_Settings, umint _KeyLen);
 
 	struct CKeyExpansion
 	{
@@ -112,13 +99,7 @@ namespace NMib::NCryptography
 				, EDigestType _Digest = EDigestType_SHA512
 			)
 		;
-		CKeyExpansion
-			(
-				NContainer::CSecureByteVector const &_Key
-				, NContainer::CSecureByteVector const &_ExpansionSalt
-				, EDigestType _Digest = EDigestType_SHA512
-			)
-		;
+		CKeyExpansion(NContainer::CSecureByteVector const &_Key, NContainer::CSecureByteVector const &_ExpansionSalt, EDigestType _Digest = EDigestType_SHA512);
 		~CKeyExpansion();
 
 		CEncryptKeyIV f_GetKeyIV(ECryptoType _Crypto = ECryptoType_AES_256_CBC) const;

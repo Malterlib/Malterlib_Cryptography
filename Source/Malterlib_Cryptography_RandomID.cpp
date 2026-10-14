@@ -32,7 +32,7 @@ namespace NMib::NCryptography
 				m_iByte = 0;
 			}
 
-			uint8 operator ()()
+			uint8 operator () ()
 			{
 				while (true)
 				{

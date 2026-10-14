@@ -15,14 +15,7 @@ namespace NMib::NCryptography
 		}
 	}
 
-	constexpr CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier
-		(
-			uint32 _TimeLow
-			, uint16 _TimeMid
-			, uint16 _TimeHiAndVersion
-			, uint16 _ClockSequence
-			, uint64 _Node
-		)
+	constexpr CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier(uint32 _TimeLow, uint16 _TimeMid, uint16 _TimeHiAndVersion, uint16 _ClockSequence, uint64 _Node)
 		: m_TimeLow(_TimeLow)
 		, m_TimeMid(_TimeMid)
 		, m_TimeHiAndVersion(_TimeHiAndVersion)
@@ -30,12 +23,12 @@ namespace NMib::NCryptography
 		, m_ClockSquenceLow(_ClockSequence & uint8(0xff))
 		, m_Node
 		{
-			uint8((_Node >> 8*5) & uint8(0xff))
-			, uint8((_Node >> 8*4) & uint8(0xff))
-			, uint8((_Node >> 8*3) & uint8(0xff))
-			, uint8((_Node >> 8*2) & uint8(0xff))
-			, uint8((_Node >> 8*1) & uint8(0xff))
-			, uint8((_Node >> 8*0) & uint8(0xff))
+			uint8((_Node >> 8 * 5) & uint8(0xff))
+			, uint8((_Node >> 8 * 4) & uint8(0xff))
+			, uint8((_Node >> 8 * 3) & uint8(0xff))
+			, uint8((_Node >> 8 * 2) & uint8(0xff))
+			, uint8((_Node >> 8 * 1) & uint8(0xff))
+			, uint8((_Node >> 8 * 0) & uint8(0xff))
 		}
 	{
 	}

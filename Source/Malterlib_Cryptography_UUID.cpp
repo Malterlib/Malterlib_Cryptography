@@ -7,18 +7,11 @@
 
 namespace NMib::NCryptography
 {
-	CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier
-		(
-			EUniversallyUniqueIdentifierGenerate _Generate
-			, CUniversallyUniqueIdentifier const &_Namespace
-			, NStr::CStr const &_InData
-		)
+	CUniversallyUniqueIdentifier::CUniversallyUniqueIdentifier(EUniversallyUniqueIdentifierGenerate _Generate, CUniversallyUniqueIdentifier const &_Namespace, NStr::CStr const &_InData)
 	{
 		switch (_Generate)
 		{
-		case EUniversallyUniqueIdentifierGenerate_Secure:
-			NMib::NSys::fg_System_GenerateUUID(*this);
-			break;
+		case EUniversallyUniqueIdentifierGenerate_Secure: NMib::NSys::fg_System_GenerateUUID(*this); break;
 		case EUniversallyUniqueIdentifierGenerate_Random:
 			{
 				static_assert(sizeof(*this) == 16 && NTraits::cIsTriviallyCopyAssignable<CUniversallyUniqueIdentifier>);
@@ -45,27 +38,18 @@ namespace NMib::NCryptography
 		uint64 Node;
 		aint nParsedArgs = 0;
 
-		char const* pFormat = nullptr;
-		switch(_Format)
+		char const *pFormat = nullptr;
+		switch (_Format)
 		{
-			default:
-			case EUniversallyUniqueIdentifierFormat_Registry:
-				pFormat = "{{{nfh}-{nfh}-{nfh}-{nfh}-{nfh}}";
-				break;
-			case EUniversallyUniqueIdentifierFormat_Bare:
-				pFormat = "{nfh}-{nfh}-{nfh}-{nfh}-{nfh}";
-				break;
-			case EUniversallyUniqueIdentifierFormat_AlphaNum:
-				DMibError("EUniversallyUniqueIdentifierFormat_AlphaNum parsing of GUID not supported");
-				break;
+		default:
+		case EUniversallyUniqueIdentifierFormat_Registry:
+			pFormat = "{{{nfh}-{nfh}-{nfh}-{nfh}-{nfh}}";
+			break;
+		case EUniversallyUniqueIdentifierFormat_Bare: pFormat = "{nfh}-{nfh}-{nfh}-{nfh}-{nfh}"; break;
+		case EUniversallyUniqueIdentifierFormat_AlphaNum: DMibError("EUniversallyUniqueIdentifierFormat_AlphaNum parsing of GUID not supported"); break;
 		}
 
-		(
-			NStr::CStr::CParse
-			(
-				pFormat
-			) >> m_TimeLow >> m_TimeMid >> m_TimeHiAndVersion >> ClockSequence >> Node
-		).f_Parse(_RegistryFormat, nParsedArgs);
+		(NStr::CStr::CParse(pFormat) >> m_TimeLow >> m_TimeMid >> m_TimeHiAndVersion >> ClockSequence >> Node).f_Parse(_RegistryFormat, nParsedArgs);
 
 		if (nParsedArgs != 5)
 			DMibError("Failed to parse GUID");
@@ -73,12 +57,12 @@ namespace NMib::NCryptography
 		m_ClockSequenceHiAndReserved = ClockSequence >> 8;
 		m_ClockSquenceLow = ClockSequence & uint8(0xff);
 
-		m_Node[0] = (Node >> 8*5) & uint8(0xff);
-		m_Node[1] = (Node >> 8*4) & uint8(0xff);
-		m_Node[2] = (Node >> 8*3) & uint8(0xff);
-		m_Node[3] = (Node >> 8*2) & uint8(0xff);
-		m_Node[4] = (Node >> 8*1) & uint8(0xff);
-		m_Node[5] = (Node >> 8*0) & uint8(0xff);
+		m_Node[0] = (Node >> 8 * 5) & uint8(0xff);
+		m_Node[1] = (Node >> 8 * 4) & uint8(0xff);
+		m_Node[2] = (Node >> 8 * 3) & uint8(0xff);
+		m_Node[3] = (Node >> 8 * 2) & uint8(0xff);
+		m_Node[4] = (Node >> 8 * 1) & uint8(0xff);
+		m_Node[5] = (Node >> 8 * 0) & uint8(0xff);
 	}
 
 	CUniversallyUniqueIdentifier CUniversallyUniqueIdentifier::fs_Empty()
@@ -89,25 +73,25 @@ namespace NMib::NCryptography
 	template <typename tf_CStrType>
 	static tf_CStrType fg_GetUUIDAsString(CUniversallyUniqueIdentifier &_UUID, EUniversallyUniqueIdentifierFormat _Format)
 	{
-		char const* pFormat = nullptr;
-		switch(_Format)
+		char const *pFormat = nullptr;
+		switch (_Format)
 		{
-			default:
-			case EUniversallyUniqueIdentifierFormat_Registry:
-				pFormat = "{{{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}}";
-				break;
-			case EUniversallyUniqueIdentifierFormat_Bare:
-				pFormat = "{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}";
-				break;
-			case EUniversallyUniqueIdentifierFormat_AlphaNum:
-				pFormat = "{nfh,nc,sj8,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}";
-				break;
+		default:
+		case EUniversallyUniqueIdentifierFormat_Registry:
+			pFormat = "{{{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}"
+				"{nfh,nc,sj2,sf0}}";
+			break;
+		case EUniversallyUniqueIdentifierFormat_Bare:
+			pFormat = "{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}"
+				"{nfh,nc,sj2,sf0}";
+			break;
+		case EUniversallyUniqueIdentifierFormat_AlphaNum:
+			pFormat = "{nfh,nc,sj8,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}"
+				"{nfh,nc,sj2,sf0}";
+			break;
 		}
 
-		return typename tf_CStrType::CFormat
-			(
-				pFormat
-			)
+		return typename tf_CStrType::CFormat(pFormat)
 			<< _UUID.m_TimeLow
 			<< _UUID.m_TimeMid
 			<< _UUID.m_TimeHiAndVersion
@@ -183,6 +167,7 @@ namespace NMib::NCryptography
 		CUniversallyUniqueIdentifier UUID(EUniversallyUniqueIdentifierGenerate_Random);
 		return UUID.f_GetAsString(_Format);
 	}
+
 	NStr::CStr fg_GetSecureUuidString(EUniversallyUniqueIdentifierFormat _Format)
 	{
 		CUniversallyUniqueIdentifier UUID(EUniversallyUniqueIdentifierGenerate_Secure);
