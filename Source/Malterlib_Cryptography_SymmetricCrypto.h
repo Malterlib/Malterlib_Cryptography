@@ -10,16 +10,15 @@ namespace NMib::NCryptography
 {
 	enum ECryptoFlags
 	{
-		ECryptoFlags_None = DMibBit(0)
-		, ECryptoFlags_Decrypt = DMibBit(1)
-		, ECryptoFlags_Encrypt = DMibBit(2)
+		ECryptoFlags_None         = DMibBit(0)
+		, ECryptoFlags_Decrypt    = DMibBit(1)
+		, ECryptoFlags_Encrypt    = DMibBit(2)
 		, ECryptoFlags_UsePadding = DMibBit(3)
 	};
 
 	class CEncryptAES
 	{
 	public:
-
 		CEncryptAES(CEncryptKeyIV const &_KeyIV);
 		~CEncryptAES();
 
@@ -53,5 +52,5 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif

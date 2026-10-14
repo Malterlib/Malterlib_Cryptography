@@ -15,26 +15,26 @@ namespace NMib::NCryptography
 {
 	enum EKeyUsage
 	{
-		EKeyUsage_None = 0
+		EKeyUsage_None               = 0
 		, EKeyUsage_DigitalSignature = DMibBit(0)
-		, EKeyUsage_NonRepudiation = DMibBit(1)
-		, EKeyUsage_KeyEncipherment = DMibBit(2)
+		, EKeyUsage_NonRepudiation   = DMibBit(1)
+		, EKeyUsage_KeyEncipherment  = DMibBit(2)
 		, EKeyUsage_DataEncipherment = DMibBit(3)
-		, EKeyUsage_KeyAgreement = DMibBit(4)
-		, EKeyUsage_CertificateSign = DMibBit(5)
-		, EKeyUsage_CRLSign = DMibBit(6)
-		, EKeyUsage_EncipherOnly = DMibBit(7)
-		, EKeyUsage_DecipherOnly = DMibBit(8)
+		, EKeyUsage_KeyAgreement     = DMibBit(4)
+		, EKeyUsage_CertificateSign  = DMibBit(5)
+		, EKeyUsage_CRLSign          = DMibBit(6)
+		, EKeyUsage_EncipherOnly     = DMibBit(7)
+		, EKeyUsage_DecipherOnly     = DMibBit(8)
 	};
 
 	enum EExtendedKeyUsage
 	{
-		EExtendedKeyUsage_None = 0
-		, EExtendedKeyUsage_ServerAuth = DMibBit(0)
-		, EExtendedKeyUsage_ClientAuth = DMibBit(1)
-		, EExtendedKeyUsage_CodeSigning = DMibBit(2)
+		EExtendedKeyUsage_None              = 0
+		, EExtendedKeyUsage_ServerAuth      = DMibBit(0)
+		, EExtendedKeyUsage_ClientAuth      = DMibBit(1)
+		, EExtendedKeyUsage_CodeSigning     = DMibBit(2)
 		, EExtendedKeyUsage_EmailProtection = DMibBit(3)
-		, EExtendedKeyUsage_Timestamping = DMibBit(4)
+		, EExtendedKeyUsage_Timestamping    = DMibBit(4)
 	};
 
 	// Role-restricted leaves must support signatures. Missing EKU permits either role; present EKU must include the exact role.
@@ -92,9 +92,9 @@ namespace NMib::NCryptography
 		int32 m_Days = 365;
 		NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> m_Extensions;
 		ECertificateLeafRole m_LeafRole = ECertificateLeafRole_Unrestricted;
-		NContainer::TCVector<CPublicKeySetting> m_AllowedKeyTypes; // Empty permits any key; EC entries require the exact curve and RSA entries specify a minimum bit length.
-		NContainer::TCVector<EDigestType> m_AllowedRequestDigests; // Allowed request-signature digests; empty permits any digest.
-		NStr::CStr m_OverrideSubjectCommonName; // Nonempty replaces the requested subject with this common name.
+		NContainer::TCVector<CPublicKeySetting> m_AllowedKeyTypes;   // Empty permits any key; EC entries require the exact curve and RSA entries specify a minimum bit length.
+		NContainer::TCVector<EDigestType> m_AllowedRequestDigests;   // Allowed request-signature digests; empty permits any digest.
+		NStr::CStr m_OverrideSubjectCommonName;                      // Nonempty replaces the requested subject with this common name.
 		NContainer::TCVector<NStr::CStr> m_AllowedRequestExtensions; // Numeric OIDs allowed from the request; empty copies all requested extensions.
 	};
 
@@ -102,7 +102,7 @@ namespace NMib::NCryptography
 	struct CCertificateVerifyOptions
 	{
 		NContainer::TCVector<CPublicKeySetting> m_AllowedLeafKeyTypes; // RSA entries specify a minimum bit length.
-		NContainer::TCVector<EDigestType> m_AllowedSignatureDigests; // Applies to the leaf and every intermediate on the built path, not to the anchor's own signature.
+		NContainer::TCVector<EDigestType> m_AllowedSignatureDigests;   // Applies to the leaf and every intermediate on the built path, not to the anchor's own signature.
 	};
 
 	struct CCertificate
@@ -180,5 +180,5 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif

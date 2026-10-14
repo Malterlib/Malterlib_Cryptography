@@ -104,7 +104,7 @@ namespace NMib::NCryptography
 							SecureMeasure
 							, [] inline_always_lambda
 							{
-								 return fg_RandomID(64);
+								return fg_RandomID(64);
 							}
 							, mc_nIterations
 						)

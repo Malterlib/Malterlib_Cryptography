@@ -61,7 +61,7 @@ namespace NMib::NCryptography
 			;
 
 			ERR_clear_error();
-			if (!X509_add_ext(_pCert,pExtension,-1))
+			if (!X509_add_ext(_pCert, pExtension, -1))
 				DMibErrorCryptography(fg_GetExceptionStr("Error adding x509 extension"));
 		}
 
@@ -80,7 +80,7 @@ namespace NMib::NCryptography
 			return fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _Allowed);
 		}
 
-		void fg_AddExtension(X509V3_CTX &_Context, X509_EXTENSIONS *&_pExtensions, int _nID, CCertificateExtension _Extension)
+		void fg_AddExtension(X509V3_CTX &_Context, X509_EXTENSIONS * &_pExtensions, int _nID, CCertificateExtension _Extension)
 		{
 			X509_EXTENSION *pExtension = fg_CreateExtension(_Context, _nID, _Extension);
 			auto Cleanup = g_OnScopeExit / [&]
@@ -94,7 +94,7 @@ namespace NMib::NCryptography
 		}
 
 		template <typename tf_CObject>
-		void fg_AddHostnames(X509V3_CTX &_Context, tf_CObject *&_pObject, NContainer::TCVector<NStr::CStr> const &_Hostnames)
+		void fg_AddHostnames(X509V3_CTX &_Context, tf_CObject * &_pObject, NContainer::TCVector<NStr::CStr> const &_Hostnames)
 		{
 			NContainer::TCVector<NStr::CStr> SortedHosts = CCertificate::fs_GetSortedHostnames(_Hostnames);
 
@@ -113,7 +113,7 @@ namespace NMib::NCryptography
 		}
 
 		template <typename tf_CObject>
-		void fg_AddExtensions(X509V3_CTX &_Context, tf_CObject *&_pObject, NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> const &_Extensions)
+		void fg_AddExtensions(X509V3_CTX &_Context, tf_CObject * &_pObject, NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> const &_Extensions)
 		{
 			for (auto iExtension = _Extensions.f_GetIterator(); iExtension; ++iExtension)
 			{
@@ -132,14 +132,14 @@ namespace NMib::NCryptography
 	static void fg_GenerateSubject(X509_NAME *_pName, CCertificateOptions const &_Options)
 	{
 		ERR_clear_error();
-		if (!X509_NAME_add_entry_by_txt(_pName, "CN", MBSTRING_UTF8, (const unsigned char*)_Options.m_CommonName.f_GetStr(), -1, -1, 0))
+		if (!X509_NAME_add_entry_by_txt(_pName, "CN", MBSTRING_UTF8, (unsigned char const *)_Options.m_CommonName.f_GetStr(), -1, -1, 0))
 			DMibErrorCryptography(fg_GetExceptionStr("Error adding CN entry"));
 
 		for (auto &Value : _Options.m_RelativeDistinguishedNames)
 		{
 			auto &Subject = _Options.m_RelativeDistinguishedNames.fs_GetKey(Value);
 			ERR_clear_error();
-			if (!X509_NAME_add_entry_by_txt(_pName, Subject, MBSTRING_UTF8, (const unsigned char*)Value.f_GetStr(), -1, -1, 0))
+			if (!X509_NAME_add_entry_by_txt(_pName, Subject, MBSTRING_UTF8, (unsigned char const *)Value.f_GetStr(), -1, -1, 0))
 				DMibErrorCryptography(fg_GetExceptionStr(fg_Format("Error adding {} entry", Subject)));
 		}
 	}
@@ -173,7 +173,7 @@ namespace NMib::NCryptography
 					else
 						pKey = fg_LoadPrivateKey(o_KeyData);
 
-					auto Cleanup0 = g_OnScopeExit / [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&]()
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -183,7 +183,7 @@ namespace NMib::NCryptography
 					X509_REQ *pCertificateRequest = X509_REQ_new();
 					if (!pCertificateRequest)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating certificate request"));
-					auto Cleanup1 = g_OnScopeExit / [&] ()
+					auto Cleanup1 = g_OnScopeExit / [&]()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
@@ -245,14 +245,14 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_CertRequestData);
-					auto Cleanup0 = g_OnScopeExit / [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&]()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
 					;
 
 					X509 *pCertificate = fg_LoadCertificate(_CertData);
-					auto Cleanup3 = g_OnScopeExit / [&] ()
+					auto Cleanup3 = g_OnScopeExit / [&]()
 						{
 							X509_free(pCertificate);
 						}
@@ -297,21 +297,21 @@ namespace NMib::NCryptography
 					o_SignedCertificateData.f_Clear();
 
 					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_CertRequestData);
-					auto Cleanup0 = g_OnScopeExit / [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&]()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
 					;
 
 					EVP_PKEY *pCAKey = fg_LoadPrivateKey(_CAKey);
-					auto Cleanup2 = g_OnScopeExit / [&] ()
+					auto Cleanup2 = g_OnScopeExit / [&]()
 						{
 							EVP_PKEY_free(pCAKey);
 						}
 					;
 
 					X509 *pCACertificate = fg_LoadCertificate(_CACertificate);
-					auto Cleanup3 = g_OnScopeExit / [&] ()
+					auto Cleanup3 = g_OnScopeExit / [&]()
 						{
 							X509_free(pCACertificate);
 						}
@@ -321,7 +321,7 @@ namespace NMib::NCryptography
 					X509 *pCertificate = X509_new();
 					if (!pCertificate)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating certificate"));
-					auto Cleanup1 = g_OnScopeExit / [&] ()
+					auto Cleanup1 = g_OnScopeExit / [&]()
 						{
 							X509_free(pCertificate);
 						}
@@ -333,7 +333,7 @@ namespace NMib::NCryptography
 						if (!pPublicKey)
 							DMibErrorCryptography(fg_GetExceptionStr("The certificate request does not contain a public key"));
 
-						auto Cleanup = g_OnScopeExit / [&] ()
+						auto Cleanup = g_OnScopeExit / [&]()
 							{
 								EVP_PKEY_free(pPublicKey);
 							}
@@ -371,7 +371,6 @@ namespace NMib::NCryptography
 					ERR_clear_error();
 					if (!X509_set_issuer_name(pCertificate, X509_get_subject_name(pCACertificate)))
 						DMibErrorCryptography(fg_GetExceptionStr("Error setting x509 issuer"));
-
 
 					if (!_SignOptions.m_OverrideSubjectCommonName.f_IsEmpty())
 					{
@@ -560,16 +559,16 @@ namespace NMib::NCryptography
 					X509 *pCertificate = X509_new();
 					if (!pCertificate)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating certificate"));
-					auto Cleanup0 = g_OnScopeExit / [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&]()
 						{
 							X509_free(pCertificate);
 						}
 					;
 					ERR_clear_error();
-					EVP_PKEY* pKey = EVP_PKEY_new();
+					EVP_PKEY *pKey = EVP_PKEY_new();
 					if (!pKey)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating key"));
-					auto Cleanup1 = g_OnScopeExit / [&] ()
+					auto Cleanup1 = g_OnScopeExit / [&]()
 						{
 							EVP_PKEY_free(pKey);
 						}
@@ -638,14 +637,14 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509_REQ *pCertificateRequest = fg_LoadCertificateRequest(_Pem);
-					auto Cleanup0 = g_OnScopeExit / [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&]()
 						{
 							X509_REQ_free(pCertificateRequest);
 						}
 					;
 
 					ERR_clear_error();
-					BIO* pMemoryBio = BIO_new(BIO_s_mem());
+					BIO *pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 					auto Cleanup = g_OnScopeExit / [&]
@@ -664,7 +663,6 @@ namespace NMib::NCryptography
 					if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 						DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate signing request from BIO"));
 					return Return;
-
 				}
 			)
 		;
@@ -677,14 +675,14 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					X509 *pCertificate = fg_LoadCertificate(_Pem);
-					auto Cleanup0 = g_OnScopeExit / [&] ()
+					auto Cleanup0 = g_OnScopeExit / [&]()
 						{
 							X509_free(pCertificate);
 						}
 					;
 
 					ERR_clear_error();
-					BIO* pMemoryBio = BIO_new(BIO_s_mem());
+					BIO *pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 					auto Cleanup = g_OnScopeExit / [&]
@@ -703,7 +701,6 @@ namespace NMib::NCryptography
 					if (!BIO_read(pMemoryBio, Return.f_GetArray(), Return.f_GetLen()))
 						DMibErrorCryptography(fg_GetExceptionStr("Error reading certificate signing request from BIO"));
 					return Return;
-
 				}
 			)
 		;

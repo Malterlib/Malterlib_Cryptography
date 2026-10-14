@@ -11,12 +11,14 @@ namespace NMib::NCryptography
 		, EUniversallyUniqueIdentifierFormat_Registry
 		, EUniversallyUniqueIdentifierFormat_AlphaNum
 	};
+
 	enum EUniversallyUniqueIdentifierGenerate
 	{
 		EUniversallyUniqueIdentifierGenerate_Secure
 		, EUniversallyUniqueIdentifierGenerate_Random
 		, EUniversallyUniqueIdentifierGenerate_StringHash
 	};
+
 	struct CUniversallyUniqueIdentifier
 	{
 		uint32 m_TimeLow = 0;
@@ -34,15 +36,7 @@ namespace NMib::NCryptography
 			)
 		;
 		CUniversallyUniqueIdentifier(NStr::CStr const &_RegistryFormat, EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
-		constexpr CUniversallyUniqueIdentifier
-			(
-				uint32 _TimeLow
-				, uint16 _TimeMid
-				, uint16 _TimeHiAndVersion
-				, uint16 _ClockSequence
-				, uint64 _Node
-			)
-		;
+		constexpr CUniversallyUniqueIdentifier(uint32 _TimeLow, uint16 _TimeMid, uint16 _TimeHiAndVersion, uint16 _ClockSequence, uint64 _Node);
 		constexpr ~CUniversallyUniqueIdentifier();
 		NStr::CStr f_GetAsString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
 		NStr::CFStr256 f_GetAsStaticString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_Registry);
@@ -56,7 +50,6 @@ namespace NMib::NCryptography
 		void fp_CreateFromSHA1(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, umint _DataLen);
 		void fp_CreateFromMD5(CUniversallyUniqueIdentifier const &_Namespace, void const *_pData, umint _DataLen);
 		void fp_CreateFromHash(uint8 *_pHash, int32 _Version);
-
 	};
 
 	NStr::CStr fg_GetRandomUuidString(EUniversallyUniqueIdentifierFormat _Format = EUniversallyUniqueIdentifierFormat_AlphaNum);
@@ -71,7 +64,7 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif
 
 #include "Malterlib_Cryptography_UUID.hpp"

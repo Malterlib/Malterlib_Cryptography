@@ -7,18 +7,18 @@
 #include <Mib/Encoding/Base64>
 
 #if defined(DPlatformFamily_macOS)
-	#include <Security/Security.h>
+#	include <Security/Security.h>
 #elif defined(DPlatformFamily_Windows)
-	#include <Windows.h>
-	#include <Wincrypt.h>
+#	include <Windows.h>
+#	include <Wincrypt.h>
 
-	#undef X509_NAME
-	#undef X509_EXTENSIONS
-	#undef PKCS7_ISSUER_AND_SERIAL
-	#undef OCSP_REQUEST
-	#undef OCSP_RESPONSE
+#	undef X509_NAME
+#	undef X509_EXTENSIONS
+#	undef PKCS7_ISSUER_AND_SERIAL
+#	undef OCSP_REQUEST
+#	undef OCSP_RESPONSE
 
-	#pragma comment(lib, "crypt32.lib")
+#	pragma comment(lib, "crypt32.lib")
 #endif
 
 namespace NMib::NCryptography
@@ -61,72 +61,73 @@ namespace NMib::NCryptography
 				}
 			;
 
-			auto fLoadFromStore = [&] (LPCWSTR _pStore)
-			{
-				HCERTSTORE hStore = CertOpenSystemStore(NULL, _pStore);
-				for (PCCERT_CONTEXT pCertContext = CertEnumCertificatesInStore(hStore, nullptr); pCertContext; pCertContext = CertEnumCertificatesInStore(hStore, pCertContext))
+			auto fLoadFromStore = [&](LPCWSTR _pStore)
 				{
-					NStr::CStr OutputType = fIsPKCS7(pCertContext->dwCertEncodingType) ? "PKCS7" : "CERTIFICATE";
-					NContainer::CByteVector Data;
-					Data.f_Insert(pCertContext->pbCertEncoded, pCertContext->cbCertEncoded);
-					NStr::CStr CertData = NEncoding::fg_Base64Encode(Data);
-					NStr::CStr CertAsString = NStr::CStr::CFormat("-----BEGIN {}-----\n{}\n-----END {}-----\n") << OutputType << CertData << OutputType;
-
-					NContainer::CByteVector lCertData;
-					lCertData.f_SetLen(CertAsString.f_GetLen());
-					NMemory::fg_MemCopy(lCertData.f_GetArray(), CertAsString.f_GetStr(), CertAsString.f_GetLen());
-
-					X509 *pCertificate;
-					try
+					HCERTSTORE hStore = CertOpenSystemStore(NULL, _pStore);
+					for (PCCERT_CONTEXT pCertContext = CertEnumCertificatesInStore(hStore, nullptr); pCertContext; pCertContext = CertEnumCertificatesInStore(hStore, pCertContext))
 					{
-						pCertificate = fg_LoadCertificate(lCertData);
-					}
-					catch (CExceptionCryptography const &)
-					{
-						continue;
-					}
-					auto Cleanup0 = g_OnScopeExit / [&]
+						NStr::CStr OutputType = fIsPKCS7(pCertContext->dwCertEncodingType) ? "PKCS7" : "CERTIFICATE";
+						NContainer::CByteVector Data;
+						Data.f_Insert(pCertContext->pbCertEncoded, pCertContext->cbCertEncoded);
+						NStr::CStr CertData = NEncoding::fg_Base64Encode(Data);
+						NStr::CStr CertAsString = NStr::CStr::CFormat("-----BEGIN {}-----\n{}\n-----END {}-----\n") << OutputType << CertData << OutputType;
+
+						NContainer::CByteVector lCertData;
+						lCertData.f_SetLen(CertAsString.f_GetLen());
+						NMemory::fg_MemCopy(lCertData.f_GetArray(), CertAsString.f_GetStr(), CertAsString.f_GetLen());
+
+						X509 *pCertificate;
+						try
 						{
-							X509_free(pCertificate);
+							pCertificate = fg_LoadCertificate(lCertData);
 						}
-					;
-
-					if (fg_GetX509ExpireTime(pCertificate) > Now)
-						X509_STORE_add_cert(pStore, pCertificate);
-				}
-
-				for (PCCRL_CONTEXT pCrlContext = CertEnumCRLsInStore(hStore, nullptr); pCrlContext; pCrlContext = CertEnumCRLsInStore(hStore, pCrlContext))
-				{
-					NStr::CStr OutputType = fIsPKCS7(pCrlContext->dwCertEncodingType) ? "PKCS7" : "X509 CRL";
-					NContainer::CByteVector Data;
-					Data.f_Insert(pCrlContext->pbCrlEncoded, pCrlContext->cbCrlEncoded);
-					NStr::CStr CertData = NEncoding::fg_Base64Encode(Data);
-					NStr::CStr CertAsString = NStr::CStr::CFormat("-----BEGIN {}-----\n{}\n-----END {}-----\n") << OutputType << CertData << OutputType;
-
-					NContainer::CByteVector lCertData;
-					lCertData.f_SetLen(CertAsString.f_GetLen());
-					NMemory::fg_MemCopy(lCertData.f_GetArray(), CertAsString.f_GetStr(), CertAsString.f_GetLen());
-
-					X509_CRL *pCrl;
-					try
-					{
-						pCrl = fg_LoadCrl(lCertData);
-					}
-					catch (CExceptionCryptography const &)
-					{
-						continue;
-					}
-					auto Cleanup0 = g_OnScopeExit / [&]
+						catch (CExceptionCryptography const &)
 						{
-							X509_CRL_free(pCrl);
+							continue;
 						}
-					;
+						auto Cleanup0 = g_OnScopeExit / [&]
+							{
+								X509_free(pCertificate);
+							}
+						;
 
-					X509_STORE_add_crl(pStore, pCrl);
+						if (fg_GetX509ExpireTime(pCertificate) > Now)
+							X509_STORE_add_cert(pStore, pCertificate);
+					}
+
+					for (PCCRL_CONTEXT pCrlContext = CertEnumCRLsInStore(hStore, nullptr); pCrlContext; pCrlContext = CertEnumCRLsInStore(hStore, pCrlContext))
+					{
+						NStr::CStr OutputType = fIsPKCS7(pCrlContext->dwCertEncodingType) ? "PKCS7" : "X509 CRL";
+						NContainer::CByteVector Data;
+						Data.f_Insert(pCrlContext->pbCrlEncoded, pCrlContext->cbCrlEncoded);
+						NStr::CStr CertData = NEncoding::fg_Base64Encode(Data);
+						NStr::CStr CertAsString = NStr::CStr::CFormat("-----BEGIN {}-----\n{}\n-----END {}-----\n") << OutputType << CertData << OutputType;
+
+						NContainer::CByteVector lCertData;
+						lCertData.f_SetLen(CertAsString.f_GetLen());
+						NMemory::fg_MemCopy(lCertData.f_GetArray(), CertAsString.f_GetStr(), CertAsString.f_GetLen());
+
+						X509_CRL *pCrl;
+						try
+						{
+							pCrl = fg_LoadCrl(lCertData);
+						}
+						catch (CExceptionCryptography const &)
+						{
+							continue;
+						}
+						auto Cleanup0 = g_OnScopeExit / [&]
+							{
+								X509_CRL_free(pCrl);
+							}
+						;
+
+						X509_STORE_add_crl(pStore, pCrl);
+					}
+
+					CertCloseStore(hStore, 0);
 				}
-
-				CertCloseStore(hStore, 0);
-			};
+			;
 
 			fLoadFromStore(L"ROOT");
 			fLoadFromStore(L"CA");
@@ -192,7 +193,7 @@ namespace NMib::NCryptography
 
 					for (umint i = 0; i < CFArrayGetCount(pTrustSettings); ++i)
 					{
-						CFDictionaryRef pTrustDictionary = reinterpret_cast<CFDictionaryRef>(const_cast<void*>(CFArrayGetValueAtIndex(pTrustSettings, i)));
+						CFDictionaryRef pTrustDictionary = reinterpret_cast<CFDictionaryRef>(const_cast<void *>(CFArrayGetValueAtIndex(pTrustSettings, i)));
 
 						if (SecPolicyRef pPolicy = nullptr; CFDictionaryGetValueIfPresent(pTrustDictionary, kSecTrustSettingsPolicy, (void const **)&pPolicy))
 						{
@@ -209,7 +210,7 @@ namespace NMib::NCryptography
 							if (!CFNumberGetValue(pTrustResult, kCFNumberSInt32Type, &Result))
 								return kSecTrustSettingsResultInvalid;
 
-							 if (Result == kSecTrustSettingsResultTrustRoot || Result == kSecTrustSettingsResultTrustAsRoot || Result == kSecTrustSettingsResultDeny)
+							if (Result == kSecTrustSettingsResultTrustRoot || Result == kSecTrustSettingsResultTrustAsRoot || Result == kSecTrustSettingsResultDeny)
 								return (SecTrustSettingsResult)Result;
 						}
 						else
@@ -224,7 +225,7 @@ namespace NMib::NCryptography
 				{
 					for (umint i = 0; i < CFArrayGetCount(pCerts); ++i)
 					{
-						SecCertificateRef pCertRef = reinterpret_cast<SecCertificateRef>(const_cast<void*>(CFArrayGetValueAtIndex(pCerts, i)));
+						SecCertificateRef pCertRef = reinterpret_cast<SecCertificateRef>(const_cast<void *>(CFArrayGetValueAtIndex(pCerts, i)));
 						X509 *pCertificate;
 						if (CSystem::ms_PlatformVersion >= 10'06'00)
 						{
@@ -233,7 +234,7 @@ namespace NMib::NCryptography
 								continue;
 
 							{
-								unsigned const char *pDERCert = CFDataGetBytePtr(DERCert);
+								unsigned char const *pDERCert = CFDataGetBytePtr(DERCert);
 								umint DataLength = CFDataGetLength(DERCert);
 								pCertificate = d2i_X509(nullptr, &pDERCert, DataLength);
 							}
@@ -248,7 +249,7 @@ namespace NMib::NCryptography
 								continue;
 
 							{
-								unsigned const char *pDERCert = certCSSMData.Data;
+								unsigned char const *pDERCert = certCSSMData.Data;
 								umint DataLength = certCSSMData.Length;
 								pCertificate = d2i_X509(nullptr, &pDERCert, DataLength);
 							}
@@ -301,9 +302,7 @@ namespace NMib::NCryptography
 										Trusted[Certificate];
 								}
 								break;
-							case kSecTrustSettingsResultDeny:
-								Untrusted[Certificate];
-								break;
+							case kSecTrustSettingsResultDeny: Untrusted[Certificate]; break;
 							case kSecTrustSettingsResultUnspecified:
 							case kSecTrustSettingsResultInvalid:
 								break;
@@ -359,7 +358,7 @@ namespace NMib::NCryptography
 		{
 			auto pStore = X509_STORE_new();
 
-			auto fLoadCerts = [&](NStr::CStr const  &_File) -> bool
+			auto fLoadCerts = [&](NStr::CStr const &_File) -> bool
 				{
 					try
 					{
@@ -413,9 +412,9 @@ namespace NMib::NCryptography
 
 			NContainer::TCVector<NStr::CStr> CertDirectories =
 				{
-					"/etc/ssl/certs", // SLES10/SLES11
-					"/etc/pki/tls/certs", // Fedora/RHEL
-					"/system/etc/security/cacerts", // Android
+					"/etc/ssl/certs" // SLES10/SLES11
+					, "/etc/pki/tls/certs" // Fedora/RHEL
+					, "/system/etc/security/cacerts" // Android
 				}
 			;
 
@@ -460,7 +459,7 @@ namespace NMib::NCryptography
 				Globals.m_pSystemCertStore = fg_ExtractSystemCertificates();
 		}
 
-		STACK_OF(X509_OBJECT) *certs = X509_STORE_get0_objects(Globals.m_pSystemCertStore);
+		STACK_OF(X509_OBJECT) * certs = X509_STORE_get0_objects(Globals.m_pSystemCertStore);
 		/* Look for exact match */
 		for (umint i = 0; i < sk_X509_OBJECT_num(certs); i++)
 		{

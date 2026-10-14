@@ -84,16 +84,18 @@ extern "C"
 		return pMem;
 	}
 #endif
-	void *OPENSSL_zalloc(size_t size) {
+	void *OPENSSL_zalloc(size_t size)
+	{
 		void *ret = OPENSSL_malloc(size);
-		if (ret != NULL) {
+		if (ret != NULL)
 			memset(ret, 0, size);
-		}
 		return ret;
 	}
 
-	void *OPENSSL_calloc(size_t num, size_t size) {
-		if (size != 0 && num > SIZE_MAX / size) {
+	void *OPENSSL_calloc(size_t num, size_t size)
+	{
+		if (size != 0 && num > SIZE_MAX / size)
+		{
 			OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
 			return NULL;
 		}
@@ -221,10 +223,8 @@ namespace NMib::NCryptography::NBoringSSL
 
 					switch (CurveName)
 					{
-					case NID_secp521r1:
-						return EVP_sha512();
-					case NID_secp384r1:
-						return EVP_sha384();
+					case NID_secp521r1: return EVP_sha512();
+					case NID_secp384r1: return EVP_sha384();
 					case NID_X9_62_prime256v1:
 					case NID_X25519:
 						return EVP_sha256();
@@ -252,7 +252,7 @@ namespace NMib::NCryptography::NBoringSSL
 	{
 		ERR_clear_error();
 
-		BIO* pMemoryBio = BIO_new_mem_buf(const_cast<void*>(static_cast<void const*>(_Data.f_GetArray())), _Data.f_GetLen());
+		BIO *pMemoryBio = BIO_new_mem_buf(const_cast<void *>(static_cast<void const *>(_Data.f_GetArray())), _Data.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO buffer"));
 		auto Cleanup0 = g_OnScopeExit / [&]
@@ -262,7 +262,7 @@ namespace NMib::NCryptography::NBoringSSL
 		;
 
 		ERR_clear_error();
-		EVP_PKEY* pKey = d2i_PrivateKey_bio(pMemoryBio, nullptr);
+		EVP_PKEY *pKey = d2i_PrivateKey_bio(pMemoryBio, nullptr);
 		if (!pKey)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to read private key"));
 
@@ -273,7 +273,7 @@ namespace NMib::NCryptography::NBoringSSL
 	{
 		ERR_clear_error();
 
-		BIO* pMemoryBio = BIO_new_mem_buf(const_cast<void*>(static_cast<void const*>(_Data.f_GetArray())), _Data.f_GetLen());
+		BIO *pMemoryBio = BIO_new_mem_buf(const_cast<void *>(static_cast<void const *>(_Data.f_GetArray())), _Data.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO buffer"));
 		auto Cleanup0 = g_OnScopeExit / [&]
@@ -296,7 +296,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("Key in nullptr");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new(BIO_s_mem());
+		BIO *pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 		auto Cleanup = g_OnScopeExit / [&]
@@ -323,7 +323,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("Key in nullptr");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new(BIO_s_mem());
+		BIO *pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 		auto Cleanup = g_OnScopeExit / [&]
@@ -371,21 +371,11 @@ namespace NMib::NCryptography::NBoringSSL
 				int CurveName = NID_secp521r1;
 				switch (_Options.m_KeySetting.f_GetTypeID())
 				{
-				case EPublicKeyType::mc_EC_secp256r1:
-					CurveName = NID_X9_62_prime256v1;
-					break;
-				case EPublicKeyType::mc_EC_secp384r1:
-					CurveName = NID_secp384r1;
-					break;
-				case EPublicKeyType::mc_EC_secp521r1:
-					CurveName = NID_secp521r1;
-					break;
-				case EPublicKeyType::mc_EC_X25519:
-					CurveName = NID_X25519;
-					break;
-				default:
-					DMibNeverGetHere;
-					break;
+				case EPublicKeyType::mc_EC_secp256r1: CurveName = NID_X9_62_prime256v1; break;
+				case EPublicKeyType::mc_EC_secp384r1: CurveName = NID_secp384r1; break;
+				case EPublicKeyType::mc_EC_secp521r1: CurveName = NID_secp521r1; break;
+				case EPublicKeyType::mc_EC_X25519: CurveName = NID_X25519; break;
+				default: DMibNeverGetHere; break;
 				}
 
 				ERR_clear_error();
@@ -407,8 +397,7 @@ namespace NMib::NCryptography::NBoringSSL
 				Cleanup.f_Clear();
 			}
 			break;
-		default:
-			DMibErrorCryptography("Invalid key type");
+		default: DMibErrorCryptography("Invalid key type");
 		}
 	}
 
@@ -418,7 +407,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("Empty certificate data");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new_mem_buf( const_cast<void *>(static_cast<void const *>(_CertificateData.f_GetArray())), _CertificateData.f_GetLen());
+		BIO *pMemoryBio = BIO_new_mem_buf(const_cast<void *>(static_cast<void const *>(_CertificateData.f_GetArray())), _CertificateData.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO buffer"));
 		auto Cleanup = g_OnScopeExit / [&]
@@ -428,7 +417,7 @@ namespace NMib::NCryptography::NBoringSSL
 		;
 
 		ERR_clear_error();
-		X509 *pCertificate = PEM_read_bio_X509(pMemoryBio, nullptr, nullptr, nullptr);;
+		X509 *pCertificate = PEM_read_bio_X509(pMemoryBio, nullptr, nullptr, nullptr);
 		if (!pCertificate)
 			DMibErrorCryptography(fg_GetExceptionStr("Error reading x509 certificate"));
 
@@ -441,7 +430,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("Empty CRL data");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new_mem_buf( const_cast<void *>(static_cast<void const *>(_CertificateData.f_GetArray())), _CertificateData.f_GetLen());
+		BIO *pMemoryBio = BIO_new_mem_buf(const_cast<void *>(static_cast<void const *>(_CertificateData.f_GetArray())), _CertificateData.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO buffer"));
 		auto Cleanup = g_OnScopeExit / [&]
@@ -451,7 +440,7 @@ namespace NMib::NCryptography::NBoringSSL
 		;
 
 		ERR_clear_error();
-		X509_CRL *pCRL = PEM_read_bio_X509_CRL(pMemoryBio, nullptr, nullptr, nullptr);;
+		X509_CRL *pCRL = PEM_read_bio_X509_CRL(pMemoryBio, nullptr, nullptr, nullptr);
 		if (!pCRL)
 			DMibErrorCryptography(fg_GetExceptionStr("Error reading x509 certificate"));
 
@@ -464,7 +453,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("x509 certificate in nullptr");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new(BIO_s_mem());
+		BIO *pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 		auto Cleanup = g_OnScopeExit / [&]
@@ -576,7 +565,7 @@ namespace NMib::NCryptography::NBoringSSL
 	{
 		ERR_clear_error();
 
-		BIO* pMemoryBio = BIO_new_mem_buf(const_cast<void*>(static_cast<void const*>(_Data.f_GetArray())), _Data.f_GetLen());
+		BIO *pMemoryBio = BIO_new_mem_buf(const_cast<void *>(static_cast<void const *>(_Data.f_GetArray())), _Data.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO buffer"));
 		auto Cleanup0 = g_OnScopeExit / [&]
@@ -586,7 +575,7 @@ namespace NMib::NCryptography::NBoringSSL
 		;
 
 		ERR_clear_error();
-		EVP_PKEY* pKey = PEM_read_bio_PrivateKey(pMemoryBio, nullptr, nullptr, nullptr);
+		EVP_PKEY *pKey = PEM_read_bio_PrivateKey(pMemoryBio, nullptr, nullptr, nullptr);
 		if (!pKey)
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to read private key"));
 

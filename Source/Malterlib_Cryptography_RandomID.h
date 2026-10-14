@@ -23,7 +23,7 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif
 
 #include "Malterlib_Cryptography_RandomID.hpp"

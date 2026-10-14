@@ -15,7 +15,7 @@ namespace NMib::NCryptography
 	{
 		CInternal(EDigestType _Digest, NContainer::CSecureByteVector const &_Key)
 		{
-			const EVP_MD *Md = fg_GetDigest(_Digest);
+			EVP_MD const *Md = fg_GetDigest(_Digest);
 			umint const RequiredKeyLength = EVP_MD_size(Md);
 			if (_Key.f_GetLen() < RequiredKeyLength)
 				DMibErrorCryptography(NStr::fg_Format("HMAC key should be at least {} bytes", RequiredKeyLength));
@@ -79,7 +79,7 @@ namespace NMib::NCryptography
 			if (!m_pHMACContext)
 				DMibErrorCryptography("No HMAC context. Please initialize before calling f_Finalize.");
 			if (_DestLen < HMAC_size(m_pHMACContext))
-				DMibErrorCryptography(NStr::fg_Format("Buffer is too short. The HMAC is {} bytes",  HMAC_size(m_pHMACContext)));
+				DMibErrorCryptography(NStr::fg_Format("Buffer is too short. The HMAC is {} bytes", HMAC_size(m_pHMACContext)));
 
 			return fg_RunProtectRegisters
 				(
@@ -127,22 +127,8 @@ namespace NMib::NCryptography
 	{
 		NCryptography::CHashDigest_SHA256 Return;
 		unsigned int Size = Return.mc_Size;
-		if
-			(
-				!HMAC
-				(
-					EVP_sha256()
-					, _pKey
-					, _KeyLen
-					, _pData
-					, _DataLen
-					, Return.f_GetData()
-					, &Size
-				)
-			)
-		{
+		if (!HMAC(EVP_sha256(), _pKey, _KeyLen, _pData, _DataLen, Return.f_GetData(), &Size))
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to run HMAC-SHA256"));
-		}
 
 		if (Size != Return.mc_Size)
 			DMibErrorCryptography("Failed to run HMAC-SHA256: Unexpected digest size");
@@ -154,22 +140,8 @@ namespace NMib::NCryptography
 	{
 		NCryptography::CHashDigest_SHA1 Return;
 		unsigned int Size = Return.mc_Size;
-		if
-			(
-				!HMAC
-				(
-					EVP_sha1()
-					, _pKey
-					, _KeyLen
-					, _pData
-					, _DataLen
-					, Return.f_GetData()
-					, &Size
-				)
-			)
-		{
+		if (!HMAC(EVP_sha1(), _pKey, _KeyLen, _pData, _DataLen, Return.f_GetData(), &Size))
 			DMibErrorCryptography(fg_GetExceptionStr("Failed to run HMAC-SHA1"));
-		}
 
 		if (Size != Return.mc_Size)
 			DMibErrorCryptography("Failed to run HMAC-SHA1: Unexpected digest size");

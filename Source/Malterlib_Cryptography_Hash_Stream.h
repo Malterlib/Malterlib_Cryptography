@@ -8,7 +8,7 @@ namespace NMib::NCryptography
 	template <typename t_CHash, typename t_CStreamType = NStream::CBinaryStreamDefault>
 	struct TCBinaryStreamHashRef : public t_CStreamType
 	{
-		using CDigest = typename t_CHash::CMessageDigest;;
+		using CDigest = typename t_CHash::CMessageDigest;
 
 		DMibStreamImplementOperators(TCBinaryStreamHashRef);
 
