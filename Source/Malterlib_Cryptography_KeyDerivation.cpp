@@ -25,12 +25,11 @@ namespace NMib::NCryptography
 			, ECryptoType _Crypto
 		)
 	{
-
 		return fg_RunProtectRegisters
 			(
 				[&]() -> CEncryptKeyIV
 				{
-					EVP_CIPHER const* pCipher = fg_GetCipher(_Crypto);
+					EVP_CIPHER const *pCipher = fg_GetCipher(_Crypto);
 					EVP_MD const *pDigest = fg_GetDigest(_Settings.m_Digest);
 					uint8 Key[EVP_MAX_KEY_LENGTH];
 					uint8 IV[EVP_MAX_IV_LENGTH];
@@ -39,19 +38,19 @@ namespace NMib::NCryptography
 
 					ERR_clear_error();
 					if
+					(
+						!EVP_BytesToKey
 						(
-							!EVP_BytesToKey
-							(
-								pCipher
-								, pDigest
-								, !_Salt.f_IsEmpty() ? (uint8_t const *)_Salt.f_GetArray() : nullptr
-								, (uint8_t const *)_Password.f_GetStr()
-								, _Password.f_GetLen()
-								, _Settings.m_Rounds
-								, Key
-								, IV
-							)
+							pCipher
+							, pDigest
+							, !_Salt.f_IsEmpty() ? (uint8_t const *)_Salt.f_GetArray() : nullptr
+							, (uint8_t const *)_Password.f_GetStr()
+							, _Password.f_GetLen()
+							, _Settings.m_Rounds
+							, Key
+							, IV
 						)
+					)
 					{
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to generate key, iv for EKeyDerivationType_PKCS5_Deprecated"));
 					}
@@ -105,14 +104,7 @@ namespace NMib::NCryptography
 		return fg_Move(Key);
 	}
 
-
-	NContainer::CSecureByteVector fg_DeriveKey
-		(
-			NStr::CStrSecure const &_Password
-			, NContainer::CSecureByteVector const &_PasswordSalt
-			, CKeyDerivationSettings const &_Settings
-			, umint _KeyLen
-		)
+	NContainer::CSecureByteVector fg_DeriveKey(NStr::CStrSecure const &_Password, NContainer::CSecureByteVector const &_PasswordSalt, CKeyDerivationSettings const &_Settings, umint _KeyLen)
 	{
 		return fg_RunProtectRegisters
 			(
@@ -127,22 +119,22 @@ namespace NMib::NCryptography
 							auto const &Settings = _Settings.f_Get<EKeyDerivationType_Scrypt>();
 							ERR_clear_error();
 							if
+							(
+								!EVP_PBE_scrypt_with_digest
 								(
-									!EVP_PBE_scrypt_with_digest
-									(
-										_Password.f_GetStr()
-										, _Password.f_GetLen()
-										, _PasswordSalt.f_GetArray()
-										, _PasswordSalt.f_GetLen()
-										, Settings.m_Workload
-										, Settings.m_Ratio
-										, Settings.m_Parallel
-										, Settings.m_MaxMemory
-										, fg_GetDigest(Settings.m_Digest)
-										, Key.f_GetArray()
-										, _KeyLen
-									)
+									_Password.f_GetStr()
+									, _Password.f_GetLen()
+									, _PasswordSalt.f_GetArray()
+									, _PasswordSalt.f_GetLen()
+									, Settings.m_Workload
+									, Settings.m_Ratio
+									, Settings.m_Parallel
+									, Settings.m_MaxMemory
+									, fg_GetDigest(Settings.m_Digest)
+									, Key.f_GetArray()
+									, _KeyLen
 								)
+							)
 							{
 								DMibErrorCryptography(fg_GetExceptionStr("Failed to generate key using scrypt"));
 							}
@@ -153,30 +145,26 @@ namespace NMib::NCryptography
 							auto const &Settings = _Settings.f_Get<EKeyDerivationType_PKCS5_PBKDF2_HMAC>();
 							ERR_clear_error();
 							if
+							(
+								!PKCS5_PBKDF2_HMAC
 								(
-									!PKCS5_PBKDF2_HMAC
-									(
-										_Password.f_GetStr()
-										, _Password.f_GetLen()
-										, _PasswordSalt.f_GetArray()
-										, _PasswordSalt.f_GetLen()
-										, Settings.m_Rounds
-										, fg_GetDigest(Settings.m_Digest)
-										, _KeyLen
-										, Key.f_GetArray()
-									 )
+									_Password.f_GetStr()
+									, _Password.f_GetLen()
+									, _PasswordSalt.f_GetArray()
+									, _PasswordSalt.f_GetLen()
+									, Settings.m_Rounds
+									, fg_GetDigest(Settings.m_Digest)
+									, _KeyLen
+									, Key.f_GetArray()
 								)
+							)
 							{
 								DMibErrorCryptography(fg_GetExceptionStr("Failed to generate key using PKCS5_PBKDF2_HMAC"));
 							}
 						}
 						break;
-					case EKeyDerivationType_Argon2id:
-						NPrivate::fg_DeriveKeyArgon2id(_Password, _PasswordSalt, _Settings.f_Get<EKeyDerivationType_Argon2id>(), Key);
-						break;
-					default:
-						DMibError("Unknown key derivation type");
-						break;
+					case EKeyDerivationType_Argon2id: NPrivate::fg_DeriveKeyArgon2id(_Password, _PasswordSalt, _Settings.f_Get<EKeyDerivationType_Argon2id>(), Key); break;
+					default: DMibError("Unknown key derivation type"); break;
 					}
 					return Key;
 				}
@@ -196,12 +184,7 @@ namespace NMib::NCryptography
 	{
 	}
 
-	CKeyExpansion::CKeyExpansion
-		(
-			NContainer::CSecureByteVector const &_Key
-			, NContainer::CSecureByteVector const &_ExpansionSalt
-			, EDigestType _Digest
-		)
+	CKeyExpansion::CKeyExpansion(NContainer::CSecureByteVector const &_Key, NContainer::CSecureByteVector const &_ExpansionSalt, EDigestType _Digest)
 		: mp_Digest{_Digest}
 	{
 		fg_RunProtectRegisters
@@ -244,18 +227,18 @@ namespace NMib::NCryptography
 					NContainer::CSecureByteVector Result;
 					Result.f_SetLen(_Length);
 					if
+					(
+						!HKDF_expand
 						(
-							!HKDF_expand
-							(
-								Result.f_GetArray()
-								, _Length
-								, pDigest
-								, mp_PseudoRandomKey.f_GetArray()
-								, mp_PseudoRandomKey.f_GetLen()
-								, (uint8_t const *)_Label.f_GetStr()
-								, _Label.f_GetLen()
-							)
+							Result.f_GetArray()
+							, _Length
+							, pDigest
+							, mp_PseudoRandomKey.f_GetArray()
+							, mp_PseudoRandomKey.f_GetLen()
+							, (uint8_t const *)_Label.f_GetStr()
+							, _Label.f_GetLen()
 						)
+					)
 					{
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to get key from HKDF_expand"));
 					}

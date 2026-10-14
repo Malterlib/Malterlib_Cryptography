@@ -79,20 +79,12 @@ namespace NMib::NCryptography
 
 		using CPublicKeyParameters = NStorage::TCVariant<CPublicKeyParameters_RSA, CPublicKeyParameters_EC>;
 
-		static NContainer::CSecureByteVector fs_SignMessage
-			(
-				NContainer::CSecureByteVector const &_Message
-				, NContainer::CSecureByteVector const &_KeyData
-				, EDigestType _Digest = EDigestType_Automatic
-			)
+		static auto fs_SignMessage(NContainer::CSecureByteVector const &_Message, NContainer::CSecureByteVector const &_KeyData, EDigestType _Digest = EDigestType_Automatic)
+			-> NContainer::CSecureByteVector
 		;
 
-		static NContainer::CSecureByteVector fs_SignMessageRawSignature
-			(
-				NContainer::CSecureByteVector const &_Message
-				, NContainer::CSecureByteVector const &_KeyData
-				, EDigestType _Digest = EDigestType_Automatic
-			)
+		static auto fs_SignMessageRawSignature(NContainer::CSecureByteVector const &_Message, NContainer::CSecureByteVector const &_KeyData, EDigestType _Digest = EDigestType_Automatic)
+			-> NContainer::CSecureByteVector
 		;
 
 		static NContainer::CSecureByteVector fs_GetPublicKeyFromPrivateKey(NContainer::CSecureByteVector const &_PrivateKey);
@@ -122,5 +114,5 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif

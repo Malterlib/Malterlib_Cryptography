@@ -54,7 +54,8 @@ namespace
 						{
 							return fg_RandomID(_Len);
 						}
-					>("RandomID", 55)
+					>
+					("RandomID", 55)
 				;
 				f_Test
 					<
@@ -62,7 +63,8 @@ namespace
 						{
 							return fg_HighEntropyRandomID(_Len);
 						}
-					>("HighEntropyRandomID", 55)
+					>
+					("HighEntropyRandomID", 55)
 				;
 				f_Test
 					<
@@ -70,7 +72,8 @@ namespace
 						{
 							return fg_RandomID("1234", _Len);
 						}
-					>("RandomID 4", 4)
+					>
+					("RandomID 4", 4)
 				;
 				f_Test
 					<
@@ -78,7 +81,8 @@ namespace
 						{
 							return fg_RandomID("12345", _Len);
 						}
-					>("RandomID 5", 5)
+					>
+					("RandomID 5", 5)
 				;
 				f_Test
 					<
@@ -86,7 +90,8 @@ namespace
 						{
 							return fg_HighEntropyRandomID("1234", _Len);
 						}
-					>("HighEntropyRandomID 4", 4)
+					>
+					("HighEntropyRandomID 4", 4)
 				;
 				f_Test
 					<
@@ -94,7 +99,8 @@ namespace
 						{
 							return fg_HighEntropyRandomID("12345", _Len);
 						}
-					>("HighEntropyRandomID 5", 5)
+					>
+					("HighEntropyRandomID 5", 5)
 				;
 				f_Test
 					<
@@ -102,7 +108,8 @@ namespace
 						{
 							return fg_FastRandomID(_Len);
 						}
-					>("FastRandomID", 55)
+					>
+					("FastRandomID", 55)
 				;
 				f_Test
 					<
@@ -110,7 +117,8 @@ namespace
 						{
 							return fg_FastRandomID("1234", _Len);
 						}
-					>("FastRandomID 4", 4)
+					>
+					("FastRandomID 4", 4)
 				;
 				f_Test
 					<
@@ -118,7 +126,8 @@ namespace
 						{
 							return fg_FastRandomID("12345", _Len);
 						}
-					>("FastRandomID 5", 5)
+					>
+					("FastRandomID 5", 5)
 				;
 			};
 		}

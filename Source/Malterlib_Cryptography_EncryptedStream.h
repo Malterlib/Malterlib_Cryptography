@@ -14,14 +14,13 @@ namespace NMib::NCryptography
 	class TCBinaryStream_Encrypted : public t_CStreamType
 	{
 	public:
-
 		TCBinaryStream_Encrypted(CEncryptKeyIV const &_KeyIV, EDigestType _HMAC, NContainer::CSecureByteVector const &_HMACKey);
 		~TCBinaryStream_Encrypted();
 
 		template <typename tf_CParentStream>
 		void f_Open(tf_CParentStream &&_pStream, NFile::EFileOpen _OpenFlags);
 		void f_Close();
-		void f_FeedBytes(const void *_pMem, umint _nBytes);
+		void f_FeedBytes(void const *_pMem, umint _nBytes);
 		void f_ConsumeBytes(void *_pMem, umint _nBytes);
 		bool f_IsValid() const;
 		bool f_IsAtEndOfStream() const;
@@ -49,7 +48,7 @@ namespace NMib::NCryptography
 
 		enum
 		{
-			EDefaultBufferSize = 8192,
+			EDefaultBufferSize = 8192
 		};
 
 		t_CParentStream mp_Stream = t_CParentStream();
@@ -83,5 +82,5 @@ namespace NMib::NCryptography
 #include "Malterlib_Cryptography_EncryptedStream.hpp"
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif

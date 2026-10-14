@@ -91,7 +91,6 @@ namespace NMib::NCryptography
 	TCHashImpl_BoringSSL<t_DigestType, t_DigestSize>::TCHashImpl_BoringSSL(TCHashImpl_BoringSSL &&_Other)
 		: mp_pContext(fg_Exchange(_Other.mp_pContext, nullptr))
 	{
-
 	}
 
 	template <EDigestType t_DigestType, umint t_DigestSize>

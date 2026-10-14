@@ -19,7 +19,7 @@ public:
 	{
 		DMibTestSuite("Public Key Signing and Verifying")
 		{
-			static const char *Text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
+			static char const *Text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
 			CSecureByteVector Message;
 			NMemory::fg_MemCopy(Message.f_GetArray(fg_StrLen(Text)), Text, fg_StrLen(Text));
 			CSecureByteVector Truncated(Message);
@@ -33,11 +33,11 @@ public:
 				CPublicKeySetting KeySettings;
 				switch (KeyType)
 				{
-				case EPublicKeyType::mc_RSA:          KeySettings = CPublicKeySettings_RSA{};          break;
+				case EPublicKeyType::mc_RSA: KeySettings = CPublicKeySettings_RSA{}; break;
 				case EPublicKeyType::mc_EC_secp256r1: KeySettings = CPublicKeySettings_EC_secp256r1{}; break;
 				case EPublicKeyType::mc_EC_secp384r1: KeySettings = CPublicKeySettings_EC_secp384r1{}; break;
 				case EPublicKeyType::mc_EC_secp521r1: KeySettings = CPublicKeySettings_EC_secp521r1{}; break;
-				case EPublicKeyType::mc_EC_X25519:    KeySettings = CPublicKeySettings_EC_X25519{};    break;
+				case EPublicKeyType::mc_EC_X25519: KeySettings = CPublicKeySettings_EC_X25519{}; break;
 				}
 
 				NContainer::CSecureByteVector PrivateKey;
@@ -57,7 +57,7 @@ public:
 				NContainer::CSecureByteVector PrivateKey;
 				NContainer::CSecureByteVector PublicKey;
 				CPublicCrypto::fs_GenerateKeys(PrivateKey, PublicKey);
-				EDigestType DigestsTypes[] = { EDigestType_SHA512, EDigestType_SHA384, EDigestType_SHA256 };
+				EDigestType DigestsTypes[] = {EDigestType_SHA512, EDigestType_SHA384, EDigestType_SHA256};
 				for (auto DigestType : DigestsTypes)
 				{
 					DMibTestPath("DigestType {}"_f << DigestType);

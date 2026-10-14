@@ -18,11 +18,9 @@ namespace NMib::NCryptography::NBoringSSL
 		int nID = OBJ_obj2nid(pObject);
 		if (nID != NID_undef)
 		{
-			const char *pShortName = OBJ_nid2sn(nID);
+			char const *pShortName = OBJ_nid2sn(nID);
 			if (pShortName)
-			{
 				Name = pShortName;
-			}
 		}
 		if (Name.f_IsEmpty())
 		{
@@ -51,8 +49,7 @@ namespace NMib::NCryptography::NBoringSSL
 				Value = NStr::CStr((ch8 const *)pData->data, pData->length);
 			}
 			break;
-		default:
-			return false;
+		default: return false;
 		}
 
 		o_Name = fg_Move(Name);
@@ -68,7 +65,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("Empty certificate request data");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new_mem_buf( const_cast<void*>(static_cast<void const *>(_CertificateRequestData.f_GetArray())), _CertificateRequestData.f_GetLen());
+		BIO *pMemoryBio = BIO_new_mem_buf(const_cast<void *>(static_cast<void const *>(_CertificateRequestData.f_GetArray())), _CertificateRequestData.f_GetLen());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO buffer"));
 		auto Cleanup = g_OnScopeExit / [&]
@@ -92,7 +89,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("Key in nullptr");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new(BIO_s_mem());
+		BIO *pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 		auto Cleanup = g_OnScopeExit / [&]
@@ -119,7 +116,7 @@ namespace NMib::NCryptography::NBoringSSL
 			DMibErrorCryptography("x509 certificate request in nullptr");
 
 		ERR_clear_error();
-		BIO* pMemoryBio = BIO_new(BIO_s_mem());
+		BIO *pMemoryBio = BIO_new(BIO_s_mem());
 		if (!pMemoryBio)
 			DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 		auto Cleanup = g_OnScopeExit / [&]

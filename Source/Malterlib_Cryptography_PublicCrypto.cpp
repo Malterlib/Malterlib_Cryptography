@@ -114,7 +114,7 @@ namespace NMib::NCryptography
 		}
 		else if (RSA *pRSA = EVP_PKEY_get0_RSA(pKey))
 		{
-			const BIGNUM *pModulus, *pExponent;
+			BIGNUM const *pModulus, *pExponent;
 			RSA_get0_key(pRSA, &pModulus, &pExponent, nullptr);
 
 			CPublicKeyParameters_RSA Params;
@@ -227,7 +227,7 @@ namespace NMib::NCryptography
 
 						Signature.f_SetLen(ExpectedBytes * 2);
 
-						const BIGNUM *pComponentR, *pComponentS;
+						BIGNUM const *pComponentR, *pComponentS;
 						ECDSA_SIG_get0(pSignature, &pComponentR, &pComponentS);
 
 						umint nBytesComporentR = BN_num_bytes(pComponentR);
@@ -237,7 +237,7 @@ namespace NMib::NCryptography
 							DMibErrorCryptography("Invalid number of bytes in EC signature component");
 
 						BN_bn2bin(pComponentR, Signature.f_GetArray() + (ExpectedBytes - BN_num_bytes(pComponentR)));
-						BN_bn2bin(pComponentS, Signature.f_GetArray() + (ExpectedBytes*2 - BN_num_bytes(pComponentS)));
+						BN_bn2bin(pComponentS, Signature.f_GetArray() + (ExpectedBytes * 2 - BN_num_bytes(pComponentS)));
 					}
 					else if (EVP_PKEY_get0_RSA(pKey))
 					{
@@ -348,8 +348,7 @@ namespace NMib::NCryptography
 						if (!EVP_PKEY_get0_EC_KEY(pKey)) //Did we get one?
 							DMibErrorCryptography(fg_GetExceptionStr("Error getting EC_Key"));
 						break;
-					case EPublicKeyType::mc_RSA:
-						break;
+					case EPublicKeyType::mc_RSA: break;
 					}
 
 					o_PrivateKeyData = fg_ConvertPrivateKeyToDER(pKey);
