@@ -11,7 +11,7 @@ namespace NMib::NCryptography
 	template <EDigestType t_DigestType, umint t_DigestSize>
 	struct TCHashImpl_BoringSSL
 	{
-		constexpr static umint mc_DigestSize = t_DigestSize;
+		static constexpr umint mc_DigestSize = t_DigestSize;
 
 		TCHashImpl_BoringSSL();
 		~TCHashImpl_BoringSSL();
@@ -41,5 +41,5 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif

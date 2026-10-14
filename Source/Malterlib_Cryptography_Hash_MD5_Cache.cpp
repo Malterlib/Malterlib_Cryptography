@@ -19,9 +19,9 @@ namespace NMib::NCryptography
 	}
 
 	CHashCache::CHashCache(NStr::CStr const &_File, bool _bUpdateHash, bool _bAlwaysCheckHash)
-			: mp_HashFileName(_File)
-			, mp_bUpdateHash(_bUpdateHash)
-			, mp_bAlwaysCheckHash(_bAlwaysCheckHash)
+		: mp_HashFileName(_File)
+		, mp_bUpdateHash(_bUpdateHash)
+		, mp_bAlwaysCheckHash(_bAlwaysCheckHash)
 	{
 		if (!_File.f_IsEmpty() && NFile::CFile::fs_FileExists(_File))
 		{

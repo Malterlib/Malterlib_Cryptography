@@ -8,43 +8,42 @@
 
 extern "C"
 {
-#	include <openssl/dh.h>
-#	include <openssl/bn.h>
-#	include <openssl/ssl.h>
-#	include <openssl/evp.h>
-#	include <openssl/aes.h>
-#	include <openssl/err.h>
-#	include <openssl/conf.h>
-#	include <openssl/engine.h>
-#	include <openssl/hkdf.h>
-#	undef X509_NAME
-#	include <openssl/x509v3.h>
+#include <openssl/dh.h>
+#include <openssl/bn.h>
+#include <openssl/ssl.h>
+#include <openssl/evp.h>
+#include <openssl/aes.h>
+#include <openssl/err.h>
+#include <openssl/conf.h>
+#include <openssl/engine.h>
+#include <openssl/hkdf.h>
+#undef X509_NAME
+#include <openssl/x509v3.h>
 
 #ifdef DPlatformFamily_macOS
-	#include <Security/Security.h>
+#	include <Security/Security.h>
 #endif
-
 };
 
 #if defined(DPlatformFamily_Windows)
 
-	#include <Windows.h>
-	#include <Wincrypt.h>
+#	include <Windows.h>
+#	include <Wincrypt.h>
 
-	#undef X509_NAME
-	#undef X509_EXTENSIONS
-	#undef PKCS7_ISSUER_AND_SERIAL
-	#undef OCSP_REQUEST
-	#undef OCSP_RESPONSE
+#	undef X509_NAME
+#	undef X509_EXTENSIONS
+#	undef PKCS7_ISSUER_AND_SERIAL
+#	undef OCSP_REQUEST
+#	undef OCSP_RESPONSE
 
-	#include <Mib/Core/PlatformSpecific/WindowsError>
+#	include <Mib/Core/PlatformSpecific/WindowsError>
 
-	#pragma comment(lib, "crypt32.lib")
+#	pragma comment(lib, "crypt32.lib")
 
 #else
-	// Unix
-	#include <Mib/Core/PlatformSpecific/PosixErrNo>
-	#include <errno.h>
+// Unix
+#	include <Mib/Core/PlatformSpecific/PosixErrNo>
+#	include <errno.h>
 
 #endif
 
@@ -74,7 +73,7 @@ namespace NMib::NCryptography::NBoringSSL
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif
 
 #include "Malterlib_Cryptography_BoringSSL_RegisterProtect.h"

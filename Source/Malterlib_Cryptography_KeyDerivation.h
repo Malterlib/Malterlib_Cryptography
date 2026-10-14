@@ -14,14 +14,14 @@ namespace NMib::NCryptography
 	{
 		ECryptoType_AES_256_CBC
 		, ECryptoType_AES_128_CBC
-		, ECryptoType_AES_256_OFB	// Be careful (stream cipher)
-		, ECryptoType_AES_128_OFB	// Be careful (stream cipher)
-		, ECryptoType_DES_EDE3_CBC	// Be careful, only to be used for compatibility with legacy systems (weak croypto)
-		, ECryptoType_AES_256_ECB	// Be careful, only to be used for compatibility with legacy systems (ECB mode)
-		, ECryptoType_AES_128_ECB	// Be careful, only to be used for compatibility with legacy systems (ECB mode)
-//			, ECryptoType_AES_128_CTR // Needs to have interface for specifying counter
-//			, ECryptoType_AES_256_CTR // Needs to have interface for specifying counter
-//			, ECryptoType_AES_256_XTS // Needs to have interface for specifying counter
+		, ECryptoType_AES_256_OFB  // Be careful (stream cipher)
+		, ECryptoType_AES_128_OFB  // Be careful (stream cipher)
+		, ECryptoType_DES_EDE3_CBC // Be careful, only to be used for compatibility with legacy systems (weak croypto)
+		, ECryptoType_AES_256_ECB  // Be careful, only to be used for compatibility with legacy systems (ECB mode)
+		, ECryptoType_AES_128_ECB  // Be careful, only to be used for compatibility with legacy systems (ECB mode)
+		// , ECryptoType_AES_128_CTR // Needs to have interface for specifying counter
+		// , ECryptoType_AES_256_CTR // Needs to have interface for specifying counter
+		// , ECryptoType_AES_256_XTS // Needs to have interface for specifying counter
 	};
 
 	enum EKeyDerivationType
@@ -36,16 +36,16 @@ namespace NMib::NCryptography
 	{
 		EDigestType m_Digest = EDigestType_SHA512;
 		uint64 m_Workload = 1 << 15; // (N)
-		uint64 m_Ratio = 8; // (r)
-		uint64 m_Parallel = 1; // (p)
+		uint64 m_Ratio = 8;          // (r)
+		uint64 m_Parallel = 1;       // (p)
 		umint m_MaxMemory = 1024 * 1024 * 64;
 	};
 
 	// Argon2id version 1.3 (RFC 9106) with one lane, as implemented by libsodium. The salt must be 16 bytes and the key at least 16 bytes.
 	struct CKeyDerivationSettings_Argon2id
 	{
-		uint32 m_Iterations = 2; // (t)
-		umint m_Memory = 64 * 1024 * 1024; // (m) In bytes, a multiple of 1024 and at least 8 KiB
+		uint32 m_Iterations = 2;               // (t)
+		umint m_Memory = 64 * 1024 * 1024;     // (m) In bytes, a multiple of 1024 and at least 8 KiB
 		umint m_MaxMemory = 256 * 1024 * 1024; // Settings asking for more memory than this are refused
 	};
 
@@ -72,13 +72,7 @@ namespace NMib::NCryptography
 
 	struct CEncryptKeyIV
 	{
-		CEncryptKeyIV
-			(
-				NContainer::CSecureByteVector const &_Key
-				, NContainer::CSecureByteVector const &_IV
-				, ECryptoType _Crypto = ECryptoType_AES_256_CBC
-			)
-		;
+		CEncryptKeyIV(NContainer::CSecureByteVector const &_Key, NContainer::CSecureByteVector const &_IV, ECryptoType _Crypto = ECryptoType_AES_256_CBC);
 
 		static CEncryptKeyIV fs_GenerateKeyIV
 			(
@@ -102,14 +96,7 @@ namespace NMib::NCryptography
 		ECryptoType m_Crypto;
 	};
 
-	NContainer::CSecureByteVector fg_DeriveKey
-		(
-			NStr::CStrSecure const &_Password
-			, NContainer::CSecureByteVector const &_PasswordSalt
-			, CKeyDerivationSettings const &_Settings
-			, umint _KeyLen
-		)
-	;
+	NContainer::CSecureByteVector fg_DeriveKey(NStr::CStrSecure const &_Password, NContainer::CSecureByteVector const &_PasswordSalt, CKeyDerivationSettings const &_Settings, umint _KeyLen);
 
 	struct CKeyExpansion
 	{
@@ -122,13 +109,7 @@ namespace NMib::NCryptography
 				, EDigestType _Digest = EDigestType_SHA512
 			)
 		;
-		CKeyExpansion
-			(
-				NContainer::CSecureByteVector const &_Key
-				, NContainer::CSecureByteVector const &_ExpansionSalt
-				, EDigestType _Digest = EDigestType_SHA512
-			)
-		;
+		CKeyExpansion(NContainer::CSecureByteVector const &_Key, NContainer::CSecureByteVector const &_ExpansionSalt, EDigestType _Digest = EDigestType_SHA512);
 		~CKeyExpansion();
 
 		CEncryptKeyIV f_GetKeyIV(ECryptoType _Crypto = ECryptoType_AES_256_CBC) const;
@@ -143,5 +124,5 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif

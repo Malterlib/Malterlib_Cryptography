@@ -108,7 +108,7 @@ namespace NMib::NCryptography
 					;
 
 					ERR_clear_error();
-					BIO* pMemoryBio = BIO_new(BIO_s_mem());
+					BIO *pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to create BIO"));
 					auto Cleanup1 = g_OnScopeExit / [&]
@@ -117,7 +117,7 @@ namespace NMib::NCryptography
 						}
 					;
 
-					BUF_MEM* pMemory = nullptr;
+					BUF_MEM *pMemory = nullptr;
 
 					unsigned long NameOptions = 0;
 					unsigned long CertOptions = 0;
@@ -178,7 +178,7 @@ namespace NMib::NCryptography
 					;
 
 					ERR_clear_error();
-					BIO* pMemoryBio = BIO_new(BIO_s_mem());
+					BIO *pMemoryBio = BIO_new(BIO_s_mem());
 					if (!pMemoryBio)
 						DMibErrorCryptography(fg_GetExceptionStr("Error creating BIO"));
 					auto Cleanup = g_OnScopeExit / [&]
@@ -361,9 +361,9 @@ namespace NMib::NCryptography
 
 					// First look at "subjectAltNames"
 					int Index = -1;
-					while(true)
+					while (true)
 					{
-						GENERAL_NAMES* pSubjectAltNames = (GENERAL_NAMES*)X509_get_ext_d2i(pCertificate, NID_subject_alt_name, nullptr, &Index);
+						GENERAL_NAMES *pSubjectAltNames = (GENERAL_NAMES *)X509_get_ext_d2i(pCertificate, NID_subject_alt_name, nullptr, &Index);
 						if (!pSubjectAltNames)
 							break;
 						auto Cleanup = g_OnScopeExit / [&]
@@ -375,18 +375,18 @@ namespace NMib::NCryptography
 
 						for (umint iEntry = 0; iEntry < nAltEntries; ++iEntry)
 						{
-							GENERAL_NAME const* pName = sk_GENERAL_NAME_value(pSubjectAltNames, iEntry);
+							GENERAL_NAME const *pName = sk_GENERAL_NAME_value(pSubjectAltNames, iEntry);
 							if (!pName)
 								continue;
 
-							unsigned char* pBuffer = nullptr;
+							unsigned char *pBuffer = nullptr;
 
 							switch (pName->type)
 							{
 							case GEN_DNS:
 							case GEN_URI:
 							case GEN_EMAIL:
-								ASN1_STRING_to_UTF8((unsigned char**)&pBuffer, pName->d.ia5);
+								ASN1_STRING_to_UTF8((unsigned char **)&pBuffer, pName->d.ia5);
 								if (pBuffer)
 								{
 									auto Cleanup = g_OnScopeExit / [&]
@@ -428,7 +428,7 @@ namespace NMib::NCryptography
 					// Fallback on the common name of the certificate
 					if (_bCheckCommonName)
 					{
-						X509_NAME* pSubject = X509_get_subject_name(pCertificate);
+						X509_NAME *pSubject = X509_get_subject_name(pCertificate);
 						if (pSubject)
 						{
 							char CommonName[256];
@@ -482,10 +482,7 @@ namespace NMib::NCryptography
 		;
 	}
 
-	NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> CCertificate::fs_GetCertificateRequestExtensions
-		(
-			NContainer::CByteVector const &_CertificateRequestData
-		)
+	NContainer::TCMap<NStr::CStr, NContainer::TCVector<CCertificateExtension>> CCertificate::fs_GetCertificateRequestExtensions(NContainer::CByteVector const &_CertificateRequestData)
 	{
 		return fg_RunProtectRegisters
 			(
@@ -741,7 +738,8 @@ namespace NMib::NCryptography
 						ERR_clear_error();
 						if (X509_check_purpose(pLeafCertificate, Purpose, 0) != 1)
 						{
-							o_Error = _RequiredPurpose == EVerificationPurpose_ServerAuth
+							o_Error
+								= _RequiredPurpose == EVerificationPurpose_ServerAuth
 								? "Certificate is not valid for server authentication"
 								: "Certificate is not valid for client authentication"
 							;
@@ -754,7 +752,8 @@ namespace NMib::NCryptography
 							uint32_t RequiredUsage = _RequiredPurpose == EVerificationPurpose_ServerAuth ? XKU_SSL_SERVER : XKU_SSL_CLIENT;
 							if (!(X509_get_extended_key_usage(pLeafCertificate) & RequiredUsage))
 							{
-								o_Error = _RequiredPurpose == EVerificationPurpose_ServerAuth
+								o_Error
+									= _RequiredPurpose == EVerificationPurpose_ServerAuth
 									? "Certificate extended key usage does not include server authentication"
 									: "Certificate extended key usage does not include client authentication"
 								;
@@ -803,7 +802,7 @@ namespace NMib::NCryptography
 					}
 
 					ERR_clear_error();
-					STACK_OF(X509) *pUntrusted = sk_X509_new_null();
+					STACK_OF(X509) * pUntrusted = sk_X509_new_null();
 					if (!pUntrusted)
 						DMibErrorCryptography(fg_GetExceptionStr("Failed to create certificate stack"));
 					auto Cleanup3 = g_OnScopeExit / [&]
@@ -863,7 +862,7 @@ namespace NMib::NCryptography
 
 					// BoringSSL skips the anchor's pathlen. Enforce it explicitly, excluding self-issued intermediates as required by the definition.
 					{
-						STACK_OF(X509) *pBuiltChain = X509_STORE_CTX_get0_chain(pContext);
+						STACK_OF(X509) * pBuiltChain = X509_STORE_CTX_get0_chain(pContext);
 						size_t nChain = sk_X509_num(pBuiltChain);
 						if (nChain >= 2)
 						{
@@ -935,7 +934,7 @@ namespace NMib::NCryptography
 						// Return the built path, which can differ from the supplied chain.
 						o_pVerifiedChain->f_Clear();
 
-						STACK_OF(X509) *pVerifiedChain = X509_STORE_CTX_get0_chain(pContext);
+						STACK_OF(X509) * pVerifiedChain = X509_STORE_CTX_get0_chain(pContext);
 						for (size_t i = 0; i < sk_X509_num(pVerifiedChain); ++i)
 							o_pVerifiedChain->f_Insert(fg_ConvertX509ToBinary(sk_X509_value(pVerifiedChain, i)));
 					}

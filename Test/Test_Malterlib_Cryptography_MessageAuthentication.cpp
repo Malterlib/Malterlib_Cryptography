@@ -33,17 +33,17 @@ public:
 
 			CSecureByteVector Salt = f_GetRandomBuffer(8, 6);
 
-			static const char *Text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
-			static const char *KeyBytes = "abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
+			static char const *Text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
+			static char const *KeyBytes = "abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
 			CByteVector PlainText;
 			NMemory::fg_MemCopy(PlainText.f_GetArray(fg_StrLen(Text)), Text, fg_StrLen(Text));
 			CSecureByteVector Key;
 			NMemory::fg_MemCopy(Key.f_GetArray(fg_StrLen(KeyBytes)), KeyBytes, fg_StrLen(KeyBytes));
 
-			auto ContinuousHMAC =  fg_MessageAuthenication_HMAC_SHA256(PlainText, Key);
+			auto ContinuousHMAC = fg_MessageAuthenication_HMAC_SHA256(PlainText, Key);
 
 			// Use multiple incremental lengths: full length and some powers of 2, and some odd ones
-			static const int Lengths[] = { 89, 1, 8, 64, 3, 9 };
+			static int const Lengths[] = {89, 1, 8, 64, 3, 9};
 
 			for (auto Length : Lengths)
 			{

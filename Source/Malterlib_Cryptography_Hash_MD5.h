@@ -18,5 +18,5 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif

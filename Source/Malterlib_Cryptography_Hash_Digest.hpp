@@ -37,7 +37,7 @@ namespace NMib::NCryptography
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const TCMessageDigest &_Src)
+	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(TCMessageDigest const &_Src)
 	{
 		NMemory::fg_MemCopy(mp_Data, _Src.mp_Data, sizeof(mp_Data));
 	}
@@ -49,33 +49,33 @@ namespace NMib::NCryptography
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(const t_CHash &_Src)
+	constexpr TCMessageDigest<t_Size, t_CHash>::TCMessageDigest(t_CHash const &_Src)
 	{
 		_Src.f_GetDigest(*this);
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr auto TCMessageDigest<t_Size, t_CHash>::operator = (const TCMessageDigest &_Src) -> TCMessageDigest &
+	constexpr auto TCMessageDigest<t_Size, t_CHash>::operator = (TCMessageDigest const &_Src) -> TCMessageDigest &
 	{
 		NMemory::fg_MemCopy(mp_Data, _Src.mp_Data, sizeof(mp_Data));
 		return *this;
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr auto TCMessageDigest<t_Size, t_CHash>::operator = (const t_CHash &_Src) -> TCMessageDigest &
+	constexpr auto TCMessageDigest<t_Size, t_CHash>::operator = (t_CHash const &_Src) -> TCMessageDigest &
 	{
 		_Src.f_GetDigest(*this);
 		return *this;
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr aint TCMessageDigest<t_Size, t_CHash>::f_Compare(const TCMessageDigest &_Other) const
+	constexpr aint TCMessageDigest<t_Size, t_CHash>::f_Compare(TCMessageDigest const &_Other) const
 	{
 		return NMemory::fg_MemCmp(mp_Data, _Other.mp_Data, sizeof(mp_Data));
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const TCMessageDigest &_Src) const noexcept
+	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (TCMessageDigest const &_Src) const noexcept
 	{
 		if (NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size))
 			return false;
@@ -84,7 +84,7 @@ namespace NMib::NCryptography
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (const t_CHash &_Src) const noexcept
+	constexpr bool TCMessageDigest<t_Size, t_CHash>::operator == (t_CHash const &_Src) const noexcept
 	{
 		TCMessageDigest Temp = _Src;
 
@@ -92,13 +92,13 @@ namespace NMib::NCryptography
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const TCMessageDigest &_Src) const noexcept
+	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (TCMessageDigest const &_Src) const noexcept
 	{
 		return NMemory::fg_MemCmp(mp_Data, _Src.mp_Data, t_Size) <=> 0;
 	}
 
 	template <umint t_Size, typename t_CHash>
-	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (const t_CHash &_Src) const noexcept
+	constexpr COrdering_Strong TCMessageDigest<t_Size, t_CHash>::operator <=> (t_CHash const &_Src) const noexcept
 	{
 		TCMessageDigest Temp = _Src;
 
@@ -132,16 +132,16 @@ namespace NMib::NCryptography
 		for (umint i = 0; i < DigestSize; ++i)
 		{
 			umint IntPos = i % IntSize;
-			uint8 CurrentInt = (Temp >> (IntPos * 8))  & 0xff;
+			uint8 CurrentInt = (Temp >> (IntPos * 8)) & 0xff;
 			uint8 CurrentDigest = mp_Data[i];
 			uint8 Xored = CurrentInt ^ CurrentDigest;
-			Temp = (Temp & ((~(tf_CIntType(0xff) << (IntPos *8))))) | (tf_CIntType(Xored) << (IntPos * 8));
+			Temp = (Temp & ((~(tf_CIntType(0xff) << (IntPos * 8))))) | (tf_CIntType(Xored) << (IntPos * 8));
 		}
 		return Temp;
 	}
 
 	template <umint t_Size, typename t_CHash>
-	auto TCMessageDigest<t_Size, t_CHash>::fs_FromString(const ch8 *_pString) -> TCMessageDigest
+	auto TCMessageDigest<t_Size, t_CHash>::fs_FromString(ch8 const *_pString) -> TCMessageDigest
 	{
 		TCMessageDigest Ret;
 
@@ -178,10 +178,10 @@ namespace NMib::NCryptography
 	}
 
 	template <umint t_Size, typename t_CHash>
-	void TCMessageDigest<t_Size, t_CHash>::f_ParseString(const ch8 *_pStr)
+	void TCMessageDigest<t_Size, t_CHash>::f_ParseString(ch8 const *_pStr)
 	{
 		NMemory::fg_MemClear(mp_Data);
-		const ch8 *pParse = _pStr;
+		ch8 const *pParse = _pStr;
 
 		for (umint i = 0; i < t_Size; ++i)
 		{
