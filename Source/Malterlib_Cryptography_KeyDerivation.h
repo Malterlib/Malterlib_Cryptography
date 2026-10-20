@@ -29,6 +29,7 @@ namespace NMib::NCryptography
 		EKeyDerivationType_Scrypt
 		, EKeyDerivationType_PKCS5_PBKDF2_HMAC
 		, EKeyDerivationType_PKCS5_Deprecated
+		, EKeyDerivationType_Argon2id
 	};
 
 	struct CKeyDerivationSettings_Scrypt
@@ -38,6 +39,14 @@ namespace NMib::NCryptography
 		uint64 m_Ratio = 8; // (r)
 		uint64 m_Parallel = 1; // (p)
 		umint m_MaxMemory = 1024 * 1024 * 64;
+	};
+
+	// Argon2id version 1.3 (RFC 9106) with one lane, as implemented by libsodium. The salt must be 16 bytes and the key at least 16 bytes.
+	struct CKeyDerivationSettings_Argon2id
+	{
+		uint32 m_Iterations = 2; // (t)
+		umint m_Memory = 64 * 1024 * 1024; // (m) In bytes, a multiple of 1024 and at least 8 KiB
+		umint m_MaxMemory = 256 * 1024 * 1024; // Settings asking for more memory than this are refused
 	};
 
 	struct CKeyDerivationSettings_PKCS5_PBKDF2_HMAC
@@ -57,6 +66,7 @@ namespace NMib::NCryptography
 			EKeyDerivationType
 			, NStorage::TCMember<CKeyDerivationSettings_Scrypt, EKeyDerivationType_Scrypt>
 			, NStorage::TCMember<CKeyDerivationSettings_PKCS5_PBKDF2_HMAC, EKeyDerivationType_PKCS5_PBKDF2_HMAC>
+			, NStorage::TCMember<CKeyDerivationSettings_Argon2id, EKeyDerivationType_Argon2id>
 		>
 	;
 
