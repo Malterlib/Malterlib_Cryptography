@@ -1,4 +1,5 @@
 #include "Malterlib_Cryptography_KeyDerivation.h"
+#include "Malterlib_Cryptography_KeyDerivation_Argon2id.h"
 
 #include <Mib/Cryptography/BoringSSL>
 
@@ -166,6 +167,9 @@ namespace NMib::NCryptography
 								DMibErrorCryptography(fg_GetExceptionStr("Failed to generate key using PKCS5_PBKDF2_HMAC"));
 							}
 						}
+						break;
+					case EKeyDerivationType_Argon2id:
+						NPrivate::fg_DeriveKeyArgon2id(_Password, _PasswordSalt, _Settings.f_Get<EKeyDerivationType_Argon2id>(), Key);
 						break;
 					default:
 						DMibError("Unknown key derivation type");
