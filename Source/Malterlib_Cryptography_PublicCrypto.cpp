@@ -236,8 +236,9 @@ namespace NMib::NCryptography
 						if (nBytesComporentR > ExpectedBytes || nBytesComporentS > ExpectedBytes)
 							DMibErrorCryptography("Invalid number of bytes in EC signature component");
 
-						BN_bn2bin(pComponentR, Signature.f_GetArray() + (ExpectedBytes - BN_num_bytes(pComponentR)));
-						BN_bn2bin(pComponentS, Signature.f_GetArray() + (ExpectedBytes*2 - BN_num_bytes(pComponentS)));
+						// f_SetLen leaves the bytes uninitialized, so a component shorter than ExpectedBytes has to be padded with zeros
+						BN_bn2bin_padded(Signature.f_GetArray(), ExpectedBytes, pComponentR);
+						BN_bn2bin_padded(Signature.f_GetArray() + ExpectedBytes, ExpectedBytes, pComponentS);
 					}
 					else if (EVP_PKEY_get0_RSA(pKey))
 					{
