@@ -1,5 +1,8 @@
 {
 	"../../External/boringssl": {
 		"Hash": "7d83fc14a0883bf4cec0b711baf9daa855ed3387"
+	},
+	"../../External/libsodium": {
+		"Hash": "57273f4173e5b90adb54f2fdde6e9eed20bd9e5e"
 	}
 }

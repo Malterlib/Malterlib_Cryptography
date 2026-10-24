@@ -51,6 +51,10 @@ The Cryptography module provides comprehensive cryptographic functionality for t
   - Located in `../../External/boringssl/`
   - Includes: crypto, ssl, decrepit, fipsmodule libraries
   - Custom build configuration via CMake import
+- **libsodium**: Malterlib fork, used for Argon2id key derivation
+  - Located in `../../External/libsodium/`
+  - Only the Argon2id parts are built (`Lib_sodium`); `Malterlib_Cryptography_KeyDerivation_Argon2id.cpp` provides `randombytes_buf` and `sodium_misuse`
+  - These and libsodium's own functions (for example `sodium_memzero`) are global C symbols, so an application that also links a full libsodium gets duplicate symbols
 
 ### Internal Malterlib Modules
 - **Core**: Basic types and platform abstractions

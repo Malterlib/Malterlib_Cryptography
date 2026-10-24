@@ -16,6 +16,113 @@ Import "../Core/Lib_Malterlib.MTarget"
 	}
 }
 
+%Repository "libsodium"
+{
+	Repository
+	{
+		Type "External"
+		Remotes =+ {Name: "upstream", URL: "https://github.com/jedisct1/libsodium.git"}
+		{
+			!!MalterlibAddUpstreams true
+		}
+	}
+}
+
+// Only the parts of libsodium that Argon2id needs are built. Malterlib_Cryptography_KeyDerivation_Argon2id.cpp provides the missing pieces.
+%Target "Lib_sodium"
+{
+	Target
+	{
+		BaseName "sodium"
+		Type "StaticLibrary"
+		Group "External/libsodium"
+	}
+	Compile
+	{
+		!!CompileDialect "C"
+		SearchPath += "../../External/libsodium/src/libsodium/include"->MakeAbsolute()
+		SearchPath += "../../External/libsodium/src/libsodium/include/sodium"->MakeAbsolute()
+		Warnings "Off"
+		Analyzer false
+		PrefixHeader undefined
+
+		PreprocessorDefines =+ ["CONFIGURED=1", "SODIUM_STATIC=1", "NATIVE_LITTLE_ENDIAN=1"]
+		PreprocessorDefines =+ ["HAVE_TI_MODE=1", "TLS=_Thread_local", "HAVE_MLOCK=1", "HAVE_MMAP=1", "HAVE_MPROTECT=1", "HAVE_MADVISE=1"]
+		{
+			!PlatformFamily "Windows"
+		}
+		PreprocessorDefines =+ ["HAVE_POSIX_MEMALIGN=1", "HAVE_RAISE=1", "HAVE_SYSCONF=1", "HAVE_SYS_MMAN_H=1", "HAVE_SYS_PARAM_H=1", "HAVE_WEAK_SYMBOLS=1"]
+		{
+			!PlatformFamily "Windows"
+		}
+		// The compiler barrier in sodium_memzero, so link time optimization can't remove the memset
+		PreprocessorDefines =+ "HAVE_INLINE_ASM=1"
+		{
+			!PlatformFamily "Windows"
+		}
+		PreprocessorDefines =+ ["_GNU_SOURCE=1", "HAVE_SYS_AUXV_H=1"]
+		{
+			!!PlatformFamily "Linux"
+		}
+		PreprocessorDefines =+ "HAVE_MEMSET_S=1"
+		{
+			!!PlatformFamily "macOS"
+		}
+		PreprocessorDefines =+ "HAVE_RAISE=1"
+		{
+			!!PlatformFamily "Windows"
+		}
+		PreprocessorDefines =+ ["HAVE_CPUID=1", "HAVE_MMINTRIN_H=1", "HAVE_EMMINTRIN_H=1", "HAVE_PMMINTRIN_H=1", "HAVE_TMMINTRIN_H=1", "HAVE_SMMINTRIN_H=1"]
+		{
+			!!Architecture "x64"
+		}
+		PreprocessorDefines =+ ["HAVE_AVXINTRIN_H=1", "HAVE_AVX2INTRIN_H=1", "HAVE_AVX512FINTRIN_H=1", "HAVE_WMMINTRIN_H=1"]
+		{
+			!!Architecture "x64"
+		}
+		PreprocessorDefines =+ ["HAVE_XGETBV_ASM=1", "HAVE_AVX_ASM=1"]
+		{
+			&
+			{
+				Architecture "x64"
+				!PlatformFamily "Windows"
+			}
+		}
+	}
+
+	%Group "Source"
+	{
+		%Group "crypto_pwhash/argon2"
+		{
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2-core.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2-encoding.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2-fill-block-avx2.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2-fill-block-avx512f.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2-fill-block-neon.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2-fill-block-ref.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2-fill-block-ssse3.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/argon2.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/blake2b-long.c"
+			%File "../../External/libsodium/src/libsodium/crypto_pwhash/argon2/pwhash_argon2id.c"
+		}
+		%Group "crypto_generichash/blake2b"
+		{
+			%File "../../External/libsodium/src/libsodium/crypto_generichash/blake2b/ref/blake2b-compress-avx2.c"
+			%File "../../External/libsodium/src/libsodium/crypto_generichash/blake2b/ref/blake2b-compress-ref.c"
+			%File "../../External/libsodium/src/libsodium/crypto_generichash/blake2b/ref/blake2b-compress-sse41.c"
+			%File "../../External/libsodium/src/libsodium/crypto_generichash/blake2b/ref/blake2b-compress-ssse3.c"
+			%File "../../External/libsodium/src/libsodium/crypto_generichash/blake2b/ref/blake2b-ref.c"
+			%File "../../External/libsodium/src/libsodium/crypto_generichash/blake2b/ref/generichash_blake2b.c"
+		}
+		%Group "sodium"
+		{
+			%File "../../External/libsodium/src/libsodium/sodium/codecs.c"
+			%File "../../External/libsodium/src/libsodium/sodium/runtime.c"
+			%File "../../External/libsodium/src/libsodium/sodium/utils.c"
+		}
+	}
+}
+
 %Group "{Malterlib}/{Lib_Malterlib_Cryptography}/{TargetInjectionBoringSSL}"
 {
 	Compile
@@ -329,6 +436,12 @@ Import
 		}
 		Dependency.Indirect true
 		Dependency.LinkWithObjectFiles false
+	}
+	%Dependency "Lib_sodium"
+	{
+		!DocumentationEnabled true
+
+		Dependency.Indirect true
 	}
 }
 
