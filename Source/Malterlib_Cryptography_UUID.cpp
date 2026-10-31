@@ -92,16 +92,22 @@ namespace NMib::NCryptography
 		char const* pFormat = nullptr;
 		switch(_Format)
 		{
-			default:
-			case EUniversallyUniqueIdentifierFormat_Registry:
-				pFormat = "{{{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}}";
-				break;
-			case EUniversallyUniqueIdentifierFormat_Bare:
-				pFormat = "{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}";
-				break;
-			case EUniversallyUniqueIdentifierFormat_AlphaNum:
-				pFormat = "{nfh,nc,sj8,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}";
-				break;
+		default:
+		case EUniversallyUniqueIdentifierFormat_Registry:
+			pFormat = "{{{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}"
+				"{nfh,nc,sj2,sf0}}"
+			;
+			break;
+		case EUniversallyUniqueIdentifierFormat_Bare:
+			pFormat = "{nfh,nc,sj8,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj4,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}-{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}"
+				"{nfh,nc,sj2,sf0}"
+			;
+			break;
+		case EUniversallyUniqueIdentifierFormat_AlphaNum:
+			pFormat = "{nfh,nc,sj8,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj4,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}{nfh,nc,sj2,sf0}"
+				"{nfh,nc,sj2,sf0}"
+			;
+			break;
 		}
 
 		return typename tf_CStrType::CFormat
