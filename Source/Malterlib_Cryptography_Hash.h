@@ -15,10 +15,10 @@ namespace NMib::NCryptography
 		, EDigestType_SHA384
 		, EDigestType_SHA256
 		, EDigestType_SHA224
-		, EDigestType_SHA1		// Be careful, only to be used for compatibility with legacy systems (borken hash)
-		, EDigestType_MD5		// Be careful, only to be used for compatibility with legacy systems (borken hash)
-		, EDigestType_MD4		// Be careful, only to be used for compatibility with legacy systems (borken hash)
-		, EDigestType_SHA256_16	// Use first 16 bytes of SHA256
+		, EDigestType_SHA1      // Be careful, only to be used for compatibility with legacy systems (borken hash)
+		, EDigestType_MD5       // Be careful, only to be used for compatibility with legacy systems (borken hash)
+		, EDigestType_MD4       // Be careful, only to be used for compatibility with legacy systems (borken hash)
+		, EDigestType_SHA256_16 // Use first 16 bytes of SHA256
 	};
 
 	template <umint t_Size, typename t_CHash>
@@ -55,7 +55,7 @@ namespace NMib::NCryptography
 		void f_Format(tf_CStr &o_String) const;
 		void f_ParseString(ch8 const *_pStr);
 
-		constexpr static umint mc_Size = t_Size;
+		static constexpr umint mc_Size = t_Size;
 
 	private:
 		uint8 mp_Data[t_Size] = {0};
@@ -64,7 +64,7 @@ namespace NMib::NCryptography
 	template <typename t_CHashImpl>
 	struct TCHashImpl
 	{
-		constexpr static umint mc_DigestSize = t_CHashImpl::mc_DigestSize;
+		static constexpr umint mc_DigestSize = t_CHashImpl::mc_DigestSize;
 
 		using CMessageDigest = TCMessageDigest<mc_DigestSize, TCHashImpl>;
 
@@ -92,7 +92,7 @@ namespace NMib::NCryptography
 }
 
 #ifndef DMibPNoShortCuts
-	using namespace NMib::NCryptography;
+using namespace NMib::NCryptography;
 #endif
 
 #include "Malterlib_Cryptography_Hash_Stream.h"

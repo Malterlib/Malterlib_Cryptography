@@ -13,8 +13,8 @@ namespace
 {
 	enum ETesting
 	{
-		ETesting_0,
-		ETesting_1,
+		ETesting_0
+		, ETesting_1
 	};
 
 	using namespace NMib::NStream;
@@ -26,7 +26,6 @@ namespace
 	class CEncryptedStream_Tests : public CTest
 	{
 	public:
-
 		void f_DoTests()
 		{
 			DMibTestSuite("Encrypted Stream")
@@ -62,7 +61,7 @@ namespace
 
 				{
 					DMibTestPath("Password and salt");
-					static const char *KeyBytes = "abcdefghijk";
+					static char const *KeyBytes = "abcdefghijk";
 					CSecureByteVector Salt{0, 1, 2, 3};
 					CKeyExpansion KeyExpansion{KeyBytes, Salt, CKeyDerivationSettings_Scrypt{}, {}};
 
@@ -169,7 +168,7 @@ namespace
 
 					// First positions matching block boundaries
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(16), 16);
-					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() , 16), ==, 0);
+					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr(), 16), ==, 0);
 					EncryptedStream.f_SetPosition(48);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 16);
 					DMibExpect(NMib::NMemory::fg_MemCmp(Buffer.f_GetArray(), (uint8 *)ClearText.f_GetStr() + 48, 16), ==, 0);
@@ -201,7 +200,6 @@ namespace
 					EncryptedStream.f_SetPosition(EncryptedStream.f_GetLength() - 1);
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 1);
 					DMibExpect(Buffer[0], ==, '.');
-
 
 					DMibExpectException(EncryptedStream.f_FeedBytes(ClearText.f_GetStr(), 1), DMibCryptographyErrorInstance("Stream not opened for write"));
 
@@ -257,7 +255,6 @@ namespace
 					EncryptedStream.f_ConsumeBytes(Buffer.f_GetArray(), 1);
 					DMibExpect(Buffer[0], ==, '.');
 
-
 					DMibExpectException(EncryptedStream.f_FeedBytes(ClearText.f_GetStr(), 1), DMibCryptographyErrorInstance("Stream not opened for write"));
 
 					EncryptedStream.f_Close();
@@ -307,8 +304,7 @@ namespace
 							case ECryptoType_AES_256_OFB:
 							case ECryptoType_AES_256_ECB:
 								return EDigestType_SHA256;
-							case ECryptoType_DES_EDE3_CBC:
-								return EDigestType_SHA1;
+							case ECryptoType_DES_EDE3_CBC: return EDigestType_SHA1;
 							}
 							DMibNeverGetHere;
 							return EDigestType_SHA256;
@@ -402,6 +398,4 @@ namespace
 
 	DMibTestRegister(CEncryptedStream_Tests, Malterlib::Cryptography);
 }
-
-
 

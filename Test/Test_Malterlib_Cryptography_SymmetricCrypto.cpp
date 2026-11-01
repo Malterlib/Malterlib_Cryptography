@@ -73,12 +73,7 @@ public:
 
 				CEncryptAES EncryptAES3(CEncryptKeyIV::fs_GenerateKeyIV(Password, Salt, CKeyDerivationSettings_PKCS5_Deprecated{}));
 
-				DMibTest
-					(
-						DMibExpr(TCThrowsException<NException::CException>())
-						== DMibLExpr(EncryptAES3.f_Encrypt(Unaligned.f_GetArray(), Unaligned.f_GetLen(), Encrypted.f_GetArray(32)))
-					)
-				;
+				DMibTest(DMibExpr(TCThrowsException<NException::CException>()) == DMibLExpr(EncryptAES3.f_Encrypt(Unaligned.f_GetArray(), Unaligned.f_GetLen(), Encrypted.f_GetArray(32))));
 			}
 
 			{
@@ -101,11 +96,7 @@ public:
 				NMemory::fg_MemClear(ToEncrypt.f_GetArray(), ToEncrypt.f_GetLen());
 
 				NStr::CStrSecure OpenSSLPassword("ABCDEFGH");
-				CEncryptAES EncryptAES4
-					(
-						CEncryptKeyIV::fs_GenerateKeyIV(OpenSSLPassword, {}, CKeyDerivationSettings_PKCS5_Deprecated{EDigestType_SHA256, 1}, ECryptoType_AES_256_CBC)
-					)
-				;
+				CEncryptAES EncryptAES4(CEncryptKeyIV::fs_GenerateKeyIV(OpenSSLPassword, {}, CKeyDerivationSettings_PKCS5_Deprecated{EDigestType_SHA256, 1}, ECryptoType_AES_256_CBC));
 
 				EncryptAES4.f_Encrypt(ToEncrypt.f_GetArray(), ToEncrypt.f_GetLen(), Encrypted.f_GetArray());
 				DMibExpect(EncryptedOpenSSL, ==, Encrypted);
@@ -144,7 +135,7 @@ public:
 			uint32 BlockSize;
 			// Use multiple lengths: small single block, around the block size border, around two blocks, around the buffer length +/- block size, huge buffer, and
 			// finally a value that is suitable for the rest of the tests
-			int const Lengths[] = { 1, 2, 14, 15, 16, 17, 25, 31, 33, 8192 - 17, 8192 - 16 , 8192 - 15, 8192, 8193, 8192 + 15, 8192 + 16, 8192 + 17, 55555, 32 };
+			int const Lengths[] = {1, 2, 14, 15, 16, 17, 25, 31, 33, 8192 - 17, 8192 - 16, 8192 - 15, 8192, 8193, 8192 + 15, 8192 + 16, 8192 + 17, 55555, 32};
 
 			for (auto Length : Lengths)
 			{
@@ -177,7 +168,6 @@ public:
 					DecryptedLen += DecryptAES2.f_FinalizePaddedDecrypt(Decrypted.f_GetArray() + DecryptedLen, Decrypted.f_GetLen() - DecryptedLen);
 					DMibExpect(DecryptedLen, ==, Length % BlockSize);
 				}
-
 			}
 			{
 				DMibTestPath("IncorrectPassword");
@@ -284,7 +274,7 @@ public:
 			uint32 EncryptedLen;
 			uint32 DecryptedLen;
 			// Use multiple lengths: We do not use paddingin this test so stick to blocks that are multiples of the block size
-			int const Lengths[] = { 32, 256, 65536 };
+			int const Lengths[] = {32, 256, 65536};
 
 			for (auto Length : Lengths)
 			{

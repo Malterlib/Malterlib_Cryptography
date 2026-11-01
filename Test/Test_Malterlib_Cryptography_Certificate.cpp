@@ -21,13 +21,7 @@ public:
 	{
 		DMibTestSuite("Properties")
 		{
-			CCertificate::fs_RegisterExtension
-				(
-					"1.3.6.1.4.1.47722.1.2"
-					, "MalterlibTest"
-					, "Malterlib Test"
-				)
-			;
+			CCertificate::fs_RegisterExtension("1.3.6.1.4.1.47722.1.2", "MalterlibTest", "Malterlib Test");
 
 			CPublicKeySetting TestKeySetting = CPublicKeySettings_EC_secp256r1{};
 			CByteVector ServerPublicCertificateData;
@@ -191,30 +185,12 @@ public:
 
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(ClientCertificateData)
-						, CACertificateData
-						, false
-						, EVerificationPurpose_ServerAuth
-						, {}
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_ServerAuth, {}, nullptr, Error)
 					)
 				;
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(ClientCertificateData)
-						, CACertificateData
-						, false
-						, EVerificationPurpose_ClientAuth
-						, {}
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
 					)
 				;
 
@@ -239,16 +215,7 @@ public:
 
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(ClientAuthCertificateData)
-						, CACertificateData
-						, false
-						, EVerificationPurpose_ClientAuth
-						, {}
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientAuthCertificateData), CACertificateData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
 					)
 				;
 				DMibExpectTrue(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientAuthCertificateData), CACertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error));
@@ -286,28 +253,28 @@ public:
 						(
 							CCertificate::fs_VerifyCertificateChain
 							(
-							fg_CreateVector(SelfSignedClientAuthData)
-							, SelfSignedClientAuthData
-							, false
-							, EVerificationPurpose_ClientAuth
-							, {}
-							, nullptr
-							, Error
+								fg_CreateVector(SelfSignedClientAuthData)
+								, SelfSignedClientAuthData
+								, false
+								, EVerificationPurpose_ClientAuth
+								, {}
+								, nullptr
+								, Error
 							)
 						)
 					;
 
 					bool bOwnAnchorValidAsServer = CCertificate::fs_VerifyCertificateChain
-					(
-						fg_CreateVector(SelfSignedClientAuthData)
-						, SelfSignedClientAuthData
-						, false
-						, EVerificationPurpose_ServerAuth
-						, {}
-						, nullptr
-						, Error
-					)
-				;
+						(
+							fg_CreateVector(SelfSignedClientAuthData)
+							, SelfSignedClientAuthData
+							, false
+							, EVerificationPurpose_ServerAuth
+							, {}
+							, nullptr
+							, Error
+						)
+					;
 					DMibExpectFalse(bOwnAnchorValidAsServer);
 					DMibExpectFalse(Error.f_IsEmpty());
 				}
@@ -385,30 +352,12 @@ public:
 
 					DMibExpectFalse
 						(
-							CCertificate::fs_VerifyCertificateChain
-							(
-							fg_CreateVector(KeyExchangeOnlyData)
-							, KeyExchangeOnlyData
-							, false
-							, EVerificationPurpose_ServerAuth
-							, {}
-							, nullptr
-							, Error
-							)
+							CCertificate::fs_VerifyCertificateChain(fg_CreateVector(KeyExchangeOnlyData), KeyExchangeOnlyData, false, EVerificationPurpose_ServerAuth, {}, nullptr, Error)
 						)
 					;
 					DMibExpectFalse
 						(
-							CCertificate::fs_VerifyCertificateChain
-							(
-							fg_CreateVector(KeyExchangeOnlyData)
-							, KeyExchangeOnlyData
-							, false
-							, EVerificationPurpose_ClientAuth
-							, {}
-							, nullptr
-							, Error
-							)
+							CCertificate::fs_VerifyCertificateChain(fg_CreateVector(KeyExchangeOnlyData), KeyExchangeOnlyData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
 						)
 					;
 					DMibExpectTrue(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(KeyExchangeOnlyData), KeyExchangeOnlyData, false, EVerificationPurpose_Any, {}, nullptr, Error));
@@ -426,13 +375,7 @@ public:
 				DMibTestPath("Pinned Leaf With Unsupported Critical Extension");
 
 				// The verifier must reject an unknown critical extension even on a directly pinned leaf.
-				CCertificate::fs_RegisterExtension
-					(
-						"1.3.6.1.4.1.47722.1.3"
-						, "MalterlibTestCritical"
-						, "Malterlib Test Critical"
-					)
-				;
+				CCertificate::fs_RegisterExtension("1.3.6.1.4.1.47722.1.3", "MalterlibTestCritical", "Malterlib Test Critical");
 
 				CPublicKeySetting CriticalKeySetting = CPublicKeySettings_EC_secp256r1{};
 
@@ -457,16 +400,7 @@ public:
 				NStr::CStr Error;
 				DMibExpectFalse
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(CriticalCertificateData)
-						, CriticalCertificateData
-						, false
-						, EVerificationPurpose_Any
-						, {}
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(CriticalCertificateData), CriticalCertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error)
 					)
 				;
 				DMibExpect(Error, ==, "Certificate contains an unsupported critical extension");
@@ -477,16 +411,7 @@ public:
 				Error.f_Clear();
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(NonCriticalCertificateData)
-						, NonCriticalCertificateData
-						, false
-						, EVerificationPurpose_Any
-						, {}
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(NonCriticalCertificateData), NonCriticalCertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error)
 					)
 				;
 			}
@@ -700,17 +625,7 @@ public:
 				DMibExpectFalse(bValidFromIntermediate);
 				DMibExpect(Error, ==, CStr("Trust anchor is not valid for the verification purpose"));
 
-				bool bValidForAny = CCertificate::fs_VerifyCertificateChain
-					(
-						fg_CreateVector(ServerData)
-						, IntermediateData
-						, false
-						, EVerificationPurpose_Any
-						, {}
-						, nullptr
-						, Error
-					)
-				;
+				bool bValidForAny = CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ServerData), IntermediateData, false, EVerificationPurpose_Any, {}, nullptr, Error);
 				DMibExpectTrue(bValidForAny);
 			}
 
@@ -780,16 +695,7 @@ public:
 				NStr::CStr Error;
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(ClientCertificateData)
-						, CACertificateData
-						, false
-						, EVerificationPurpose_Any
-						, MatchingOptions
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, MatchingOptions, nullptr, Error)
 					)
 				;
 
@@ -797,16 +703,7 @@ public:
 				WrongKeyType.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_secp521r1{});
 				DMibExpectFalse
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(ClientCertificateData)
-						, CACertificateData
-						, false
-						, EVerificationPurpose_Any
-						, WrongKeyType
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, WrongKeyType, nullptr, Error)
 					)
 				;
 				DMibExpect(Error, ==, CStr("Certificate public key type is not allowed"));
@@ -815,16 +712,7 @@ public:
 				WrongDigest.m_AllowedSignatureDigests.f_Insert(EDigestType_SHA512);
 				DMibExpectFalse
 					(
-						CCertificate::fs_VerifyCertificateChain
-						(
-						fg_CreateVector(ClientCertificateData)
-						, CACertificateData
-						, false
-						, EVerificationPurpose_Any
-						, WrongDigest
-						, nullptr
-						, Error
-						)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, WrongDigest, nullptr, Error)
 					)
 				;
 				DMibExpect(Error, ==, CStr("Certificate signature digest is not allowed"));

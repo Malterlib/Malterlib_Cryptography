@@ -217,27 +217,11 @@ namespace
 			// runs out, so seal in a loop until the payload is taken.
 			while (Consumed < _Payload.f_GetLen())
 			{
-				auto Remaining = fg_SplitInput
-					(
-						_Payload.f_GetArray() + Consumed
-						, _Payload.f_GetLen() - Consumed
-						, fg_Min(_nFragments, _Payload.f_GetLen() - Consumed)
-					)
-				;
+				auto Remaining = fg_SplitInput(_Payload.f_GetArray() + Consumed, _Payload.f_GetLen() - Consumed, fg_Min(_nFragments, _Payload.f_GetLen() - Consumed));
 
 				size_t Written = 0;
 				size_t RoundConsumed = 0;
-				auto Result = SSL_seal_app_datav
-					(
-						_Pair.m_pClient
-						, Ciphertext.f_GetArray()
-						, &Written
-						, Ciphertext.f_GetLen()
-						, Remaining.f_GetArray()
-						, Remaining.f_GetLen()
-						, &RoundConsumed
-					)
-				;
+				auto Result = SSL_seal_app_datav(_Pair.m_pClient, Ciphertext.f_GetArray(), &Written, Ciphertext.f_GetLen(), Remaining.f_GetArray(), Remaining.f_GetLen(), &RoundConsumed);
 
 				DMibExpect(int(Result), ==, int(ssl_seal_v_success));
 				if (Result != ssl_seal_v_success)
@@ -276,17 +260,7 @@ namespace
 
 			size_t Produced = 0;
 			size_t Consumed = 0;
-			auto Result = SSL_open_app_datav
-				(
-					_Pair.m_pClient
-					, OutFragments.f_GetArray()
-					, OutFragments.f_GetLen()
-					, &Produced
-					, &Consumed
-					, InFragments.f_GetArray()
-					, InFragments.f_GetLen()
-				)
-			;
+			auto Result = SSL_open_app_datav(_Pair.m_pClient, OutFragments.f_GetArray(), OutFragments.f_GetLen(), &Produced, &Consumed, InFragments.f_GetArray(), InFragments.f_GetLen());
 
 			DMibExpect(int(Result), ==, int(ssl_open_v_success));
 			DMibExpect(Consumed, ==, Ciphertext.f_GetLen());
@@ -336,25 +310,7 @@ namespace
 
 						size_t Written = 0;
 						size_t Consumed = 0;
-						DMibExpect
-							(
-								int
-									(
-										SSL_seal_app_datav
-											(
-												Pair.m_pClient
-												, Ciphertext.f_GetArray()
-												, &Written
-												, Ciphertext.f_GetLen()
-												, &Fragment
-												, 1
-												, &Consumed
-											)
-									)
-								, ==
-								, int(ssl_seal_v_success)
-							)
-						;
+						DMibExpect(int(SSL_seal_app_datav(Pair.m_pClient, Ciphertext.f_GetArray(), &Written, Ciphertext.f_GetLen(), &Fragment, 1, &Consumed)), ==, int(ssl_seal_v_success));
 						DMibExpect(Consumed, ==, umint(0));
 					}
 				};
@@ -695,10 +651,11 @@ namespace
 						DMibExpect(Consumed, ==, umint(0));
 
 						CRYPTO_IVEC Split[2] =
-						{
-							{Ciphertext.f_GetArray(), Ciphertext.f_GetLen() - 1}
-							, {Ciphertext.f_GetArray() + Ciphertext.f_GetLen() - 1, 1}
-						};
+							{
+								{Ciphertext.f_GetArray(), Ciphertext.f_GetLen() - 1}
+								, {Ciphertext.f_GetArray() + Ciphertext.f_GetLen() - 1, 1}
+							}
+						;
 
 						DMibExpect(int(SSL_open_app_datav(Pair.m_pClient, &OutFragment, 1, &Produced, &Consumed, Split, 2)), ==, int(ssl_open_v_success));
 						DMibExpect(Consumed, ==, Ciphertext.f_GetLen());

@@ -9,18 +9,12 @@
 namespace NMib::NCryptography
 {
 	template <typename t_CParentStream, typename t_CStreamType>
-	TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::TCBinaryStream_Encrypted
-		(
-			CEncryptKeyIV const &_KeyIV
-			, EDigestType _HMAC
-			, NContainer::CSecureByteVector const &_HMACKey
-		)
+	TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::TCBinaryStream_Encrypted(CEncryptKeyIV const &_KeyIV, EDigestType _HMAC, NContainer::CSecureByteVector const &_HMACKey)
 		: mp_KeyIV(_KeyIV)
 		, mp_HMAC(_HMAC)
 		, mp_HMACKey(_HMACKey)
 		, mp_BlockSize(CEncryptKeyIV::fs_GetBlockSize(_KeyIV.m_Crypto))
 	{
-
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
@@ -59,7 +53,6 @@ namespace NMib::NCryptography
 		if constexpr (!NTraits::cIsBaseOf<NTraits::TCRemoveReference<t_CParentStream>, NStream::CBinaryStream>)
 			mp_Stream = nullptr;
 		mp_CurrentLoaded = -1;
-
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
@@ -128,7 +121,7 @@ namespace NMib::NCryptography
 			if (mp_BufferSize < mp_BlockSize)
 				DMibErrorCryptography(NStr::fg_Format("Buffer size cannot be smaller than cipher block size: {}", mp_BlockSize));
 
-			if ((mp_FileLen - NStream::CFilePos(HMACSize)) & (NStream::CFilePos(mp_BlockSize)-1) || mp_FileLen < NStream::CFilePos(HMACSize + mp_BlockSize))
+			if ((mp_FileLen - NStream::CFilePos(HMACSize)) & (NStream::CFilePos(mp_BlockSize) - 1) || mp_FileLen < NStream::CFilePos(HMACSize + mp_BlockSize))
 				DMibErrorCryptography("Stream length does not correspond with a properly encoded stream");
 
 			mp_OpenFlags = _OpenFlags;
@@ -180,12 +173,7 @@ namespace NMib::NCryptography
 								ParentStream.f_ConsumeBytes(IV.f_GetArray(mp_BlockSize), mp_BlockSize);
 							}
 						}
-						CIncrementalEncrypt TempDecryptionContext
-							(
-								ECryptoFlags_Decrypt | ECryptoFlags_UsePadding
-								, {mp_KeyIV.m_Key, IV, mp_KeyIV.m_Crypto}
-							)
-						;
+						CIncrementalEncrypt TempDecryptionContext(ECryptoFlags_Decrypt | ECryptoFlags_UsePadding, {mp_KeyIV.m_Key, IV, mp_KeyIV.m_Crypto});
 
 						// A padded decrypt may write mp_BlockSize bytes beyond the length it reports, so the destination needs room for two blocks.
 						TempDecryptionContext.f_Decrypt(LastBlock.f_GetArray(), mp_BlockSize, Decrypted.f_GetArray(mp_BlockSize * 2));
@@ -267,10 +255,8 @@ namespace NMib::NCryptography
 	template <typename t_CParentStream, typename t_CStreamType>
 	umint TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite)
 	{
-		if (mp_CurrentLoaded >= 0 && _Pos >=  mp_CurrentLoaded && _Pos < (mp_CurrentLoaded + NStream::CFilePos(mp_BufferSize)))
-		{
+		if (mp_CurrentLoaded >= 0 && _Pos >= mp_CurrentLoaded && _Pos < (mp_CurrentLoaded + NStream::CFilePos(mp_BufferSize)))
 			return _Pos - mp_CurrentLoaded;
-		}
 
 		fp_WriteDirty(false);
 
@@ -334,12 +320,12 @@ namespace NMib::NCryptography
 	}
 
 	template <typename t_CParentStream, typename t_CStreamType>
-	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_FeedBytes(const void *_pMem, umint _nBytes)
+	void TCBinaryStream_Encrypted<t_CParentStream, t_CStreamType>::f_FeedBytes(void const *_pMem, umint _nBytes)
 	{
 		if (!(mp_OpenFlags & NFile::EFileOpen_Write))
 			DMibErrorCryptography("Stream not opened for write");
 
-		const uint8 *pMem = (const uint8 *)_pMem;
+		uint8 const *pMem = (uint8 const *)_pMem;
 		while (_nBytes)
 		{
 			umint Pos = fp_PrepareBlock(mp_FilePos, true);

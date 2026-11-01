@@ -59,13 +59,7 @@ namespace NMib::NCryptography::NPrivate
 			DMibErrorCryptography("Argon2id needs a salt of {} bytes, got {}"_f << crypto_pwhash_argon2id_SALTBYTES << _PasswordSalt.f_GetLen());
 
 		if (o_Key.f_GetLen() < crypto_pwhash_argon2id_BYTES_MIN || uint64(o_Key.f_GetLen()) > uint64(crypto_pwhash_argon2id_BYTES_MAX))
-		{
-			DMibErrorCryptography
-				(
-					"Argon2id key length must be {} to {} bytes, got {}"_f << crypto_pwhash_argon2id_BYTES_MIN << crypto_pwhash_argon2id_BYTES_MAX << o_Key.f_GetLen()
-				)
-			;
-		}
+			DMibErrorCryptography("Argon2id key length must be {} to {} bytes, got {}"_f << crypto_pwhash_argon2id_BYTES_MIN << crypto_pwhash_argon2id_BYTES_MAX << o_Key.f_GetLen());
 
 		if (uint64(_Password.f_GetLen()) > uint64(crypto_pwhash_argon2id_PASSWD_MAX))
 			DMibErrorCryptography("Argon2id password is too long");
@@ -82,10 +76,7 @@ namespace NMib::NCryptography::NPrivate
 		{
 			DMibErrorCryptography
 				(
-					"Argon2id memory must be {} to {} bytes, got {}"_f
-					<< crypto_pwhash_argon2id_MEMLIMIT_MIN
-					<< umint(crypto_pwhash_argon2id_MEMLIMIT_MAX)
-					<< _Settings.m_Memory
+					"Argon2id memory must be {} to {} bytes, got {}"_f << crypto_pwhash_argon2id_MEMLIMIT_MIN << umint(crypto_pwhash_argon2id_MEMLIMIT_MAX) << _Settings.m_Memory
 				)
 			;
 		}
@@ -97,20 +88,20 @@ namespace NMib::NCryptography::NPrivate
 
 		// The algorithm is selected explicitly, so a change of libsodium's default can't change derived keys
 		if
+		(
+			crypto_pwhash_argon2id
 			(
-				crypto_pwhash_argon2id
-				(
-					o_Key.f_GetArray()
-					, o_Key.f_GetLen()
-					, _Password.f_GetStr()
-					, _Password.f_GetLen()
-					, _PasswordSalt.f_GetArray()
-					, _Settings.m_Iterations
-					, _Settings.m_Memory
-					, crypto_pwhash_argon2id_ALG_ARGON2ID13
-				)
-				!= 0
+				o_Key.f_GetArray()
+				, o_Key.f_GetLen()
+				, _Password.f_GetStr()
+				, _Password.f_GetLen()
+				, _PasswordSalt.f_GetArray()
+				, _Settings.m_Iterations
+				, _Settings.m_Memory
+				, crypto_pwhash_argon2id_ALG_ARGON2ID13
 			)
+			!= 0
+		)
 		{
 			DMibErrorCryptography("Failed to generate key using Argon2id (out of memory?)");
 		}

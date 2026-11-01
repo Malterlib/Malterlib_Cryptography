@@ -40,6 +40,7 @@ namespace NMib::NCryptography::NBoringSSL
 		{
 			fg_Malterlib_Network_SSL_SaveRegisters_X86_64(&m_RegisterState);
 		}
+
 		inline_always ~COpenSSLBrokenRegistryHandlingScope()
 		{
 			fg_Malterlib_Network_SSL_RestoreRegisters_X86_64(&m_RegisterState);
@@ -55,15 +56,15 @@ namespace NMib::NCryptography::NBoringSSL
 		TCRunProtectedRegistersHelper(t_FToRun &&_fToRun)
 			: mp_fToRun(NMib::fg_Move(_fToRun))
 		{
-
 		}
+
 		inline_never decltype(auto) f_Run()
 		{
 			COpenSSLBrokenRegistryHandlingScope ProtectionScope;
 			return fp_Run();
 		}
-	private:
 
+	private:
 		inline_never decltype(auto) fp_Run()
 		{
 			return mp_fToRun();

@@ -9,9 +9,9 @@ namespace NMib::NCryptography
 {
 	enum class ECryptoStrength : uint16
 	{
-		mc_Compatible = 0,
-		mc_EquivalentSymmetric128bit = 128,
-		mc_EquivalentSymmetric192bit = 192,
-		mc_EquivalentSymmetric256bit = 256,
+		mc_Compatible                  = 0
+		, mc_EquivalentSymmetric128bit = 128
+		, mc_EquivalentSymmetric192bit = 192
+		, mc_EquivalentSymmetric256bit = 256
 	};
 }

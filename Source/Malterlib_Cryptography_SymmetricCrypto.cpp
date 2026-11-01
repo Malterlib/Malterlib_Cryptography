@@ -245,7 +245,7 @@ namespace NMib::NCryptography
 
 			auto nNeededBytes = EVP_CIPHER_CTX_block_size(m_pCipherContext);
 			if (_DestLen < nNeededBytes)
-				DMibErrorCryptography(NStr::fg_Format("Buffer is too short. Need at least {} bytes",  nNeededBytes));
+				DMibErrorCryptography(NStr::fg_Format("Buffer is too short. Need at least {} bytes", nNeededBytes));
 
 			DMibRequire(m_pCipherContext->encrypt);
 
@@ -271,7 +271,7 @@ namespace NMib::NCryptography
 
 			auto nNeededBytes = EVP_CIPHER_CTX_block_size(m_pCipherContext);
 			if (_DestLen < nNeededBytes)
-				DMibErrorCryptography(NStr::fg_Format("Buffer is too short. Need at least {} bytes",  nNeededBytes));
+				DMibErrorCryptography(NStr::fg_Format("Buffer is too short. Need at least {} bytes", nNeededBytes));
 
 			DMibRequire(!m_pCipherContext->encrypt);
 
