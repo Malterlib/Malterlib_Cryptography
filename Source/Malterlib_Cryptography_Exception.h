@@ -8,10 +8,10 @@
 namespace NMib::NCryptography
 {
 	DMibImpErrorClassDefine(CExceptionCryptography, NException::CException);
-#define DMibErrorCryptography(_Description) DMibImpError(NMib::NCryptography::CExceptionCryptography, _Description)
+#define DMibErrorCryptography(d_Description) DMibImpError(NMib::NCryptography::CExceptionCryptography, d_Description)
 
 #ifndef DMibPNoShortCuts
-#	define DErrorCryptography(_Description) DMibErrorCryptography(_Description)
+#	define DErrorCryptography(d_Description) DMibErrorCryptography(d_Description)
 #endif
 }
 

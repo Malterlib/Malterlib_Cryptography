@@ -5,7 +5,7 @@
 
 #include <stdlib.h>
 
-#define SODIUM_STATIC 1
+#define SODIUM_STATIC 1 // NOLINT(malterlib-macro-naming)
 #include "../../../External/libsodium/src/libsodium/include/sodium/core.h"
 #include "../../../External/libsodium/src/libsodium/include/sodium/crypto_pwhash_argon2id.h"
 #include "../../../External/libsodium/src/libsodium/include/sodium/randombytes.h"
