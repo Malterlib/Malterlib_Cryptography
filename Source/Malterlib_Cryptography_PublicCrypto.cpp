@@ -320,7 +320,7 @@ namespace NMib::NCryptography
 		;
 	}
 
-	void CPublicCrypto::fs_GenerateKeys(NContainer::CSecureByteVector &o_PrivateKeyData, NContainer::CSecureByteVector &o_PublicKeyData, CPublicKeySetting _KeySetting)
+	void CPublicCrypto::fs_GenerateKeys(NContainer::CSecureByteVector &o_PrivateKeyData, NContainer::CSecureByteVector &o_PublicKeyData, CPublicKeySetting const &_KeySetting)
 	{
 		fg_RunProtectRegisters
 			(

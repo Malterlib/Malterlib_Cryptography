@@ -106,7 +106,7 @@ namespace NMib::NCryptography
 			(
 				NContainer::CSecureByteVector &o_PrivateKeyData
 				, NContainer::CSecureByteVector &o_PublicKeyData
-				, CPublicKeySetting _KeySetting = CPublicKeySettings_EC_secp521r1{}
+				, CPublicKeySetting const &_KeySetting = CPublicKeySettings_EC_secp521r1{}
 			)
 		;
 	};

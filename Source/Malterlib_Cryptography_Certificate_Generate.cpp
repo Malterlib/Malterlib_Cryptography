@@ -12,13 +12,13 @@ namespace NMib::NCryptography
 
 	namespace
 	{
-		X509_EXTENSION *fg_CreateExtension(X509V3_CTX &_Context, int _nID, CCertificateExtension _Extension)
+		X509_EXTENSION *fg_CreateExtension(X509V3_CTX &_Context, int _nID, CCertificateExtension const &_Extension)
 		{
 			X509_EXTENSION *pExtension = nullptr;
 
 			int Critical = _Extension.m_bCritical;
 			ERR_clear_error();
-			pExtension = X509V3_EXT_conf_nid(nullptr, &_Context, _nID, _Extension.m_Value.f_GetStrUniqueWritable());
+			pExtension = X509V3_EXT_conf_nid(nullptr, &_Context, _nID, _Extension.m_Value.f_GetStr());
 			if (pExtension)
 			{
 				X509_EXTENSION_set_critical(pExtension, Critical);
@@ -40,7 +40,7 @@ namespace NMib::NCryptography
 				}
 			;
 			pValue->length = _Extension.m_Value.f_GetLen();
-			pValue->data = (unsigned char *)_Extension.m_Value.f_GetStrUniqueWritable();
+			pValue->data = (unsigned char *)_Extension.m_Value.f_GetStr(); // Only read: the extension copies the value and the cleanup detaches it before freeing
 			ERR_clear_error();
 			pExtension = X509_EXTENSION_create_by_NID(&pExtension, _nID, Critical, pValue);
 			if (!pExtension)
@@ -49,7 +49,7 @@ namespace NMib::NCryptography
 			return pExtension;
 		}
 
-		void fg_AddExtension(X509V3_CTX &_Context, X509 *_pCert, int _nID, CCertificateExtension _Extension)
+		void fg_AddExtension(X509V3_CTX &_Context, X509 *_pCert, int _nID, CCertificateExtension const &_Extension)
 		{
 			X509_EXTENSION *pExtension = nullptr;
 			pExtension = fg_CreateExtension(_Context, _nID, _Extension);
@@ -80,7 +80,7 @@ namespace NMib::NCryptography
 			return fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _Allowed);
 		}
 
-		void fg_AddExtension(X509V3_CTX &_Context, X509_EXTENSIONS * &_pExtensions, int _nID, CCertificateExtension _Extension)
+		void fg_AddExtension(X509V3_CTX &_Context, X509_EXTENSIONS * &_pExtensions, int _nID, CCertificateExtension const &_Extension)
 		{
 			X509_EXTENSION *pExtension = fg_CreateExtension(_Context, _nID, _Extension);
 			auto Cleanup = g_OnScopeExit / [&]
