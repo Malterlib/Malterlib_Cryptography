@@ -15,8 +15,8 @@ namespace NMib::NCryptography
 	{
 		CInternal(EDigestType _Digest, NContainer::CSecureByteVector const &_Key)
 		{
-			EVP_MD const *Md = fg_GetDigest(_Digest);
-			umint const RequiredKeyLength = EVP_MD_size(Md);
+			EVP_MD const *pMd = fg_GetDigest(_Digest);
+			umint const RequiredKeyLength = EVP_MD_size(pMd);
 			if (_Key.f_GetLen() < RequiredKeyLength)
 				DMibErrorCryptography(NStr::fg_Format("HMAC key should be at least {} bytes", RequiredKeyLength));
 
@@ -35,7 +35,7 @@ namespace NMib::NCryptography
 						;
 
 						ERR_clear_error();
-						if (HMAC_Init_ex(m_pHMACContext, _Key.f_GetArray(), _Key.f_GetLen(), Md, nullptr) != 1)
+						if (HMAC_Init_ex(m_pHMACContext, _Key.f_GetArray(), _Key.f_GetLen(), pMd, nullptr) != 1)
 							DMibErrorCryptography(fg_GetExceptionStr("Failed to initialize HMAC context"));
 
 						Cleanup.f_Clear();

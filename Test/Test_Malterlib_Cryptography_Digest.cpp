@@ -162,13 +162,13 @@ namespace
 		}
 	};
 
-	extern ch8 const g_pNameMD5[];
-	extern ch8 const *g_pTestsMD5[];
-	extern ch8 const *g_pTestsDigestsMD5[];
-	extern umint g_pTestRepeatMD5[];
+	extern ch8 const g_NameMD5[];
+	extern ch8 const *g_TestsMD5[];
+	extern ch8 const *g_TestsDigestsMD5[];
+	extern umint g_TestRepeatMD5[];
 
-	ch8 const g_pNameMD5[] = "MD5";
-	ch8 const *g_pTestsMD5[] =
+	ch8 const g_NameMD5[] = "MD5";
+	ch8 const *g_TestsMD5[] =
 		{
 			""
 			, "a"
@@ -179,7 +179,7 @@ namespace
 			, "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
 		}
 	;
-	ch8 const *g_pTestsDigestsMD5[] =
+	ch8 const *g_TestsDigestsMD5[] =
 		{
 			"d41d8cd98f00b204e9800998ecf8427e"
 			, "0cc175b9c0f1b6a831c399e269772661"
@@ -190,102 +190,102 @@ namespace
 			, "57edf4a22be3c955ac49da2e2107b67a"
 		}
 	;
-	umint g_pTestRepeatMD5[] = {1, 1, 1, 1, 1, 1, 1};
+	umint g_TestRepeatMD5[] = {1, 1, 1, 1, 1, 1, 1};
 
-	using CDigestMD5_Tests = TCTestHash<NMib::NCryptography::CHash_MD5, g_pNameMD5, g_pTestsMD5, g_pTestsDigestsMD5, g_pTestRepeatMD5, fg_ArraySize(g_pTestsMD5)>;
+	using CDigestMD5_Tests = TCTestHash<NMib::NCryptography::CHash_MD5, g_NameMD5, g_TestsMD5, g_TestsDigestsMD5, g_TestRepeatMD5, fg_ArraySize(g_TestsMD5)>;
 	DMibTestRegister(CDigestMD5_Tests, Malterlib::Cryptography);
 
-	extern ch8 const g_pNameSHA1[];
-	extern ch8 const *g_pTestsSHA1[];
-	extern ch8 const *g_pTestsDigestsSHA1[];
-	extern umint g_pTestRepeatSHA1[];
+	extern ch8 const g_NameSHA1[];
+	extern ch8 const *g_TestsSHA1[];
+	extern ch8 const *g_TestsDigestsSHA1[];
+	extern umint g_TestRepeatSHA1[];
 
-	ch8 const g_pNameSHA1[] = "SHA1";
-	ch8 const *g_pTestsSHA1[] =
+	ch8 const g_NameSHA1[] = "SHA1";
+	ch8 const *g_TestsSHA1[] =
 		{
 			"abc"
 			, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"
 			, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 		}
 	;
-	ch8 const *g_pTestsDigestsSHA1[] =
+	ch8 const *g_TestsDigestsSHA1[] =
 		{
 			"a9993e364706816aba3e25717850c26c9cd0d89d"
 			, "84983e441c3bd26ebaae4aa1f95129e5e54670f1"
 			, "34aa973cd4c4daa4f61eeb2bdbad27316534016f"
 		}
 	;
-	umint g_pTestRepeatSHA1[] = {1, 1, 15625};
+	umint g_TestRepeatSHA1[] = {1, 1, 15625};
 
-	using CDigestSHA1_Tests = TCTestHash<NMib::NCryptography::CHash_SHA1, g_pNameSHA1, g_pTestsSHA1, g_pTestsDigestsSHA1, g_pTestRepeatSHA1, fg_ArraySize(g_pTestsSHA1)>;
+	using CDigestSHA1_Tests = TCTestHash<NMib::NCryptography::CHash_SHA1, g_NameSHA1, g_TestsSHA1, g_TestsDigestsSHA1, g_TestRepeatSHA1, fg_ArraySize(g_TestsSHA1)>;
 	DMibTestRegister(CDigestSHA1_Tests, Malterlib::Cryptography);
 
-	extern ch8 const g_pNameSHA256[];
-	extern ch8 const *g_pTestsSHA256[];
-	extern ch8 const *g_pTestsDigestsSHA256[];
-	extern umint g_pTestRepeatSHA256[];
+	extern ch8 const g_NameSHA256[];
+	extern ch8 const *g_TestsSHA256[];
+	extern ch8 const *g_TestsDigestsSHA256[];
+	extern umint g_TestRepeatSHA256[];
 
-	ch8 const g_pNameSHA256[] = "SHA256";
-	ch8 const *g_pTestsSHA256[] =
+	ch8 const g_NameSHA256[] = "SHA256";
+	ch8 const *g_TestsSHA256[] =
 		{
 			"abc"
 			, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"
 		}
 	;
-	ch8 const *g_pTestsDigestsSHA256[] =
+	ch8 const *g_TestsDigestsSHA256[] =
 		{
 			"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
 			, "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1"
 		}
 	;
-	umint g_pTestRepeatSHA256[] = {1, 1};
+	umint g_TestRepeatSHA256[] = {1, 1};
 
-	using CDigestSHA256_Tests = TCTestHash<NMib::NCryptography::CHash_SHA256, g_pNameSHA256, g_pTestsSHA256, g_pTestsDigestsSHA256, g_pTestRepeatSHA256, fg_ArraySize(g_pTestsSHA256)>;
+	using CDigestSHA256_Tests = TCTestHash<NMib::NCryptography::CHash_SHA256, g_NameSHA256, g_TestsSHA256, g_TestsDigestsSHA256, g_TestRepeatSHA256, fg_ArraySize(g_TestsSHA256)>;
 	DMibTestRegister(CDigestSHA256_Tests, Malterlib::Cryptography);
 
-	extern ch8 const g_pNameSHA384[];
-	extern ch8 const *g_pTestsSHA384[];
-	extern ch8 const *g_pTestsDigestsSHA384[];
-	extern umint g_pTestRepeatSHA384[];
+	extern ch8 const g_NameSHA384[];
+	extern ch8 const *g_TestsSHA384[];
+	extern ch8 const *g_TestsDigestsSHA384[];
+	extern umint g_TestRepeatSHA384[];
 
-	ch8 const g_pNameSHA384[] = "SHA384";
-	ch8 const *g_pTestsSHA384[] =
+	ch8 const g_NameSHA384[] = "SHA384";
+	ch8 const *g_TestsSHA384[] =
 		{
 			"abc"
 			, "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"
 		}
 	;
-	ch8 const *g_pTestsDigestsSHA384[] =
+	ch8 const *g_TestsDigestsSHA384[] =
 		{
 			"cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7"
 			, "09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa08086e3b0f712fcc7c71a557e2db966c3e9fa91746039"
 		}
 	;
-	umint g_pTestRepeatSHA384[] = {1, 1};
+	umint g_TestRepeatSHA384[] = {1, 1};
 
-	using CDigestSHA384_Tests = TCTestHash<NMib::NCryptography::CHash_SHA384, g_pNameSHA384, g_pTestsSHA384, g_pTestsDigestsSHA384, g_pTestRepeatSHA384, fg_ArraySize(g_pTestsSHA384)>;
+	using CDigestSHA384_Tests = TCTestHash<NMib::NCryptography::CHash_SHA384, g_NameSHA384, g_TestsSHA384, g_TestsDigestsSHA384, g_TestRepeatSHA384, fg_ArraySize(g_TestsSHA384)>;
 	DMibTestRegister(CDigestSHA384_Tests, Malterlib::Cryptography);
 
-	extern ch8 const g_pNameSHA512[];
-	extern ch8 const *g_pTestsSHA512[];
-	extern ch8 const *g_pTestsDigestsSHA512[];
-	extern umint g_pTestRepeatSHA512[];
+	extern ch8 const g_NameSHA512[];
+	extern ch8 const *g_TestsSHA512[];
+	extern ch8 const *g_TestsDigestsSHA512[];
+	extern umint g_TestRepeatSHA512[];
 
-	ch8 const g_pNameSHA512[] = "SHA512";
-	ch8 const *g_pTestsSHA512[] =
+	ch8 const g_NameSHA512[] = "SHA512";
+	ch8 const *g_TestsSHA512[] =
 		{
 			"abc"
 			, "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"
 		}
 	;
-	ch8 const *g_pTestsDigestsSHA512[] =
+	ch8 const *g_TestsDigestsSHA512[] =
 		{
 			"ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f"
 			, "8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa17299aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329eeb6dd26545e96e55b874be909"
 		}
 	;
-	umint g_pTestRepeatSHA512[] = {1, 1};
+	umint g_TestRepeatSHA512[] = {1, 1};
 
-	using CDigestSHA512_Tests = TCTestHash<NMib::NCryptography::CHash_SHA512, g_pNameSHA512, g_pTestsSHA512, g_pTestsDigestsSHA512, g_pTestRepeatSHA512, fg_ArraySize(g_pTestsSHA512)>;
+	using CDigestSHA512_Tests = TCTestHash<NMib::NCryptography::CHash_SHA512, g_NameSHA512, g_TestsSHA512, g_TestsDigestsSHA512, g_TestRepeatSHA512, fg_ArraySize(g_TestsSHA512)>;
 	DMibTestRegister(CDigestSHA512_Tests, Malterlib::Cryptography);
 }

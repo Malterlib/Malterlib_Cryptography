@@ -99,12 +99,12 @@ namespace NMib::NCryptography
 			NContainer::TCVector<NStr::CStr> SortedHosts = CCertificate::fs_GetSortedHostnames(_Hostnames);
 
 			NStr::CStr Output;
-			for (auto Iter = SortedHosts.f_GetIterator(); Iter; ++Iter)
+			for (auto iHost = SortedHosts.f_GetIterator(); iHost; ++iHost)
 			{
 				if (Output.f_IsEmpty())
-					Output = NStr::CStr::CFormat("DNS:{}") << (*Iter);
+					Output = NStr::CStr::CFormat("DNS:{}") << (*iHost);
 				else
-					Output += NStr::CStr::CFormat(",DNS:{}") << (*Iter);
+					Output += NStr::CStr::CFormat(",DNS:{}") << (*iHost);
 			}
 
 			CCertificateExtension Extension;

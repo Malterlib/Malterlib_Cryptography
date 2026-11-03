@@ -140,33 +140,33 @@ namespace NMib::NCryptography
 						}
 					;
 
-					EVP_MD const *Md = fg_GetDigest(_Digest, pKey);
+					EVP_MD const *pMd = fg_GetDigest(_Digest, pKey);
 					ERR_clear_error();
-					EVP_MD_CTX *Ctx = EVP_MD_CTX_create();
-					if (!Ctx)
+					EVP_MD_CTX *pCtx = EVP_MD_CTX_create();
+					if (!pCtx)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_MD_CTX_create failed"));
 					auto Cleanup2 = g_OnScopeExit / [&]
 						{
-							EVP_MD_CTX_destroy(Ctx);
+							EVP_MD_CTX_destroy(pCtx);
 						}
 					;
 
 					NContainer::CSecureByteVector Signature;
 					ERR_clear_error();
-					if (EVP_DigestSignInit(Ctx, NULL, Md, NULL, pKey) != 1)
+					if (EVP_DigestSignInit(pCtx, NULL, pMd, NULL, pKey) != 1)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignInit failed"));
 
 					ERR_clear_error();
-					if (EVP_DigestSignUpdate(Ctx, _Message.f_GetArray(), _Message.f_GetLen()) != 1)
+					if (EVP_DigestSignUpdate(pCtx, _Message.f_GetArray(), _Message.f_GetLen()) != 1)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignUpdate failed"));
 
 					ERR_clear_error();
 					size_t Len;
-					if (EVP_DigestSignFinal(Ctx, nullptr, &Len) != 1)
+					if (EVP_DigestSignFinal(pCtx, nullptr, &Len) != 1)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignFinal failed"));
 
 					ERR_clear_error();
-					if (EVP_DigestSignFinal(Ctx, Signature.f_GetArray(Len), &Len) != 1)
+					if (EVP_DigestSignFinal(pCtx, Signature.f_GetArray(Len), &Len) != 1)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignFinal failed"));
 
 					Signature.f_SetLen(Len);
@@ -189,15 +189,15 @@ namespace NMib::NCryptography
 						}
 					;
 
-					EVP_MD const *Md = fg_GetDigest(_Digest, pKey);
+					EVP_MD const *pMd = fg_GetDigest(_Digest, pKey);
 					ERR_clear_error();
-					EVP_MD_CTX *Ctx = EVP_MD_CTX_create();
-					if (!Ctx)
+					EVP_MD_CTX *pCtx = EVP_MD_CTX_create();
+					if (!pCtx)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_MD_CTX_create failed"));
 
 					auto Cleanup2 = g_OnScopeExit / [&]
 						{
-							EVP_MD_CTX_destroy(Ctx);
+							EVP_MD_CTX_destroy(pCtx);
 						}
 					;
 
@@ -210,7 +210,7 @@ namespace NMib::NCryptography
 						ERR_clear_error();
 						NContainer::CSecureByteVector Digest;
 						unsigned int Size = 0;
-						if (EVP_Digest(_Message.f_GetArray(), _Message.f_GetLen(), Digest.f_GetArray(EVP_MD_size(Md)), &Size, Md, nullptr) != 1)
+						if (EVP_Digest(_Message.f_GetArray(), _Message.f_GetLen(), Digest.f_GetArray(EVP_MD_size(pMd)), &Size, pMd, nullptr) != 1)
 							DMibErrorCryptography(fg_GetExceptionStr("Error computing digest"));
 						if (Size > Digest.f_GetLen())
 							DMibError("Size of hash exceeded maximum hash size");
@@ -242,20 +242,20 @@ namespace NMib::NCryptography
 					else if (EVP_PKEY_get0_RSA(pKey))
 					{
 						ERR_clear_error();
-						if (EVP_DigestSignInit(Ctx, NULL, Md, NULL, pKey) != 1)
+						if (EVP_DigestSignInit(pCtx, NULL, pMd, NULL, pKey) != 1)
 							DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignInit failed"));
 
 						ERR_clear_error();
-						if (EVP_DigestSignUpdate(Ctx, _Message.f_GetArray(), _Message.f_GetLen()) != 1)
+						if (EVP_DigestSignUpdate(pCtx, _Message.f_GetArray(), _Message.f_GetLen()) != 1)
 							DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignUpdate failed"));
 
 						ERR_clear_error();
 						size_t Len;
-						if (EVP_DigestSignFinal(Ctx, nullptr, &Len) != 1)
+						if (EVP_DigestSignFinal(pCtx, nullptr, &Len) != 1)
 							DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignFinal failed"));
 
 						ERR_clear_error();
-						if (EVP_DigestSignFinal(Ctx, Signature.f_GetArray(Len), &Len) != 1)
+						if (EVP_DigestSignFinal(pCtx, Signature.f_GetArray(Len), &Len) != 1)
 							DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestSignFinal failed"));
 
 						Signature.f_SetLen(Len);
@@ -288,30 +288,30 @@ namespace NMib::NCryptography
 							EVP_PKEY_free(pKey);
 						}
 					;
-					EVP_MD const *Md = fg_GetDigest(_Digest, pKey);
+					EVP_MD const *pMd = fg_GetDigest(_Digest, pKey);
 
 					ERR_clear_error();
-					EVP_MD_CTX *Ctx = EVP_MD_CTX_create();
-					if (!Ctx)
+					EVP_MD_CTX *pCtx = EVP_MD_CTX_create();
+					if (!pCtx)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_MD_CTX_create failed"));
 					auto Cleanup2 = g_OnScopeExit / [&]
 						{
-							EVP_MD_CTX_destroy(Ctx);
+							EVP_MD_CTX_destroy(pCtx);
 						}
 					;
 
 					NContainer::CSecureByteVector Digest;
 
 					ERR_clear_error();
-					if (EVP_DigestVerifyInit(Ctx, NULL, Md, NULL, pKey) != 1)
+					if (EVP_DigestVerifyInit(pCtx, NULL, pMd, NULL, pKey) != 1)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestVerifyInit failed"));
 
 					ERR_clear_error();
-					if (EVP_DigestVerifyUpdate(Ctx, _Message.f_GetArray(), _Message.f_GetLen()) != 1)
+					if (EVP_DigestVerifyUpdate(pCtx, _Message.f_GetArray(), _Message.f_GetLen()) != 1)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestVerifyUpdate failed"));
 
 					ERR_clear_error();
-					int Result = EVP_DigestVerifyFinal(Ctx, _Signature.f_GetArray(), _Signature.f_GetLen());
+					int Result = EVP_DigestVerifyFinal(pCtx, _Signature.f_GetArray(), _Signature.f_GetLen());
 					if (Result & ~0x01)
 						DMibErrorCryptography(fg_GetExceptionStr("EVP_DigestVerifyFinal failed"));
 					return Result == 1;

@@ -63,8 +63,13 @@ namespace NMib::NCryptography
 
 			auto fLoadFromStore = [&](LPCWSTR _pStore)
 				{
-					HCERTSTORE SystemStore = CertOpenSystemStore(NULL, _pStore);
-					for (PCCERT_CONTEXT pCertContext = CertEnumCertificatesInStore(SystemStore, nullptr); pCertContext; pCertContext = CertEnumCertificatesInStore(SystemStore, pCertContext))
+					HCERTSTORE pSystemStore = CertOpenSystemStore(NULL, _pStore);
+					for
+					(
+						PCCERT_CONTEXT pCertContext = CertEnumCertificatesInStore(pSystemStore, nullptr)
+						; pCertContext
+						; pCertContext = CertEnumCertificatesInStore(pSystemStore, pCertContext)
+					)
 					{
 						NStr::CStr OutputType = fIsPKCS7(pCertContext->dwCertEncodingType) ? "PKCS7" : "CERTIFICATE";
 						NContainer::CByteVector Data;
@@ -95,7 +100,7 @@ namespace NMib::NCryptography
 							X509_STORE_add_cert(pStore, pCertificate);
 					}
 
-					for (PCCRL_CONTEXT pCrlContext = CertEnumCRLsInStore(SystemStore, nullptr); pCrlContext; pCrlContext = CertEnumCRLsInStore(SystemStore, pCrlContext))
+					for (PCCRL_CONTEXT pCrlContext = CertEnumCRLsInStore(pSystemStore, nullptr); pCrlContext; pCrlContext = CertEnumCRLsInStore(pSystemStore, pCrlContext))
 					{
 						NStr::CStr OutputType = fIsPKCS7(pCrlContext->dwCertEncodingType) ? "PKCS7" : "X509 CRL";
 						NContainer::CByteVector Data;
@@ -125,7 +130,7 @@ namespace NMib::NCryptography
 						X509_STORE_add_crl(pStore, pCrl);
 					}
 
-					CertCloseStore(SystemStore, 0);
+					CertCloseStore(pSystemStore, 0);
 				}
 			;
 
@@ -229,16 +234,16 @@ namespace NMib::NCryptography
 						X509 *pCertificate;
 						if (CSystem::ms_PlatformVersion >= 10'06'00)
 						{
-							CFDataRef DERCert = SecCertificateCopyData(pCertRef);
-							if (!DERCert)
+							CFDataRef pDERCertData = SecCertificateCopyData(pCertRef);
+							if (!pDERCertData)
 								continue;
 
 							{
-								unsigned char const *pDERCert = CFDataGetBytePtr(DERCert);
-								umint DataLength = CFDataGetLength(DERCert);
+								unsigned char const *pDERCert = CFDataGetBytePtr(pDERCertData);
+								umint DataLength = CFDataGetLength(pDERCertData);
 								pCertificate = d2i_X509(nullptr, &pDERCert, DataLength);
 							}
-							CFRelease(DERCert);
+							CFRelease(pDERCertData);
 						}
 						else
 						{
@@ -394,7 +399,7 @@ namespace NMib::NCryptography
 			{
 				for
 				(
-					auto &CertFile :
+					auto &pCertFile :
 					{
 						"/etc/ssl/certs/ca-certificates.crt" // Debian/Ubuntu/Gentoo etc.
 						, "/etc/pki/tls/certs/ca-bundle.crt" // Fedora/RHEL 6
@@ -405,7 +410,7 @@ namespace NMib::NCryptography
 					}
 				)
 				{
-					if (fLoadCerts(CertFile))
+					if (fLoadCerts(pCertFile))
 						break;
 				}
 			}

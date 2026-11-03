@@ -538,10 +538,10 @@ namespace NMib::NCryptography
 	NContainer::TCVector<NStr::CStr> CCertificate::fs_GetSortedHostnames(NContainer::TCVector<NStr::CStr> const &_Unsorted)
 	{
 		NContainer::TCVector<NStr::CStr> Sorted;
-		for (auto Iter = _Unsorted.f_GetIterator(); Iter; ++Iter)
+		for (auto iHostname = _Unsorted.f_GetIterator(); iHostname; ++iHostname)
 		{
-			if (Sorted.f_Contains(*Iter) == -1 && !(*Iter).f_IsEmpty())
-				Sorted.f_Insert(*Iter);
+			if (Sorted.f_Contains(*iHostname) == -1 && !(*iHostname).f_IsEmpty())
+				Sorted.f_Insert(*iHostname);
 		}
 
 		Sorted.f_Sort();
@@ -556,12 +556,12 @@ namespace NMib::NCryptography
 				{
 					NStr::CStr Hostnames;
 					NContainer::TCVector<NStr::CStr> HostnameList = fs_GetCertificateHostnames(_CertificateData);
-					for (auto Iter = HostnameList.f_GetIterator(); Iter; ++Iter)
+					for (auto iHostname = HostnameList.f_GetIterator(); iHostname; ++iHostname)
 					{
 						if (Hostnames.f_IsEmpty())
-							Hostnames = (*Iter);
+							Hostnames = (*iHostname);
 						else
-							Hostnames += ", " + (*Iter);
+							Hostnames += ", " + (*iHostname);
 					}
 
 					if (Hostnames.f_IsEmpty())
