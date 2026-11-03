@@ -10,6 +10,11 @@ namespace NMib::NCryptography
 {
 	using namespace NBoringSSL;
 
+	CPublicKeySettings_RSA::CPublicKeySettings_RSA(uint32 _KeyLength)
+		: m_KeyLength(_KeyLength)
+	{
+	}
+
 	NContainer::CSecureByteVector CPublicCrypto::fs_GetPublicKeyFromPrivateKey(NContainer::CSecureByteVector const &_PrivateKey)
 	{
 		return fg_RunProtectRegisters

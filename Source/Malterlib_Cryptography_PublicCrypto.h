@@ -22,10 +22,7 @@ namespace NMib::NCryptography
 	struct CPublicKeySettings_RSA
 	{
 		CPublicKeySettings_RSA() = default;
-		explicit CPublicKeySettings_RSA(uint32 _KeyLength)
-			: m_KeyLength(_KeyLength)
-		{
-		}
+		explicit CPublicKeySettings_RSA(uint32 _KeyLength);
 
 		auto operator <=> (CPublicKeySettings_RSA const &_Right) const noexcept = default;
 

@@ -50,10 +50,7 @@ namespace NMib::NCryptography
 		auto operator <=> (CCertificateExtension const &_Right) const noexcept = default;
 
 		template <typename tf_CFormatInto>
-		void f_Format(tf_CFormatInto &o_FormatInto) const
-		{
-			o_FormatInto += typename tf_CFormatInto::CFormat("{}{}") << m_Value << (m_bCritical ? " - critical" : "");
-		}
+		void f_Format(tf_CFormatInto &o_FormatInto) const;
 
 		NStr::CStr m_Value;
 		bool m_bCritical = false;
@@ -183,3 +180,5 @@ namespace NMib::NCryptography
 #ifndef DMibPNoShortCuts
 using namespace NMib::NCryptography;
 #endif
+
+#include "Malterlib_Cryptography_Certificate.hpp"

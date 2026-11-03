@@ -36,15 +36,8 @@ namespace NMib::NCryptography::NBoringSSL
 {
 	struct COpenSSLBrokenRegistryHandlingScope
 	{
-		inline_always COpenSSLBrokenRegistryHandlingScope()
-		{
-			fg_Malterlib_Network_SSL_SaveRegisters_X86_64(&m_RegisterState);
-		}
-
-		inline_always ~COpenSSLBrokenRegistryHandlingScope()
-		{
-			fg_Malterlib_Network_SSL_RestoreRegisters_X86_64(&m_RegisterState);
-		}
+		inline_always COpenSSLBrokenRegistryHandlingScope();
+		inline_always ~COpenSSLBrokenRegistryHandlingScope();
 
 		CRegisterState m_RegisterState;
 
@@ -55,33 +48,18 @@ namespace NMib::NCryptography::NBoringSSL
 	template <typename t_FToRun>
 	struct TCRunProtectedRegistersHelper
 	{
-		TCRunProtectedRegistersHelper(t_FToRun &&_fToRun)
-			: mp_fToRun(NMib::fg_Move(_fToRun))
-		{
-		}
+		TCRunProtectedRegistersHelper(t_FToRun &&_fToRun);
 
-		inline_never decltype(auto) f_Run()
-		{
-			COpenSSLBrokenRegistryHandlingScope ProtectionScope;
-			return fp_Run();
-		}
+		inline_never decltype(auto) f_Run();
 
 	private:
-		inline_never decltype(auto) fp_Run()
-		{
-			return mp_fToRun();
-		}
+		inline_never decltype(auto) fp_Run();
 
 		t_FToRun &&mp_fToRun;
 	};
 
 	template <typename tf_FToRun>
-	decltype(auto) fg_RunProtectRegisters(tf_FToRun &&_fToRun)
-	{
-		TCRunProtectedRegistersHelper<tf_FToRun &&> RunHelper{NMib::fg_Move(_fToRun)};
-
-		return RunHelper.f_Run();
-	}
+	decltype(auto) fg_RunProtectRegisters(tf_FToRun &&_fToRun);
 }
 
 #else
@@ -89,10 +67,9 @@ namespace NMib::NCryptography::NBoringSSL
 namespace NMib::NCryptography::NBoringSSL
 {
 	template <typename tf_FToRun>
-	inline_always decltype(auto) fg_RunProtectRegisters(tf_FToRun &&_fToRun)
-	{
-		return _fToRun();
-	}
+	inline_always decltype(auto) fg_RunProtectRegisters(tf_FToRun &&_fToRun);
 }
 
 #endif
+
+#include "Malterlib_Cryptography_BoringSSL_RegisterProtect.hpp"

@@ -31,12 +31,7 @@ namespace NMib::NCryptography
 		void f_InsecureDeterministicReseed(uint64 _Seed);
 
 		template <typename tf_CInt>
-		tf_CInt f_GetValue()
-		{
-			tf_CInt Return;
-			f_GetBytes((uint8 *)&Return, sizeof(Return));
-			return Return;
-		}
+		tf_CInt f_GetValue();
 
 	private:
 		static constexpr umint mcp_BlockSize = 64;                // ChaCha20 block size (512 bits)
@@ -58,3 +53,5 @@ namespace NMib::NCryptography
 #ifndef DMibPNoShortCuts
 using namespace NMib::NCryptography;
 #endif
+
+#include "Malterlib_Cryptography_SecureRandom.hpp"
