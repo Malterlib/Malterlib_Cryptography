@@ -93,7 +93,7 @@ namespace
 
 		bool f_Handshake()
 		{
-			for (aint i = 0; i < 32; ++i)
+			for (aint iAttempt = 0; iAttempt < 32; ++iAttempt)
 			{
 				SSL_do_handshake(m_pClient);
 				fs_Pump(m_pClientWrite, m_pServerRead);
@@ -114,7 +114,7 @@ namespace
 			uint8 Buffer[4096];
 			uint8 const Probe = 0;
 
-			for (aint i = 0; i < 2; ++i)
+			for (aint iAttempt = 0; iAttempt < 2; ++iAttempt)
 			{
 				SSL_write(m_pServer, &Probe, 1);
 				fs_Pump(m_pServerWrite, m_pClientRead);
@@ -161,10 +161,10 @@ namespace
 			return Fragments;
 
 		umint Offset = 0;
-		for (umint i = 0; i < _nFragments; ++i)
+		for (umint iFragment = 0; iFragment < _nFragments; ++iFragment)
 		{
 			umint Remaining = _nBytes - Offset;
-			umint Take = (i + 1 == _nFragments) ? Remaining : fg_Min(Remaining, (_nBytes / _nFragments) + (i % 3));
+			umint Take = (iFragment + 1 == _nFragments) ? Remaining : fg_Min(Remaining, (_nBytes / _nFragments) + (iFragment % 3));
 			Fragments.f_InsertLast(CRYPTO_IVEC{_pData + Offset, Take});
 			Offset += Take;
 		}
@@ -179,10 +179,10 @@ namespace
 			return Fragments;
 
 		umint Offset = 0;
-		for (umint i = 0; i < _nFragments; ++i)
+		for (umint iFragment = 0; iFragment < _nFragments; ++iFragment)
 		{
 			umint Remaining = _nBytes - Offset;
-			umint Take = (i + 1 == _nFragments) ? Remaining : fg_Min(Remaining, (_nBytes / _nFragments) + (i % 3));
+			umint Take = (iFragment + 1 == _nFragments) ? Remaining : fg_Min(Remaining, (_nBytes / _nFragments) + (iFragment % 3));
 			Fragments.f_InsertLast(CRYPTO_IOVEC{_pData + Offset, nullptr, Take});
 			Offset += Take;
 		}
@@ -194,8 +194,8 @@ namespace
 	{
 		CByteVector Payload;
 		Payload.f_SetLen(_nBytes);
-		for (umint i = 0; i < _nBytes; ++i)
-			Payload[i] = uint8((i * 31 + (i >> 8) * 7) & 0xff);
+		for (umint iByte = 0; iByte < _nBytes; ++iByte)
+			Payload[iByte] = uint8((iByte * 31 + (iByte >> 8) * 7) & 0xff);
 
 		return Payload;
 	}

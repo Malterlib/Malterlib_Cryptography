@@ -32,28 +32,28 @@ struct CMessageAuthentication_Tests : public NMib::NTest::CTest
 
 			CSecureByteVector Salt = f_GetRandomBuffer(8, 6);
 
-			static char const *Text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
-			static char const *KeyBytes = "abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
+			static char const *s_pText = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
+			static char const *s_pKeyBytes = "abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
 			CByteVector PlainText;
-			NMemory::fg_MemCopy(PlainText.f_GetArray(fg_StrLen(Text)), Text, fg_StrLen(Text));
+			NMemory::fg_MemCopy(PlainText.f_GetArray(fg_StrLen(s_pText)), s_pText, fg_StrLen(s_pText));
 			CSecureByteVector Key;
-			NMemory::fg_MemCopy(Key.f_GetArray(fg_StrLen(KeyBytes)), KeyBytes, fg_StrLen(KeyBytes));
+			NMemory::fg_MemCopy(Key.f_GetArray(fg_StrLen(s_pKeyBytes)), s_pKeyBytes, fg_StrLen(s_pKeyBytes));
 
 			auto ContinuousHMAC = fg_MessageAuthenication_HMAC_SHA256(PlainText, Key);
 
 			// Use multiple incremental lengths: full length and some powers of 2, and some odd ones
-			static int const Lengths[] = {89, 1, 8, 64, 3, 9};
+			static int const s_Lengths[] = {89, 1, 8, 64, 3, 9};
 
-			for (auto Length : Lengths)
+			for (auto Length : s_Lengths)
 			{
 				DMibTestPath(fg_Format("Buffer length: {}", Length));
 
 				CIncrementalHMAC IncrementalHMAC(EDigestType_SHA256, Key);
 
-				for (int i = 0; i < Lengths[0]; i += Lengths[i])
+				for (int Offset = 0; Offset < s_Lengths[0]; Offset += s_Lengths[Offset])
 				{
-					int ThisTime = fg_Min(Lengths[0] - i, Lengths[i]);
-					IncrementalHMAC.f_Update(PlainText.f_GetArray() + i, ThisTime);
+					int ThisTime = fg_Min(s_Lengths[0] - Offset, s_Lengths[Offset]);
+					IncrementalHMAC.f_Update(PlainText.f_GetArray() + Offset, ThisTime);
 				}
 				NCryptography::CHashDigest_SHA256 Result;
 				auto nBytes = IncrementalHMAC.f_Finalize(Result.f_GetData(), Result.mc_Size);
@@ -65,7 +65,7 @@ struct CMessageAuthentication_Tests : public NMib::NTest::CTest
 				DMibTestPath("IncorrectKey");
 				Key[0] = 'A';
 				CIncrementalHMAC IncrementalHMAC(EDigestType_SHA256, Key);
-				IncrementalHMAC.f_Update(PlainText.f_GetArray(), Lengths[0]);
+				IncrementalHMAC.f_Update(PlainText.f_GetArray(), s_Lengths[0]);
 				NCryptography::CHashDigest_SHA256 Result;
 				auto nBytes = IncrementalHMAC.f_Finalize(Result.f_GetData(), Result.mc_Size);
 				DMibExpect(Result, !=, ContinuousHMAC);

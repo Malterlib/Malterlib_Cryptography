@@ -18,9 +18,9 @@ struct CPublicCrypto_Tests : public NMib::NTest::CTest
 	{
 		DMibTestSuite("Public Key Signing and Verifying")
 		{
-			static char const *Text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
+			static char const *s_pText = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
 			CSecureByteVector Message;
-			NMemory::fg_MemCopy(Message.f_GetArray(fg_StrLen(Text)), Text, fg_StrLen(Text));
+			NMemory::fg_MemCopy(Message.f_GetArray(fg_StrLen(s_pText)), s_pText, fg_StrLen(s_pText));
 			CSecureByteVector Truncated(Message);
 			Truncated.f_SetLen(Truncated.f_GetLen() - 1);
 

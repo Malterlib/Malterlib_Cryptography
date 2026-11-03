@@ -66,8 +66,8 @@ namespace NMib::NCryptography
 
 		NContainer::CByteVector Proof;
 		Proof.f_SetLen(_Keys.m_ClientKey.f_GetLen());
-		for (umint i = 0; i < Proof.f_GetLen(); ++i)
-			Proof[i] = _Keys.m_ClientKey[i] ^ ClientSignature.f_GetData()[i];
+		for (umint iByte = 0; iByte < Proof.f_GetLen(); ++iByte)
+			Proof[iByte] = _Keys.m_ClientKey[iByte] ^ ClientSignature.f_GetData()[iByte];
 		return Proof;
 	}
 

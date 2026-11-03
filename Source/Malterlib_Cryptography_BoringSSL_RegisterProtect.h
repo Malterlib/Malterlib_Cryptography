@@ -46,8 +46,10 @@ namespace NMib::NCryptography::NBoringSSL
 			fg_Malterlib_Network_SSL_RestoreRegisters_X86_64(&m_RegisterState);
 		}
 
-		DMibThreadLocalScopeDebugMember;
 		CRegisterState m_RegisterState;
+
+	private:
+		DMibThreadLocalScopeDebugMember;
 	};
 
 	template <typename t_FToRun>

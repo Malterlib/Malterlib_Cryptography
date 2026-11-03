@@ -23,16 +23,16 @@ namespace
 				CHash Hash;
 				CHashDigest Digest;
 
-				for (umint i = 0; i < t_nTests; ++i)
+				for (umint iTest = 0; iTest < t_nTests; ++iTest)
 				{
 					Hash.f_Reset();
-					umint Len = NMib::NStr::fg_StrLen(t_pTests[i]);
-					for (umint j = 0; j < t_pTestRepeat[i]; ++j)
-						Hash.f_AddData(t_pTests[i], Len);
+					umint Len = NMib::NStr::fg_StrLen(t_pTests[iTest]);
+					for (umint iRepeat = 0; iRepeat < t_pTestRepeat[iTest]; ++iRepeat)
+						Hash.f_AddData(t_pTests[iTest], Len);
 
 					Digest = CHashDigest(Hash);
 					NMib::NStr::CStr DigestString = Digest.f_GetString().f_LowerCase();
-					DMibExpect(DigestString, ==, t_pTestDigests[i])(ETestFlag_Aggregated);
+					DMibExpect(DigestString, ==, t_pTestDigests[iTest])(ETestFlag_Aggregated);
 				}
 #if 0
 				{

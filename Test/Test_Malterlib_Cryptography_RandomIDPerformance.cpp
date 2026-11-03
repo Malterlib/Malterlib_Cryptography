@@ -9,9 +9,9 @@
 namespace NMib::NCryptography
 {
 #if defined(DMibDebug) || defined(DMibSanitizerEnabled)
-	static constexpr umint mc_nIterations = 10'000;
+	static constexpr umint gc_nIterations = 10'000;
 #else
-	static constexpr umint mc_nIterations = 100'000;
+	static constexpr umint gc_nIterations = 100'000;
 #endif
 
 	namespace
@@ -27,7 +27,7 @@ namespace NMib::NCryptography
 			inline_never void fp_MeasureGenerator(CTestPerformanceMeasure &_Measure, tf_FGenerator const &_fGenerator, umint _nIterations)
 			{
 				DMibTestScopeMeasure(_Measure, _nIterations);
-				for (umint i = 0; i < _nIterations; ++i)
+				for (umint iIteration = 0; iIteration < _nIterations; ++iIteration)
 					_fGenerator();
 			}
 
@@ -46,7 +46,7 @@ namespace NMib::NCryptography
 							{
 								return fg_FastRandomID(17);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_AddBaseline(FastMeasure);
@@ -59,7 +59,7 @@ namespace NMib::NCryptography
 							{
 								return fg_RandomID(17);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_Add(SecureMeasure);
@@ -72,7 +72,7 @@ namespace NMib::NCryptography
 							{
 								return fg_HighEntropyRandomID(17);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_Add(HighEntropyMeasure);
@@ -95,7 +95,7 @@ namespace NMib::NCryptography
 							{
 								return fg_FastRandomID(64);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_AddBaseline(FastMeasure);
@@ -108,7 +108,7 @@ namespace NMib::NCryptography
 							{
 								return fg_RandomID(64);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_Add(SecureMeasure);
@@ -121,7 +121,7 @@ namespace NMib::NCryptography
 							{
 								return fg_HighEntropyRandomID(64);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_Add(HighEntropyMeasure);
@@ -144,7 +144,7 @@ namespace NMib::NCryptography
 							{
 								return fg_FastRandomID("0123456789abcdef", 32);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_AddBaseline(FastMeasure);
@@ -157,7 +157,7 @@ namespace NMib::NCryptography
 							{
 								return fg_RandomID("0123456789abcdef", 32);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_Add(SecureMeasure);
@@ -170,7 +170,7 @@ namespace NMib::NCryptography
 							{
 								return fg_HighEntropyRandomID("0123456789abcdef", 32);
 							}
-							, mc_nIterations
+							, gc_nIterations
 						)
 					;
 					PerfTest.f_Add(HighEntropyMeasure);

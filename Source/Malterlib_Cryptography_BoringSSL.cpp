@@ -86,10 +86,10 @@ extern "C"
 #endif
 	void *OPENSSL_zalloc(size_t size)
 	{
-		void *ret = OPENSSL_malloc(size);
-		if (ret != NULL)
-			memset(ret, 0, size);
-		return ret;
+		void *pMemory = OPENSSL_malloc(size);
+		if (pMemory != NULL)
+			memset(pMemory, 0, size);
+		return pMemory;
 	}
 
 	void *OPENSSL_calloc(size_t num, size_t size)
@@ -499,9 +499,9 @@ namespace NMib::NCryptography::NBoringSSL
 
 			ch8 const *pData = (ch8 const *)_pTime->data;
 
-			for (int i = 0; i < 10; ++i)
+			for (int iChar = 0; iChar < 10; ++iChar)
 			{
-				if (!NStr::fg_CharIsNumber(pData[i]))
+				if (!NStr::fg_CharIsNumber(pData[iChar]))
 					return NTime::CTime::fs_StartOfTime();
 			}
 
@@ -531,9 +531,9 @@ namespace NMib::NCryptography::NBoringSSL
 
 			ch8 const *pData = (ch8 const *)_pTime->data;
 
-			for (int i = 0; i < 12; ++i)
+			for (int iChar = 0; iChar < 12; ++iChar)
 			{
-				if (!NStr::fg_CharIsNumber(pData[i]))
+				if (!NStr::fg_CharIsNumber(pData[iChar]))
 					return NTime::CTime::fs_StartOfTime();
 			}
 

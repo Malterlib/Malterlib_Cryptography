@@ -28,9 +28,9 @@ namespace NMib::NCryptography
 	template <umint t_Size, typename t_CHash>
 	constexpr bool TCMessageDigest<t_Size, t_CHash>::f_IsCleared() const
 	{
-		for (umint i = 0; i < t_Size; ++i)
+		for (umint iByte = 0; iByte < t_Size; ++iByte)
 		{
-			if (mp_Data[i] != 0)
+			if (mp_Data[iByte] != 0)
 				return false;
 		}
 		return true;
@@ -129,11 +129,11 @@ namespace NMib::NCryptography
 		umint IntSize = sizeof(Temp);
 		umint DigestSize = t_Size;
 
-		for (umint i = 0; i < DigestSize; ++i)
+		for (umint iByte = 0; iByte < DigestSize; ++iByte)
 		{
-			umint IntPos = i % IntSize;
+			umint IntPos = iByte % IntSize;
 			uint8 CurrentInt = (Temp >> (IntPos * 8)) & 0xff;
-			uint8 CurrentDigest = mp_Data[i];
+			uint8 CurrentDigest = mp_Data[iByte];
 			uint8 Xored = CurrentInt ^ CurrentDigest;
 			Temp = (Temp & ((~(tf_CIntType(0xff) << (IntPos * 8))))) | (tf_CIntType(Xored) << (IntPos * 8));
 		}
@@ -164,8 +164,8 @@ namespace NMib::NCryptography
 	NStr::CStr TCMessageDigest<t_Size, t_CHash>::f_GetString() const
 	{
 		NStr::CStr ReturnStr;
-		for (umint i = 0; i < t_Size; ++i)
-			ReturnStr += NStr::CStr::CFormat("{nfh,sf0,sj2}") << mp_Data[i];
+		for (umint iByte = 0; iByte < t_Size; ++iByte)
+			ReturnStr += NStr::CStr::CFormat("{nfh,sf0,sj2}") << mp_Data[iByte];
 		return ReturnStr;
 	}
 
@@ -173,8 +173,8 @@ namespace NMib::NCryptography
 	template <typename tf_CStr>
 	void TCMessageDigest<t_Size, t_CHash>::f_Format(tf_CStr &o_String) const
 	{
-		for (umint i = 0; i < t_Size; ++i)
-			o_String += typename tf_CStr::CFormat("{nfh,sf0,sj2}") << mp_Data[i];
+		for (umint iByte = 0; iByte < t_Size; ++iByte)
+			o_String += typename tf_CStr::CFormat("{nfh,sf0,sj2}") << mp_Data[iByte];
 	}
 
 	template <umint t_Size, typename t_CHash>
@@ -183,7 +183,7 @@ namespace NMib::NCryptography
 		NMemory::fg_MemClear(mp_Data);
 		ch8 const *pParse = _pStr;
 
-		for (umint i = 0; i < t_Size; ++i)
+		for (umint iByte = 0; iByte < t_Size; ++iByte)
 		{
 			ch8 Temp[5];
 			Temp[0] = '0';
@@ -203,7 +203,7 @@ namespace NMib::NCryptography
 			Temp[3] = *pParse;
 			++pParse;
 
-			mp_Data[i] = NStr::fg_StrToInt(Temp, 0);
+			mp_Data[iByte] = NStr::fg_StrToInt(Temp, 0);
 		}
 	}
 }

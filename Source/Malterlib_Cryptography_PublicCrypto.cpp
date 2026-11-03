@@ -73,8 +73,8 @@ namespace NMib::NCryptography
 
 					Output.f_SetLen(ExpectedBytes);
 
-					for (umint i = 0; i < (ExpectedBytes - nBytes); ++i)
-						Output[i] = 0;
+					for (umint iByte = 0; iByte < (ExpectedBytes - nBytes); ++iByte)
+						Output[iByte] = 0;
 
 					BN_bn2bin(_pBigNum, Output.f_GetArray() + (ExpectedBytes - nBytes));
 				}

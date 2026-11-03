@@ -37,7 +37,7 @@ namespace
 				{
 					umint nIDs = _nChars * 100;
 					TCMap<CStrSecure, zmint> Distribution;
-					for (umint i = 0; i < nIDs; ++i)
+					for (umint iID = 0; iID < nIDs; ++iID)
 						++Distribution[tf_fGetID(1)];
 					DMibExpect(Distribution.f_GetLen(), ==, _nChars);
 				};

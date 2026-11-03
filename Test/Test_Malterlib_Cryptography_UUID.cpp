@@ -40,9 +40,9 @@ namespace
 				NMib::NCryptography::CUniversallyUniqueIdentifier RootNamespace("{C2EA34BB-5C04-4945-A798-D5685B7CD2A8}");
 				NMib::NCryptography::CUniversallyUniqueIdentifier StringHash0(EUniversallyUniqueIdentifierGenerate_StringHash, RootNamespace, "Test0");
 				NMib::NCryptography::CUniversallyUniqueIdentifier StringHash1(EUniversallyUniqueIdentifierGenerate_StringHash, RootNamespace, "Test1");
-				constexpr NMib::NCryptography::CUniversallyUniqueIdentifier RootNamespaceConst(0xC2EA34BBu, 0x5C04, 0x4945, 0xA798, constant_uint64(0xD5685B7CD2A8));
+				constexpr NMib::NCryptography::CUniversallyUniqueIdentifier c_RootNamespace(0xC2EA34BBu, 0x5C04, 0x4945, 0xA798, constant_uint64(0xD5685B7CD2A8));
 
-				DMibExpect(RootNamespaceConst, ==, RootNamespace);
+				DMibExpect(c_RootNamespace, ==, RootNamespace);
 
 				DMibExpect(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_Registry), ==, "{C2EA34BB-5C04-4945-A798-D5685B7CD2A8}");
 				DMibExpect(RootNamespace.f_GetAsString(EUniversallyUniqueIdentifierFormat_Bare), ==, "C2EA34BB-5C04-4945-A798-D5685B7CD2A8");

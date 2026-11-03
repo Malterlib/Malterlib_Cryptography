@@ -350,7 +350,7 @@ namespace NMib::NCryptography
 			(
 				[&]() -> decltype(auto)
 				{
-					NContainer::TCVector<NStr::CStr> lHostnames;
+					NContainer::TCVector<NStr::CStr> Hostnames;
 
 					X509 *pCertificate = fg_LoadCertificate(_CertificateData);
 					auto Cleanup0 = g_OnScopeExit / [&]
@@ -394,7 +394,7 @@ namespace NMib::NCryptography
 											OPENSSL_free(pBuffer);
 										}
 									;
-									lHostnames.f_Insert(NStr::CStr(pBuffer));
+									Hostnames.f_Insert(NStr::CStr(pBuffer));
 								}
 								break;
 							case GEN_IPADD:
@@ -406,7 +406,7 @@ namespace NMib::NCryptography
 										IPAddress = NStr::CStr::CFormat("{}.{}.{}.{}") << pBuffer[0] << pBuffer[1] << pBuffer[2] << pBuffer[3];
 									else if (pName->d.ip->length == 16)
 									{
-										for (int i = 0; i < 8; ++i)
+										for (int iGroup = 0; iGroup < 8; ++iGroup)
 										{
 											if (IPAddress.f_IsEmpty())
 												IPAddress += NStr::CStr::CFormat("{nfh,sj8,sf0}") << (pBuffer[0] << 8 | pBuffer[1]);
@@ -418,7 +418,7 @@ namespace NMib::NCryptography
 									}
 
 									if (!IPAddress.f_IsEmpty())
-										lHostnames.f_Insert(IPAddress);
+										Hostnames.f_Insert(IPAddress);
 								}
 								break;
 							}
@@ -434,11 +434,11 @@ namespace NMib::NCryptography
 							char CommonName[256];
 							int nChars = X509_NAME_get_text_by_NID(pSubject, NID_commonName, CommonName, sizeof(CommonName));
 							if (nChars > 0)
-								lHostnames.f_Insert(NStr::CStr(CommonName, nChars));
+								Hostnames.f_Insert(NStr::CStr(CommonName, nChars));
 						}
 					}
 
-					return lHostnames;
+					return Hostnames;
 				}
 			)
 		;
@@ -555,8 +555,8 @@ namespace NMib::NCryptography
 				[&]() -> decltype(auto)
 				{
 					NStr::CStr Hostnames;
-					NContainer::TCVector<NStr::CStr> lHostNames = fs_GetCertificateHostnames(_CertificateData);
-					for (auto Iter = lHostNames.f_GetIterator(); Iter; ++Iter)
+					NContainer::TCVector<NStr::CStr> HostnameList = fs_GetCertificateHostnames(_CertificateData);
+					for (auto Iter = HostnameList.f_GetIterator(); Iter; ++Iter)
 					{
 						if (Hostnames.f_IsEmpty())
 							Hostnames = (*Iter);
@@ -812,9 +812,9 @@ namespace NMib::NCryptography
 						}
 					;
 
-					for (umint i = 1; i < _CertificateChain.f_GetLen(); ++i)
+					for (umint iCertificate = 1; iCertificate < _CertificateChain.f_GetLen(); ++iCertificate)
 					{
-						X509 *pIntermediate = fg_LoadCertificate(_CertificateChain[i]);
+						X509 *pIntermediate = fg_LoadCertificate(_CertificateChain[iCertificate]);
 
 						ERR_clear_error();
 						if (!sk_X509_push(pUntrusted, pIntermediate))
@@ -883,9 +883,9 @@ namespace NMib::NCryptography
 							}
 
 							long nIntermediates = 0;
-							for (size_t i = 1; i + 1 < nChain; ++i)
+							for (size_t iCertificate = 1; iCertificate + 1 < nChain; ++iCertificate)
 							{
-								if (!(X509_get_extension_flags(sk_X509_value(pBuiltChain, i)) & EXFLAG_SI))
+								if (!(X509_get_extension_flags(sk_X509_value(pBuiltChain, iCertificate)) & EXFLAG_SI))
 									++nIntermediates;
 							}
 
@@ -915,11 +915,11 @@ namespace NMib::NCryptography
 						// restriction. The anchor's own signature vouches for nothing and is left out
 						if (!_VerifyOptions.m_AllowedSignatureDigests.f_IsEmpty())
 						{
-							for (size_t i = 1; i + 1 < nChain; ++i)
+							for (size_t iCertificate = 1; iCertificate + 1 < nChain; ++iCertificate)
 							{
 								ASN1_BIT_STRING const *pSignature = nullptr;
 								X509_ALGOR const *pSignatureAlgorithm = nullptr;
-								X509_get0_signature(&pSignature, &pSignatureAlgorithm, sk_X509_value(pBuiltChain, i));
+								X509_get0_signature(&pSignature, &pSignatureAlgorithm, sk_X509_value(pBuiltChain, iCertificate));
 
 								if (!fg_DigestNIDMatchesAllowed(fg_GetSignatureDigestNID(pSignatureAlgorithm), _VerifyOptions.m_AllowedSignatureDigests))
 								{
@@ -936,8 +936,8 @@ namespace NMib::NCryptography
 						o_pVerifiedChain->f_Clear();
 
 						STACK_OF(X509) * pVerifiedChain = X509_STORE_CTX_get0_chain(pContext);
-						for (size_t i = 0; i < sk_X509_num(pVerifiedChain); ++i)
-							o_pVerifiedChain->f_Insert(fg_ConvertX509ToBinary(sk_X509_value(pVerifiedChain, i)));
+						for (size_t iCertificate = 0; iCertificate < sk_X509_num(pVerifiedChain); ++iCertificate)
+							o_pVerifiedChain->f_Insert(fg_ConvertX509ToBinary(sk_X509_value(pVerifiedChain, iCertificate)));
 					}
 
 					return true;

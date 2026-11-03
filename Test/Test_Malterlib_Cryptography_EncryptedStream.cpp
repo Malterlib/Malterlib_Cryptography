@@ -29,11 +29,11 @@ namespace
 		{
 			DMibTestSuite("Encrypted Stream")
 			{
-				static uint8 const *KeyBytes = (uint8 const *)"abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
-				umint KeyBytesLen = fg_StrLen(KeyBytes);
+				static uint8 const *s_pKeyBytes = (uint8 const *)"abcdefghijklmnopqrstuvwxyz012345abcdefghijklmnopqrstuvwxyz012345";
+				umint KeyBytesLen = fg_StrLen(s_pKeyBytes);
 				CStr ClearText = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.";
 				CByteVector Buffer;
-				CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
+				CKeyExpansion KeyExpansion{CSecureByteVector(s_pKeyBytes, KeyBytesLen), {}};
 
 				{
 					DMibTestPath("Secure byte vector Key and IV");
@@ -60,9 +60,9 @@ namespace
 
 				{
 					DMibTestPath("Password and salt");
-					static char const *KeyBytes = "abcdefghijk";
+					static char const *s_pKeyBytes = "abcdefghijk";
 					CSecureByteVector Salt{0, 1, 2, 3};
-					CKeyExpansion KeyExpansion{KeyBytes, Salt, CKeyDerivationSettings_Scrypt{}, {}};
+					CKeyExpansion KeyExpansion{s_pKeyBytes, Salt, CKeyDerivationSettings_Scrypt{}, {}};
 
 					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
@@ -319,7 +319,7 @@ namespace
 
 						bool bCanChangePosition = CipherKey != ECryptoType_AES_256_OFB && CipherKey != ECryptoType_AES_128_OFB;
 
-						CKeyExpansion KeyExpansion{CSecureByteVector(KeyBytes, KeyBytesLen), {}};
+						CKeyExpansion KeyExpansion{CSecureByteVector(s_pKeyBytes, KeyBytesLen), {}};
 
 						auto HMAC = fGetHMAC(CipherKey);
 						auto HMACKey = KeyExpansion.f_GetHMACKey(HMAC);

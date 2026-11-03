@@ -749,10 +749,10 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				DMibExpect(VerifiedChain.f_GetLen(), ==, umint(2));
 
 				CStr UnrelatedFingerprint = CCertificate::fs_GetCertificateFingerprint(UnrelatedCertificateData);
-				for (umint i = 0; i < VerifiedChain.f_GetLen(); ++i)
+				for (umint iCertificate = 0; iCertificate < VerifiedChain.f_GetLen(); ++iCertificate)
 				{
-					DMibTestPath("{}"_f << i);
-					DMibExpect(CCertificate::fs_GetCertificateFingerprint(VerifiedChain[i]), !=, UnrelatedFingerprint);
+					DMibTestPath("{}"_f << iCertificate);
+					DMibExpect(CCertificate::fs_GetCertificateFingerprint(VerifiedChain[iCertificate]), !=, UnrelatedFingerprint);
 				}
 			}
 

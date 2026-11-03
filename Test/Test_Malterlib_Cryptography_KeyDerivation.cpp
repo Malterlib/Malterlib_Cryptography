@@ -183,8 +183,8 @@ private:
 
 		CSecureByteVector Bytes;
 		umint Len = fg_StrLen(_pHex);
-		for (umint i = 0; i + 1 < Len; i += 2)
-			Bytes.f_Insert(uint8((fDigit(_pHex[i]) << 4) | fDigit(_pHex[i + 1])));
+		for (umint iChar = 0; iChar + 1 < Len; iChar += 2)
+			Bytes.f_Insert(uint8((fDigit(_pHex[iChar]) << 4) | fDigit(_pHex[iChar + 1])));
 		return Bytes;
 	}
 

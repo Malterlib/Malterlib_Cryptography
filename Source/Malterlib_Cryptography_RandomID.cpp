@@ -92,7 +92,7 @@ namespace NMib::NCryptography
 
 			// Use ChaCha20-based secure random (fast and cryptographically secure)
 			CUniformIntDistributionSecure RandomDistribution(gc_nChars);
-			for (umint i = 0; i < _Len; ++i)
+			for (umint iChar = 0; iChar < _Len; ++iChar)
 				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
@@ -106,7 +106,7 @@ namespace NMib::NCryptography
 			NStr::CStr::CAppender Appender(Return);
 
 			CUniformIntDistributionHighEntropy RandomDistribution(gc_nChars);
-			for (umint i = 0; i < _Len; ++i)
+			for (umint iChar = 0; iChar < _Len; ++iChar)
 				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
@@ -124,7 +124,7 @@ namespace NMib::NCryptography
 
 			// Use ChaCha20-based secure random (fast and cryptographically secure)
 			CUniformIntDistributionSecure RandomDistribution(nChars);
-			for (umint i = 0; i < _Len; ++i)
+			for (umint iChar = 0; iChar < _Len; ++iChar)
 				Appender += _pCharacters[RandomDistribution()];
 		}
 
@@ -141,7 +141,7 @@ namespace NMib::NCryptography
 			NStr::CStrSecure::CAppender Appender(Return);
 
 			CUniformIntDistributionHighEntropy RandomDistribution(nChars);
-			for (umint i = 0; i < _Len; ++i)
+			for (umint iChar = 0; iChar < _Len; ++iChar)
 				Appender += _pCharacters[RandomDistribution()];
 		}
 
@@ -156,7 +156,7 @@ namespace NMib::NCryptography
 
 			// Use fast XorShift RNG (not cryptographically secure, but very fast)
 			CUniformIntDistribution RandomDistribution(gc_nChars);
-			for (umint i = 0; i < _Len; ++i)
+			for (umint iChar = 0; iChar < _Len; ++iChar)
 				Appender += gc_UnmistakableChars[RandomDistribution()];
 		}
 
@@ -174,7 +174,7 @@ namespace NMib::NCryptography
 
 			// Use fast XorShift RNG (not cryptographically secure, but very fast)
 			CUniformIntDistribution RandomDistribution(nChars);
-			for (umint i = 0; i < _Len; ++i)
+			for (umint iChar = 0; iChar < _Len; ++iChar)
 				Appender += _pCharacters[RandomDistribution()];
 		}
 
