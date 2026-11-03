@@ -22,6 +22,7 @@ namespace NMib::NCryptography
 
 		struct CRandomIDPerformance_Tests : public CTest
 		{
+		private:
 			template <typename tf_FGenerator>
 			inline_never void fp_MeasureGenerator(CTestPerformanceMeasure &_Measure, tf_FGenerator const &_fGenerator, umint _nIterations)
 			{
@@ -30,6 +31,7 @@ namespace NMib::NCryptography
 					_fGenerator();
 			}
 
+		public:
 			void f_TestShortIDs()
 			{
 				DMibTestSuite("Short IDs (17 chars)")

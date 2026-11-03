@@ -202,6 +202,7 @@ namespace
 
 	struct CZeroCopyTLS_Tests : public NMib::NTest::CTest
 	{
+	private:
 		void fp_TestSealGather(CTLSPair &_Pair, CByteVector const &_Payload, umint _nFragments)
 		{
 			auto Fragments = fg_SplitInput(_Payload.f_GetArray(), _Payload.f_GetLen(), _nFragments);
@@ -692,6 +693,7 @@ namespace
 			};
 		}
 
+	public:
 		void f_DoTests()
 		{
 			fp_TestVersion("TLS 1.2", TLS1_2_VERSION);
