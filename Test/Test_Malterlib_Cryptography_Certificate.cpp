@@ -22,7 +22,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 		{
 			CCertificate::fs_RegisterExtension("1.3.6.1.4.1.47722.1.2", "MalterlibTest", "Malterlib Test");
 
-			CPublicKeySetting TestKeySetting = CPublicKeySettings_EC_secp256r1{};
+			CPublicKeySetting TestKeySetting = CPublicKeySettings_EC_Secp256r1{};
 			CByteVector ServerPublicCertificateData;
 			CSecureByteVector ServerPrivateKeyData;
 			CCertificateOptions ServerOptions;
@@ -103,7 +103,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 
 		DMibTestSuite("Chain Verification")
 		{
-			CPublicKeySetting TestKeySetting = CPublicKeySettings_EC_secp256r1{};
+			CPublicKeySetting TestKeySetting = CPublicKeySettings_EC_Secp256r1{};
 
 			// An explicitly pinned anchor needs no CA:TRUE extension for path building.
 			CByteVector CACertificateData;
@@ -376,7 +376,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				// The verifier must reject an unknown critical extension even on a directly pinned leaf.
 				CCertificate::fs_RegisterExtension("1.3.6.1.4.1.47722.1.3", "MalterlibTestCritical", "Malterlib Test Critical");
 
-				CPublicKeySetting CriticalKeySetting = CPublicKeySettings_EC_secp256r1{};
+				CPublicKeySetting CriticalKeySetting = CPublicKeySettings_EC_Secp256r1{};
 
 				auto fGenerate = [&](bool _bCritical, CByteVector &o_CertificateData)
 					{
@@ -688,7 +688,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				DMibTestPath("Key Type And Digest Whitelist");
 
 				CCertificateVerifyOptions MatchingOptions;
-				MatchingOptions.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_secp256r1{});
+				MatchingOptions.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_Secp256r1{});
 				MatchingOptions.m_AllowedSignatureDigests.f_Insert(EDigestType_SHA256);
 
 				NStr::CStr Error;
@@ -699,7 +699,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				;
 
 				CCertificateVerifyOptions WrongKeyType;
-				WrongKeyType.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_secp521r1{});
+				WrongKeyType.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_Secp521r1{});
 				DMibExpectFalse
 					(
 						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, WrongKeyType, nullptr, Error)

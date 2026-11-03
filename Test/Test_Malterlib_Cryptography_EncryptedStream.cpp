@@ -37,7 +37,7 @@ namespace
 
 				{
 					DMibTestPath("Secure byte vector Key and IV");
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
@@ -64,7 +64,7 @@ namespace
 					CSecureByteVector Salt{0, 1, 2, 3};
 					CKeyExpansion KeyExpansion{KeyBytes, Salt, CKeyDerivationSettings_Scrypt{}, {}};
 
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
@@ -81,7 +81,7 @@ namespace
 
 				{
 					DMibTestPath("Detect tampering");
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
@@ -104,7 +104,7 @@ namespace
 
 				{
 					DMibTestPath("Changing buffer size");
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					// Unfortunately, we cannot give these errors until the stream is opened and we have initialized the cipher.
@@ -137,7 +137,7 @@ namespace
 
 				{
 					DMibTestPath("Pure write");
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_SetBufferSize(16);
@@ -155,7 +155,7 @@ namespace
 
 				{
 					DMibTestPath("Random access reads");
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);
@@ -209,7 +209,7 @@ namespace
 
 				{
 					DMibTestPath("First write, then random access reads");
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_SetBufferSize(16);
@@ -263,7 +263,7 @@ namespace
 
 				{
 					DMibTestPath("Streams shorter than crypto block size");
-					CBinaryStreamMemory<> Stream;
+					TCBinaryStreamMemory<> Stream;
 					TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(), EDigestType_SHA512, KeyExpansion.f_GetHMACKey(EDigestType_SHA512));
 
 					EncryptedStream.f_SetBufferSize(16);
@@ -324,7 +324,7 @@ namespace
 						auto HMAC = fGetHMAC(CipherKey);
 						auto HMACKey = KeyExpansion.f_GetHMACKey(HMAC);
 
-						CBinaryStreamMemory<> Stream;
+						TCBinaryStreamMemory<> Stream;
 						TCBinaryStream_Encrypted<CBinaryStream *> EncryptedStream(KeyExpansion.f_GetKeyIV(CipherKey), HMAC, HMACKey);
 
 						EncryptedStream.f_Open(&Stream, NMib::NFile::EFileOpen_Write);

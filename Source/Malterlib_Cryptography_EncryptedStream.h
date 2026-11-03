@@ -45,10 +45,7 @@ namespace NMib::NCryptography
 		umint fp_PrepareBlock(NStream::CFilePos _Pos, bool _bWrite);
 		decltype(auto) fp_GetParentStream() const;
 
-		enum
-		{
-			EDefaultBufferSize = 8192
-		};
+		static constexpr aint mc_DefaultBufferSize = 8192;
 
 		t_CParentStream mp_Stream = t_CParentStream();
 		NStorage::TCUniquePointer<CIncrementalEncrypt> mp_pEncryptContext;
@@ -64,7 +61,7 @@ namespace NMib::NCryptography
 		NStream::CFilePos mp_LastLoaded = 0;
 		NStream::CFilePos mp_FileLen = 0;
 		NStream::CFilePos mp_EncryptedFileLen = 0;
-		umint mp_BufferSize = EDefaultBufferSize;
+		umint mp_BufferSize = mc_DefaultBufferSize;
 		umint mp_BlockSize;
 
 		EDigestType mp_HMAC = EDigestType_None;

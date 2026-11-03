@@ -360,9 +360,9 @@ namespace NMib::NCryptography::NBoringSSL
 				pRSA = nullptr;
 			}
 			break;
-		case EPublicKeyType::mc_EC_secp256r1:
-		case EPublicKeyType::mc_EC_secp384r1:
-		case EPublicKeyType::mc_EC_secp521r1:
+		case EPublicKeyType::mc_EC_Secp256r1:
+		case EPublicKeyType::mc_EC_Secp384r1:
+		case EPublicKeyType::mc_EC_Secp521r1:
 		case EPublicKeyType::mc_EC_X25519:
 			{
 				ERR_clear_error();
@@ -371,9 +371,9 @@ namespace NMib::NCryptography::NBoringSSL
 				int CurveName = NID_secp521r1;
 				switch (_Options.m_KeySetting.f_GetTypeID())
 				{
-				case EPublicKeyType::mc_EC_secp256r1: CurveName = NID_X9_62_prime256v1; break;
-				case EPublicKeyType::mc_EC_secp384r1: CurveName = NID_secp384r1; break;
-				case EPublicKeyType::mc_EC_secp521r1: CurveName = NID_secp521r1; break;
+				case EPublicKeyType::mc_EC_Secp256r1: CurveName = NID_X9_62_prime256v1; break;
+				case EPublicKeyType::mc_EC_Secp384r1: CurveName = NID_secp384r1; break;
+				case EPublicKeyType::mc_EC_Secp521r1: CurveName = NID_secp521r1; break;
 				case EPublicKeyType::mc_EC_X25519: CurveName = NID_X25519; break;
 				default: DMibNeverGetHere; break;
 				}
@@ -603,15 +603,15 @@ namespace NMib::NCryptography::NBoringSSL
 				if (KeyType == EVP_PKEY_RSA && uint32(EVP_PKEY_bits(_pKey)) >= Setting.f_Get<EPublicKeyType::mc_RSA>().m_KeyLength)
 					return true;
 				break;
-			case EPublicKeyType::mc_EC_secp256r1:
+			case EPublicKeyType::mc_EC_Secp256r1:
 				if (KeyType == EVP_PKEY_EC && CurveNID == NID_X9_62_prime256v1)
 					return true;
 				break;
-			case EPublicKeyType::mc_EC_secp384r1:
+			case EPublicKeyType::mc_EC_Secp384r1:
 				if (KeyType == EVP_PKEY_EC && CurveNID == NID_secp384r1)
 					return true;
 				break;
-			case EPublicKeyType::mc_EC_secp521r1:
+			case EPublicKeyType::mc_EC_Secp521r1:
 				if (KeyType == EVP_PKEY_EC && CurveNID == NID_secp521r1)
 					return true;
 				break;

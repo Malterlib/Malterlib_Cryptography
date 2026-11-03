@@ -13,9 +13,9 @@ namespace NMib::NCryptography
 	enum class EPublicKeyType : uint32
 	{
 		mc_RSA
-		, mc_EC_secp256r1
-		, mc_EC_secp384r1
-		, mc_EC_secp521r1
+		, mc_EC_Secp256r1
+		, mc_EC_Secp384r1
+		, mc_EC_Secp521r1
 		, mc_EC_X25519
 	};
 
@@ -32,19 +32,19 @@ namespace NMib::NCryptography
 		uint32 m_KeyLength = 4096;
 	};
 
-	struct CPublicKeySettings_EC_secp256r1
+	struct CPublicKeySettings_EC_Secp256r1
 	{
-		auto operator <=> (CPublicKeySettings_EC_secp256r1 const &_Right) const noexcept = default;
+		auto operator <=> (CPublicKeySettings_EC_Secp256r1 const &_Right) const noexcept = default;
 	};
 
-	struct CPublicKeySettings_EC_secp384r1
+	struct CPublicKeySettings_EC_Secp384r1
 	{
-		auto operator <=> (CPublicKeySettings_EC_secp384r1 const &_Right) const noexcept = default;
+		auto operator <=> (CPublicKeySettings_EC_Secp384r1 const &_Right) const noexcept = default;
 	};
 
-	struct CPublicKeySettings_EC_secp521r1
+	struct CPublicKeySettings_EC_Secp521r1
 	{
-		auto operator <=> (CPublicKeySettings_EC_secp521r1 const &_Right) const noexcept = default;
+		auto operator <=> (CPublicKeySettings_EC_Secp521r1 const &_Right) const noexcept = default;
 	};
 
 	struct CPublicKeySettings_EC_X25519
@@ -56,9 +56,9 @@ namespace NMib::NCryptography
 		<
 			EPublicKeyType
 			, NStorage::TCMember<CPublicKeySettings_RSA, EPublicKeyType::mc_RSA>
-			, NStorage::TCMember<CPublicKeySettings_EC_secp256r1, EPublicKeyType::mc_EC_secp256r1>
-			, NStorage::TCMember<CPublicKeySettings_EC_secp384r1, EPublicKeyType::mc_EC_secp384r1>
-			, NStorage::TCMember<CPublicKeySettings_EC_secp521r1, EPublicKeyType::mc_EC_secp521r1>
+			, NStorage::TCMember<CPublicKeySettings_EC_Secp256r1, EPublicKeyType::mc_EC_Secp256r1>
+			, NStorage::TCMember<CPublicKeySettings_EC_Secp384r1, EPublicKeyType::mc_EC_Secp384r1>
+			, NStorage::TCMember<CPublicKeySettings_EC_Secp521r1, EPublicKeyType::mc_EC_Secp521r1>
 			, NStorage::TCMember<CPublicKeySettings_EC_X25519, EPublicKeyType::mc_EC_X25519>
 		>
 	;
@@ -106,7 +106,7 @@ namespace NMib::NCryptography
 			(
 				NContainer::CSecureByteVector &o_PrivateKeyData
 				, NContainer::CSecureByteVector &o_PublicKeyData
-				, CPublicKeySetting const &_KeySetting = CPublicKeySettings_EC_secp521r1{}
+				, CPublicKeySetting const &_KeySetting = CPublicKeySettings_EC_Secp521r1{}
 			)
 		;
 	};

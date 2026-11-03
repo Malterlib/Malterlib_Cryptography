@@ -341,9 +341,9 @@ namespace NMib::NCryptography
 
 					switch (_KeySetting.f_GetTypeID())
 					{
-					case EPublicKeyType::mc_EC_secp256r1:
-					case EPublicKeyType::mc_EC_secp384r1:
-					case EPublicKeyType::mc_EC_secp521r1:
+					case EPublicKeyType::mc_EC_Secp256r1:
+					case EPublicKeyType::mc_EC_Secp384r1:
+					case EPublicKeyType::mc_EC_Secp521r1:
 					case EPublicKeyType::mc_EC_X25519:
 						ERR_clear_error();
 						if (!EVP_PKEY_get0_EC_KEY(pKey)) //Did we get one?
@@ -385,9 +385,9 @@ namespace NMib::NCryptography
 							{
 								switch (EC_GROUP_get_curve_name(EC_KEY_get0_group(pECKey)))
 								{
-								case NID_secp521r1: return CPublicKeySettings_EC_secp521r1{};
-								case NID_secp384r1: return CPublicKeySettings_EC_secp384r1{};
-								case NID_X9_62_prime256v1: return CPublicKeySettings_EC_secp256r1{};
+								case NID_secp521r1: return CPublicKeySettings_EC_Secp521r1{};
+								case NID_secp384r1: return CPublicKeySettings_EC_Secp384r1{};
+								case NID_X9_62_prime256v1: return CPublicKeySettings_EC_Secp256r1{};
 								case NID_X25519: return CPublicKeySettings_EC_X25519{};
 								}
 							}
@@ -416,9 +416,9 @@ namespace NMib::NCryptography
 				else
 					return EDigestType_SHA256;
 			}
-		case EPublicKeyType::mc_EC_secp521r1: return EDigestType_SHA512;
-		case EPublicKeyType::mc_EC_secp384r1: return EDigestType_SHA384;
-		case EPublicKeyType::mc_EC_secp256r1: return EDigestType_SHA256;
+		case EPublicKeyType::mc_EC_Secp521r1: return EDigestType_SHA512;
+		case EPublicKeyType::mc_EC_Secp384r1: return EDigestType_SHA384;
+		case EPublicKeyType::mc_EC_Secp256r1: return EDigestType_SHA256;
 		case EPublicKeyType::mc_EC_X25519: return EDigestType_SHA256;
 		}
 		DMibErrorCryptography("Unsupported key setting");
