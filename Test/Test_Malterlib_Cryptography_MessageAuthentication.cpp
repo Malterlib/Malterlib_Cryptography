@@ -50,9 +50,9 @@ struct CMessageAuthentication_Tests : public NMib::NTest::CTest
 
 				CIncrementalHMAC IncrementalHMAC(EDigestType_SHA256, Key);
 
-				for (int Offset = 0; Offset < s_Lengths[0]; Offset += s_Lengths[Offset])
+				for (int Offset = 0; Offset < s_Lengths[0]; Offset += Length)
 				{
-					int ThisTime = fg_Min(s_Lengths[0] - Offset, s_Lengths[Offset]);
+					int ThisTime = fg_Min(s_Lengths[0] - Offset, Length);
 					IncrementalHMAC.f_Update(PlainText.f_GetArray() + Offset, ThisTime);
 				}
 				NCryptography::CHashDigest_SHA256 Result;
