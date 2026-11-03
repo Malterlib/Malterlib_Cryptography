@@ -12,9 +12,8 @@ using namespace NMib::NStr;
 using namespace NMib::NContainer;
 using namespace NMib::NCryptography;
 
-class CKeyDerivation_Tests : public NMib::NTest::CTest
+struct CKeyDerivation_Tests : public NMib::NTest::CTest
 {
-public:
 	void f_DoTests()
 	{
 		DMibTestSuite("Argon2id")

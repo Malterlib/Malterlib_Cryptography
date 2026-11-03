@@ -12,9 +12,8 @@ using namespace NMib::NStr;
 using namespace NMib::NContainer;
 using namespace NMib::NCryptography;
 
-class CPublicCrypto_Tests : public NMib::NTest::CTest
+struct CPublicCrypto_Tests : public NMib::NTest::CTest
 {
-public:
 	void f_DoTests()
 	{
 		DMibTestSuite("Public Key Signing and Verifying")

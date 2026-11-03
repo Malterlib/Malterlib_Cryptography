@@ -23,9 +23,8 @@ namespace
 	using namespace NMib::NTest;
 	using namespace NMib::NCryptography;
 
-	class CEncryptedStream_Tests : public CTest
+	struct CEncryptedStream_Tests : public CTest
 	{
-	public:
 		void f_DoTests()
 		{
 			DMibTestSuite("Encrypted Stream")

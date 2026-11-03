@@ -9,9 +9,8 @@
 
 namespace NMib::NCryptography
 {
-	class CIncrementalHMAC
+	struct CIncrementalHMAC
 	{
-	public:
 		CIncrementalHMAC(EDigestType _Digest, NContainer::CSecureByteVector const &_Key);
 		~CIncrementalHMAC();
 

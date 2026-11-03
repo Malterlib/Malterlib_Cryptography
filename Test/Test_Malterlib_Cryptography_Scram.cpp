@@ -8,9 +8,8 @@ using namespace NMib::NContainer;
 using namespace NMib::NCryptography;
 using namespace NMib::NStr;
 
-class CScram_Tests : public NMib::NTest::CTest
+struct CScram_Tests : public NMib::NTest::CTest
 {
-public:
 	void f_DoTests()
 	{
 		DMibTestSuite("SCRAM SHA256")

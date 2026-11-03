@@ -14,9 +14,8 @@ using namespace NMib::NStr;
 using namespace NMib::NContainer;
 using namespace NMib::NCryptography;
 
-class CCertificate_Tests : public NMib::NTest::CTest
+struct CCertificate_Tests : public NMib::NTest::CTest
 {
-public:
 	void f_DoTests()
 	{
 		DMibTestSuite("Properties")

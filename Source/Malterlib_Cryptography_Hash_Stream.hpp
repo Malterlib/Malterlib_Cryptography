@@ -236,9 +236,8 @@ namespace NMib::NCryptography
 namespace NMib::NStream
 {
 	template <typename t_CStream, umint t_Size, typename t_CHash>
-	class TCBinaryStreamTypeReference<t_CStream, NCryptography::TCMessageDigest<t_Size, t_CHash>>
+	struct TCBinaryStreamTypeReference<t_CStream, NCryptography::TCMessageDigest<t_Size, t_CHash>>
 	{
-	public:
 		static constexpr void fs_Feed(t_CStream &_Stream, NCryptography::TCMessageDigest<t_Size, t_CHash> const &_Data)
 		{
 			_Stream.f_FeedBytes(_Data.f_GetData(), t_Size);

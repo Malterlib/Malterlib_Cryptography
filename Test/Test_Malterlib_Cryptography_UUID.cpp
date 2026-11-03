@@ -9,9 +9,8 @@ namespace
 {
 	using namespace NMib::NTest;
 
-	class CMisc_Tests : public CTest
+	struct CMisc_Tests : public CTest
 	{
-	public:
 		CMisc_Tests()
 		{
 		}

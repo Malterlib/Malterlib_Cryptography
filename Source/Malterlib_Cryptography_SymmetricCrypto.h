@@ -16,9 +16,8 @@ namespace NMib::NCryptography
 		, ECryptoFlags_UsePadding = DMibBit(3)
 	};
 
-	class CEncryptAES
+	struct CEncryptAES
 	{
-	public:
 		CEncryptAES(CEncryptKeyIV const &_KeyIV);
 		~CEncryptAES();
 
@@ -34,9 +33,8 @@ namespace NMib::NCryptography
 	//
 	// When padding is used, feed the Encrypter all the data (while (!EndOfData) Encrypter.f_{De,En}crypt(Data);) and then call Encrypter.f_FinalizePadded{De,En}crypt
 	// to get the final block from the Encrypter.
-	class CIncrementalEncrypt
+	struct CIncrementalEncrypt
 	{
-	public:
 		CIncrementalEncrypt(ECryptoFlags _Flags, CEncryptKeyIV const &_KeyIV);
 		~CIncrementalEncrypt();
 

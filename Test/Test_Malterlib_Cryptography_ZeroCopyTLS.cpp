@@ -200,9 +200,8 @@ namespace
 		return Payload;
 	}
 
-	class CZeroCopyTLS_Tests : public NMib::NTest::CTest
+	struct CZeroCopyTLS_Tests : public NMib::NTest::CTest
 	{
-	public:
 		void fp_TestSealGather(CTLSPair &_Pair, CByteVector const &_Payload, umint _nFragments)
 		{
 			auto Fragments = fg_SplitInput(_Payload.f_GetArray(), _Payload.f_GetLen(), _nFragments);

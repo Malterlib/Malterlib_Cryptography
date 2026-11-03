@@ -11,9 +11,8 @@
 namespace NMib::NCryptography
 {
 	template <typename t_CParentStream, typename t_CStreamType = NStream::CBinaryStreamDefault>
-	class TCBinaryStream_Encrypted : public t_CStreamType
+	struct TCBinaryStream_Encrypted : public t_CStreamType
 	{
-	public:
 		TCBinaryStream_Encrypted(CEncryptKeyIV const &_KeyIV, EDigestType _HMAC, NContainer::CSecureByteVector const &_HMACKey);
 		~TCBinaryStream_Encrypted();
 

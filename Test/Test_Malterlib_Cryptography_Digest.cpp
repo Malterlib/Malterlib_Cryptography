@@ -11,9 +11,8 @@ namespace
 	using namespace NMib;
 
 	template <typename t_CHash, ch8 const t_pName[], ch8 const *t_pTests[], ch8 const *t_pTestDigests[], umint t_pTestRepeat[], umint t_nTests>
-	class TCTestHash : public NMib::NTest::CTest
+	struct TCTestHash : public NMib::NTest::CTest
 	{
-	public:
 		void f_DoTests()
 		{
 			DMibTestSuite("Digest")

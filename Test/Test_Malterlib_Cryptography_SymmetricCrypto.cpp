@@ -12,9 +12,8 @@ using namespace NMib::NStr;
 using namespace NMib::NContainer;
 using namespace NMib::NCryptography;
 
-class CSymmetricCrypto_Tests : public NMib::NTest::CTest
+struct CSymmetricCrypto_Tests : public NMib::NTest::CTest
 {
-public:
 	CSecureByteVector f_GetRandomBuffer(umint _Len, uint32 _Seed)
 	{
 		CSecureByteVector Buffer;
