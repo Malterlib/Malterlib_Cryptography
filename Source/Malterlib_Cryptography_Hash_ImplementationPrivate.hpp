@@ -9,16 +9,16 @@ namespace NMib::NCryptography
 	TCHashImpl<t_CHashImpl>::TCHashImpl() = default;
 
 	template <typename t_CHashImpl>
-	TCHashImpl<t_CHashImpl>::TCHashImpl(TCHashImpl const &) = default;
+	TCHashImpl<t_CHashImpl>::TCHashImpl(TCHashImpl const &_Other) = default;
 
 	template <typename t_CHashImpl>
-	TCHashImpl<t_CHashImpl>::TCHashImpl(TCHashImpl &&) = default;
+	TCHashImpl<t_CHashImpl>::TCHashImpl(TCHashImpl &&_Other) = default;
 
 	template <typename t_CHashImpl>
-	auto TCHashImpl<t_CHashImpl>::operator = (TCHashImpl const &) -> TCHashImpl & = default;
+	auto TCHashImpl<t_CHashImpl>::operator = (TCHashImpl const &_Other) -> TCHashImpl & = default;
 
 	template <typename t_CHashImpl>
-	auto TCHashImpl<t_CHashImpl>::operator = (TCHashImpl &&) -> TCHashImpl & = default;
+	auto TCHashImpl<t_CHashImpl>::operator = (TCHashImpl &&_Other) -> TCHashImpl & = default;
 
 	template <typename t_CHashImpl>
 	void TCHashImpl<t_CHashImpl>::f_Reset()

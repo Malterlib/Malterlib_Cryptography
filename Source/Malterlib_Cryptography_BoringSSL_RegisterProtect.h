@@ -73,10 +73,10 @@ namespace NMib::NCryptography::NBoringSSL
 		t_FToRun &&mp_fToRun;
 	};
 
-	template <typename t_FToRun>
-	decltype(auto) fg_RunProtectRegisters(t_FToRun &&_fToRun)
+	template <typename tf_FToRun>
+	decltype(auto) fg_RunProtectRegisters(tf_FToRun &&_fToRun)
 	{
-		TCRunProtectedRegistersHelper<t_FToRun &&> RunHelper{NMib::fg_Move(_fToRun)};
+		TCRunProtectedRegistersHelper<tf_FToRun &&> RunHelper{NMib::fg_Move(_fToRun)};
 
 		return RunHelper.f_Run();
 	}
@@ -86,8 +86,8 @@ namespace NMib::NCryptography::NBoringSSL
 
 namespace NMib::NCryptography::NBoringSSL
 {
-	template <typename t_FToRun>
-	inline_always decltype(auto) fg_RunProtectRegisters(t_FToRun &&_fToRun)
+	template <typename tf_FToRun>
+	inline_always decltype(auto) fg_RunProtectRegisters(tf_FToRun &&_fToRun)
 	{
 		return _fToRun();
 	}

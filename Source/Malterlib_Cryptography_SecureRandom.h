@@ -19,8 +19,8 @@ namespace NMib::NCryptography
 		CSecureRandom();
 		~CSecureRandom();
 
-		CSecureRandom(CSecureRandom const &) = delete;
-		CSecureRandom &operator = (CSecureRandom const &) = delete;
+		CSecureRandom(CSecureRandom const &_Other) = delete;
+		CSecureRandom &operator = (CSecureRandom const &_Other) = delete;
 
 		void f_GetBytes(uint8 *_pOut, umint _nBytes);
 
@@ -30,10 +30,10 @@ namespace NMib::NCryptography
 		// Reseed with a predetermined seed (for reproducible sequences, NOT cryptographically secure)
 		void f_InsecureDeterministicReseed(uint64 _Seed);
 
-		template <typename t_CInt>
-		t_CInt f_GetValue()
+		template <typename tf_CInt>
+		tf_CInt f_GetValue()
 		{
-			t_CInt Return;
+			tf_CInt Return;
 			f_GetBytes((uint8 *)&Return, sizeof(Return));
 			return Return;
 		}

@@ -79,8 +79,8 @@ namespace
 			SSL_CTX_free(m_pClientContext);
 		}
 
-		CTLSPair(CTLSPair const &) = delete;
-		CTLSPair &operator = (CTLSPair const &) = delete;
+		CTLSPair(CTLSPair const &_Other) = delete;
+		CTLSPair &operator = (CTLSPair const &_Other) = delete;
 
 		static void fs_Pump(BIO *_pFrom, BIO *_pTo)
 		{

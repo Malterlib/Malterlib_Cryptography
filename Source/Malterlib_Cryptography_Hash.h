@@ -69,10 +69,10 @@ namespace NMib::NCryptography
 		using CMessageDigest = TCMessageDigest<mc_DigestSize, TCHashImpl>;
 
 		TCHashImpl();
-		TCHashImpl(TCHashImpl const &);
-		TCHashImpl(TCHashImpl &&);
-		TCHashImpl &operator = (TCHashImpl const &);
-		TCHashImpl &operator = (TCHashImpl &&);
+		TCHashImpl(TCHashImpl const &_Other);
+		TCHashImpl(TCHashImpl &&_Other);
+		TCHashImpl &operator = (TCHashImpl const &_Other);
+		TCHashImpl &operator = (TCHashImpl &&_Other);
 
 		void f_Reset();
 		inline_small void f_AddData(void const *_pData, umint _Len);

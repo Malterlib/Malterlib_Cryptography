@@ -221,11 +221,11 @@ namespace NMib::NCryptography
 				}
 			;
 
-			auto fAddTrustStore = [&](CFArrayRef pCerts, SecTrustSettingsDomain _Domain)
+			auto fAddTrustStore = [&](CFArrayRef _pCerts, SecTrustSettingsDomain _Domain)
 				{
-					for (umint i = 0; i < CFArrayGetCount(pCerts); ++i)
+					for (umint i = 0; i < CFArrayGetCount(_pCerts); ++i)
 					{
-						SecCertificateRef pCertRef = reinterpret_cast<SecCertificateRef>(const_cast<void *>(CFArrayGetValueAtIndex(pCerts, i)));
+						SecCertificateRef pCertRef = reinterpret_cast<SecCertificateRef>(const_cast<void *>(CFArrayGetValueAtIndex(_pCerts, i)));
 						X509 *pCertificate;
 						if (CSystem::ms_PlatformVersion >= 10'06'00)
 						{
@@ -312,7 +312,7 @@ namespace NMib::NCryptography
 						{
 						}
 					}
-					CFRelease(pCerts);
+					CFRelease(_pCerts);
 				}
 			;
 
