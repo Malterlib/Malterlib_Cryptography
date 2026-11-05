@@ -36,13 +36,15 @@ namespace NMib::NCryptography::NPrivate
 	{
 		struct CSubSystem_Cryptography_Sodium : public CSubSystem
 		{
-			CSubSystem_Cryptography_Sodium()
-			{
-				_sodium_runtime_get_cpu_features();
-				_crypto_generichash_blake2b_pick_best_implementation();
-				_crypto_pwhash_argon2_pick_best_implementation();
-			}
+			CSubSystem_Cryptography_Sodium();
 		};
+
+		CSubSystem_Cryptography_Sodium::CSubSystem_Cryptography_Sodium()
+		{
+			_sodium_runtime_get_cpu_features();
+			_crypto_generichash_blake2b_pick_best_implementation();
+			_crypto_pwhash_argon2_pick_best_implementation();
+		}
 
 		constinit TCSubSystem<CSubSystem_Cryptography_Sodium, ESubSystemDestruction_BeforeMemoryManager> g_SubSystem_Cryptography_Sodium = {DAggregateInit};
 	}

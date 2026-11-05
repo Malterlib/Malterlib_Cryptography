@@ -29,20 +29,23 @@ namespace NMib::NCryptography
 	{
 		struct CCertificateGlobals
 		{
-			CCertificateGlobals()
-			{
-				NBoringSSL::fg_Init();
-			}
-
-			~CCertificateGlobals()
-			{
-				if (m_pSystemCertStore)
-					X509_STORE_free(m_pSystemCertStore);
-			}
+			CCertificateGlobals();
+			~CCertificateGlobals();
 
 			NMib::NThread::CMutual m_SystemCertStoreLock;
 			X509_STORE *m_pSystemCertStore = nullptr;
 		};
+
+		CCertificateGlobals::CCertificateGlobals()
+		{
+			NBoringSSL::fg_Init();
+		}
+
+		CCertificateGlobals::~CCertificateGlobals()
+		{
+			if (m_pSystemCertStore)
+				X509_STORE_free(m_pSystemCertStore);
+		}
 
 		constinit NStorage::TCAggregate<CCertificateGlobals, 129> g_CertificateGlobals = {DAggregateInit};
 	}

@@ -11,8 +11,6 @@ namespace NMib::NCryptography
 	template <EDigestType t_DigestType, umint t_DigestSize>
 	struct TCHashImpl_BoringSSL
 	{
-		static constexpr umint mc_DigestSize = t_DigestSize;
-
 		TCHashImpl_BoringSSL();
 		~TCHashImpl_BoringSSL();
 
@@ -31,6 +29,8 @@ namespace NMib::NCryptography
 		void f_GetDigest(tf_CDigest &o_Digest) &&;
 
 		void f_Reset();
+
+		static constexpr umint mc_DigestSize = t_DigestSize;
 
 	private:
 		void fp_Init();

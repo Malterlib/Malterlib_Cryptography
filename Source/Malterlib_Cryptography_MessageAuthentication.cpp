@@ -13,91 +13,98 @@ namespace NMib::NCryptography
 
 	struct CIncrementalHMAC::CInternal
 	{
-		CInternal(EDigestType _Digest, NContainer::CSecureByteVector const &_Key)
-		{
-			EVP_MD const *pMd = fg_GetDigest(_Digest);
-			umint const RequiredKeyLength = EVP_MD_size(pMd);
-			if (_Key.f_GetLen() < RequiredKeyLength)
-				DMibErrorCryptography(NStr::fg_Format("HMAC key should be at least {} bytes", RequiredKeyLength));
+		CInternal(EDigestType _Digest, NContainer::CSecureByteVector const &_Key);
+		~CInternal();
 
-			fg_RunProtectRegisters
-				(
-					[&]() -> decltype(auto)
-					{
-						ERR_clear_error();
-						if (!(m_pHMACContext = HMAC_CTX_new()))
-							DMibErrorCryptography(fg_GetExceptionStr("Failed to create HMAC context"));
-
-						auto Cleanup = g_OnScopeExit / [&]
-							{
-								this->~CInternal();
-							}
-						;
-
-						ERR_clear_error();
-						if (HMAC_Init_ex(m_pHMACContext, _Key.f_GetArray(), _Key.f_GetLen(), pMd, nullptr) != 1)
-							DMibErrorCryptography(fg_GetExceptionStr("Failed to initialize HMAC context"));
-
-						Cleanup.f_Clear();
-					}
-				)
-			;
-		}
-
-		~CInternal()
-		{
-			HMAC_CTX_free(m_pHMACContext);
-		}
-
-		int32 f_GetHMACSize()
-		{
-			if (!m_pHMACContext)
-				DMibErrorCryptography("No HMAC context. Please initialize before calling f_HMACSize.");
-
-			return (int32)HMAC_size(m_pHMACContext);
-		}
-
-		void f_Update(uint8 const *_pSource, uint32 _SourceLen) const
-		{
-			if (!m_pHMACContext)
-				DMibErrorCryptography("No HMAC context. Please initialize before calling f_Update.");
-
-			return fg_RunProtectRegisters
-				(
-					[&]() -> decltype(auto)
-					{
-						ERR_clear_error();
-						if (HMAC_Update(m_pHMACContext, _pSource, (int)_SourceLen) != 1)
-							DMibErrorCryptography(fg_GetExceptionStr("Failed to update HMAC"));
-					}
-				)
-			;
-		}
-
-		uint32 f_Finalize(uint8 *_pDest, uint32 _DestLen)
-		{
-			if (!m_pHMACContext)
-				DMibErrorCryptography("No HMAC context. Please initialize before calling f_Finalize.");
-			if (_DestLen < HMAC_size(m_pHMACContext))
-				DMibErrorCryptography(NStr::fg_Format("Buffer is too short. The HMAC is {} bytes", HMAC_size(m_pHMACContext)));
-
-			return fg_RunProtectRegisters
-				(
-					[&]() -> decltype(auto)
-					{
-						unsigned int FinalizeLen = 0;
-						ERR_clear_error();
-						if (HMAC_Final(m_pHMACContext, _pDest, &FinalizeLen) != 1)
-							DMibErrorCryptography(fg_GetExceptionStr("Failed to finalize HMAC data"));
-
-						return FinalizeLen;
-					}
-				)
-			;
-		}
+		int32 f_GetHMACSize();
+		void f_Update(uint8 const *_pSource, uint32 _SourceLen) const;
+		uint32 f_Finalize(uint8 *_pDest, uint32 _DestLen);
 
 		HMAC_CTX *m_pHMACContext = nullptr;
 	};
+
+	CIncrementalHMAC::CInternal::CInternal(EDigestType _Digest, NContainer::CSecureByteVector const &_Key)
+	{
+		EVP_MD const *pMd = fg_GetDigest(_Digest);
+		umint const RequiredKeyLength = EVP_MD_size(pMd);
+		if (_Key.f_GetLen() < RequiredKeyLength)
+			DMibErrorCryptography(NStr::fg_Format("HMAC key should be at least {} bytes", RequiredKeyLength));
+
+		fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					ERR_clear_error();
+					if (!(m_pHMACContext = HMAC_CTX_new()))
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to create HMAC context"));
+
+					auto Cleanup = g_OnScopeExit / [&]
+						{
+							this->~CInternal();
+						}
+					;
+
+					ERR_clear_error();
+					if (HMAC_Init_ex(m_pHMACContext, _Key.f_GetArray(), _Key.f_GetLen(), pMd, nullptr) != 1)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to initialize HMAC context"));
+
+					Cleanup.f_Clear();
+				}
+			)
+		;
+	}
+
+	CIncrementalHMAC::CInternal::~CInternal()
+	{
+		HMAC_CTX_free(m_pHMACContext);
+	}
+
+	int32 CIncrementalHMAC::CInternal::f_GetHMACSize()
+	{
+		if (!m_pHMACContext)
+			DMibErrorCryptography("No HMAC context. Please initialize before calling f_HMACSize.");
+
+		return (int32)HMAC_size(m_pHMACContext);
+	}
+
+	void CIncrementalHMAC::CInternal::f_Update(uint8 const *_pSource, uint32 _SourceLen) const
+	{
+		if (!m_pHMACContext)
+			DMibErrorCryptography("No HMAC context. Please initialize before calling f_Update.");
+
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					ERR_clear_error();
+					if (HMAC_Update(m_pHMACContext, _pSource, (int)_SourceLen) != 1)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to update HMAC"));
+				}
+			)
+		;
+	}
+
+	uint32 CIncrementalHMAC::CInternal::f_Finalize(uint8 *_pDest, uint32 _DestLen)
+	{
+		if (!m_pHMACContext)
+			DMibErrorCryptography("No HMAC context. Please initialize before calling f_Finalize.");
+		if (_DestLen < HMAC_size(m_pHMACContext))
+			DMibErrorCryptography(NStr::fg_Format("Buffer is too short. The HMAC is {} bytes", HMAC_size(m_pHMACContext)));
+
+		return fg_RunProtectRegisters
+			(
+				[&]() -> decltype(auto)
+				{
+					unsigned int FinalizeLen = 0;
+					ERR_clear_error();
+					if (HMAC_Final(m_pHMACContext, _pDest, &FinalizeLen) != 1)
+						DMibErrorCryptography(fg_GetExceptionStr("Failed to finalize HMAC data"));
+
+					return FinalizeLen;
+				}
+			)
+		;
+	}
 
 	CIncrementalHMAC::CIncrementalHMAC(EDigestType _Digest, NContainer::CSecureByteVector const &_Key)
 		: mp_pInternal(fg_Construct(_Digest, _Key))
