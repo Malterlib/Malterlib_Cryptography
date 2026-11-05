@@ -106,12 +106,12 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 			CPublicKeySetting TestKeySetting = CPublicKeySettings_EC_Secp256r1{};
 
 			// An explicitly pinned anchor needs no CA:TRUE extension for path building.
-			CByteVector CACertificateData;
-			CSecureByteVector CAPrivateKeyData;
-			CCertificateOptions CAOptions;
-			CAOptions.m_CommonName = "Test CA";
-			CAOptions.m_KeySetting = TestKeySetting;
-			CCertificate::fs_GenerateSelfSignedCertAndKey(CAOptions, CACertificateData, CAPrivateKeyData);
+			CByteVector AuthorityCertificateData;
+			CSecureByteVector AuthorityPrivateKeyData;
+			CCertificateOptions AuthorityOptions;
+			AuthorityOptions.m_CommonName = "Test CA";
+			AuthorityOptions.m_KeySetting = TestKeySetting;
+			CCertificate::fs_GenerateSelfSignedCertAndKey(AuthorityOptions, AuthorityCertificateData, AuthorityPrivateKeyData);
 
 			CByteVector ClientCertificateData;
 			CSecureByteVector ClientPrivateKeyData;
@@ -122,7 +122,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 
 				CByteVector CertificateRequestData;
 				CCertificate::fs_GenerateClientCertificateRequest(ClientOptions, CertificateRequestData, ClientPrivateKeyData);
-				CCertificate::fs_SignClientCertificate(CACertificateData, CAPrivateKeyData, CertificateRequestData, ClientCertificateData);
+				CCertificate::fs_SignClientCertificate(AuthorityCertificateData, AuthorityPrivateKeyData, CertificateRequestData, ClientCertificateData);
 			}
 
 			{
@@ -130,14 +130,24 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 
 				NStr::CStr Error;
 				TCVector<CByteVector> VerifiedChain;
-				bool bValid = CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, {}, &VerifiedChain, Error);
+				bool bValid = CCertificate::fs_VerifyCertificateChain
+					(
+						fg_CreateVector(ClientCertificateData)
+						, AuthorityCertificateData
+						, false
+						, EVerificationPurpose_Any
+						, {}
+						, &VerifiedChain
+						, Error
+					)
+				;
 
 				DMibExpectTrue(bValid);
 				DMibExpect(Error, ==, CStr());
 
 				DMibExpect(VerifiedChain.f_GetLen(), ==, umint(2));
 				DMibExpect(CCertificate::fs_GetCertificateFingerprint(VerifiedChain[0]), ==, CCertificate::fs_GetCertificateFingerprint(ClientCertificateData));
-				DMibExpect(CCertificate::fs_GetCertificateFingerprint(VerifiedChain[1]), ==, CCertificate::fs_GetCertificateFingerprint(CACertificateData));
+				DMibExpect(CCertificate::fs_GetCertificateFingerprint(VerifiedChain[1]), ==, CCertificate::fs_GetCertificateFingerprint(AuthorityCertificateData));
 			}
 
 			{
@@ -161,7 +171,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				DMibTestPath("Empty Chain");
 
 				NStr::CStr Error;
-				bool bValid = CCertificate::fs_VerifyCertificateChain({}, CACertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error);
+				bool bValid = CCertificate::fs_VerifyCertificateChain({}, AuthorityCertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error);
 
 				DMibExpectFalse(bValid);
 				DMibExpectFalse(Error.f_IsEmpty());
@@ -184,12 +194,12 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_ServerAuth, {}, nullptr, Error)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), AuthorityCertificateData, false, EVerificationPurpose_ServerAuth, {}, nullptr, Error)
 					)
 				;
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), AuthorityCertificateData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
 					)
 				;
 
@@ -209,20 +219,33 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 					CCertificateSignOptions SignOptions;
 					SignOptions.m_Extensions = ExtendedKeyUsageOptions.m_Extensions;
 
-					CCertificate::fs_SignClientCertificate(CACertificateData, CAPrivateKeyData, CertificateRequestData, ClientAuthCertificateData, SignOptions);
+					CCertificate::fs_SignClientCertificate(AuthorityCertificateData, AuthorityPrivateKeyData, CertificateRequestData, ClientAuthCertificateData, SignOptions);
 				}
 
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientAuthCertificateData), CACertificateData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
+						CCertificate::fs_VerifyCertificateChain
+						(
+							fg_CreateVector(ClientAuthCertificateData)
+							, AuthorityCertificateData
+							, false
+							, EVerificationPurpose_ClientAuth
+							, {}
+							, nullptr
+							, Error
+						)
 					)
 				;
-				DMibExpectTrue(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientAuthCertificateData), CACertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error));
+				DMibExpectTrue
+					(
+						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientAuthCertificateData), AuthorityCertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error)
+					)
+				;
 
 				bool bValidAsServer = CCertificate::fs_VerifyCertificateChain
 					(
 						fg_CreateVector(ClientAuthCertificateData)
-						, CACertificateData
+						, AuthorityCertificateData
 						, false
 						, EVerificationPurpose_ServerAuth
 						, {}
@@ -694,7 +717,16 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				NStr::CStr Error;
 				DMibExpectTrue
 					(
-						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, MatchingOptions, nullptr, Error)
+						CCertificate::fs_VerifyCertificateChain
+						(
+							fg_CreateVector(ClientCertificateData)
+							, AuthorityCertificateData
+							, false
+							, EVerificationPurpose_Any
+							, MatchingOptions
+							, nullptr
+							, Error
+						)
 					)
 				;
 
@@ -702,7 +734,16 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				WrongKeyType.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_Secp521r1{});
 				DMibExpectFalse
 					(
-						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, WrongKeyType, nullptr, Error)
+						CCertificate::fs_VerifyCertificateChain
+						(
+							fg_CreateVector(ClientCertificateData)
+							, AuthorityCertificateData
+							, false
+							, EVerificationPurpose_Any
+							, WrongKeyType
+							, nullptr
+							, Error
+						)
 					)
 				;
 				DMibExpect(Error, ==, CStr("Certificate public key type is not allowed"));
@@ -711,7 +752,16 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				WrongDigest.m_AllowedSignatureDigests.f_Insert(EDigestType_SHA512);
 				DMibExpectFalse
 					(
-						CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), CACertificateData, false, EVerificationPurpose_Any, WrongDigest, nullptr, Error)
+						CCertificate::fs_VerifyCertificateChain
+						(
+							fg_CreateVector(ClientCertificateData)
+							, AuthorityCertificateData
+							, false
+							, EVerificationPurpose_Any
+							, WrongDigest
+							, nullptr
+							, Error
+						)
 					)
 				;
 				DMibExpect(Error, ==, CStr("Certificate signature digest is not allowed"));
@@ -735,7 +785,7 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 				bool bValid = CCertificate::fs_VerifyCertificateChain
 					(
 						fg_CreateVector(ClientCertificateData, UnrelatedCertificateData)
-						, CACertificateData
+						, AuthorityCertificateData
 						, false
 						, EVerificationPurpose_Any
 						, {}
