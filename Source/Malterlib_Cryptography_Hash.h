@@ -64,7 +64,7 @@ namespace NMib::NCryptography
 	template <typename t_CHashImpl>
 	struct TCHashImpl
 	{
-		static constexpr umint mc_DigestSize = t_CHashImpl::mc_DigestSize;
+		static constexpr umint mc_DigestSize = t_CHashImpl::mc_DigestSize; // NOLINT(malterlib-member-order): CMessageDigest uses it
 
 		using CMessageDigest = TCMessageDigest<mc_DigestSize, TCHashImpl>;
 

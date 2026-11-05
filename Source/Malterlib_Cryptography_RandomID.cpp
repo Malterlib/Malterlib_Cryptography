@@ -15,35 +15,11 @@ namespace NMib::NCryptography
 		template <umint t_nBytesCache, typename t_CNewBytes>
 		struct TCUniformIntDistribution
 		{
-			TCUniformIntDistribution(uint8 _Max)
-				: m_Max(_Max)
-				, m_Mask(fg_RoundPowerOfTwoUp(_Max) - 1)
-			{
-			}
+			TCUniformIntDistribution(uint8 _Max);
+			~TCUniformIntDistribution();
 
-			~TCUniformIntDistribution()
-			{
-				NMemory::fg_SecureMemClear(m_Bytes);
-			}
-
-			void f_NewBytes()
-			{
-				t_CNewBytes::fs_NewBytes(m_Bytes);
-				m_iByte = 0;
-			}
-
-			uint8 operator () ()
-			{
-				while (true)
-				{
-					if (m_iByte == t_nBytesCache)
-						f_NewBytes();
-
-					auto Value = m_Bytes[m_iByte++] & m_Mask;
-					if (Value < m_Max)
-						return Value;
-				}
-			}
+			void f_NewBytes();
+			uint8 operator () ();
 
 			uint8 m_Bytes[t_nBytesCache];
 			umint m_iByte = t_nBytesCache;
@@ -51,33 +27,73 @@ namespace NMib::NCryptography
 			uint8 m_Mask;
 		};
 
+		template <umint t_nBytesCache, typename t_CNewBytes>
+		TCUniformIntDistribution<t_nBytesCache, t_CNewBytes>::TCUniformIntDistribution(uint8 _Max)
+			: m_Max(_Max)
+			, m_Mask(fg_RoundPowerOfTwoUp(_Max) - 1)
+		{
+		}
+
+		template <umint t_nBytesCache, typename t_CNewBytes>
+		TCUniformIntDistribution<t_nBytesCache, t_CNewBytes>::~TCUniformIntDistribution()
+		{
+			NMemory::fg_SecureMemClear(m_Bytes);
+		}
+
+		template <umint t_nBytesCache, typename t_CNewBytes>
+		void TCUniformIntDistribution<t_nBytesCache, t_CNewBytes>::f_NewBytes()
+		{
+			t_CNewBytes::fs_NewBytes(m_Bytes);
+			m_iByte = 0;
+		}
+
+		template <umint t_nBytesCache, typename t_CNewBytes>
+		uint8 TCUniformIntDistribution<t_nBytesCache, t_CNewBytes>::operator () ()
+		{
+			while (true)
+			{
+				if (m_iByte == t_nBytesCache)
+					f_NewBytes();
+
+				auto Value = m_Bytes[m_iByte++] & m_Mask;
+				if (Value < m_Max)
+					return Value;
+			}
+		}
+
 		struct CNewBytesRandom
 		{
-			static void fs_NewBytes(uint8 *o_pBytes)
-			{
-				auto Values = NMisc::fg_GetRandomUnsigned();
-				o_pBytes[0] = Values & 0xff;
-				o_pBytes[1] = (Values >> 8) & 0xff;
-				o_pBytes[2] = (Values >> 16) & 0xff;
-				o_pBytes[3] = (Values >> 24) & 0xff;
-			}
+			static void fs_NewBytes(uint8 *o_pBytes);
 		};
+
+		void CNewBytesRandom::fs_NewBytes(uint8 *o_pBytes)
+		{
+			auto Values = NMisc::fg_GetRandomUnsigned();
+			o_pBytes[0] = Values & 0xff;
+			o_pBytes[1] = (Values >> 8) & 0xff;
+			o_pBytes[2] = (Values >> 16) & 0xff;
+			o_pBytes[3] = (Values >> 24) & 0xff;
+		}
 
 		struct CNewBytesSecure
 		{
-			static void fs_NewBytes(uint8 *o_pBytes)
-			{
-				NMisc::fg_SecureRandomThreadLocal().f_GetBytes(o_pBytes, 8);
-			}
+			static void fs_NewBytes(uint8 *o_pBytes);
 		};
+
+		void CNewBytesSecure::fs_NewBytes(uint8 *o_pBytes)
+		{
+			NMisc::fg_SecureRandomThreadLocal().f_GetBytes(o_pBytes, 8);
+		}
 
 		struct CNewBytesHighEntropy
 		{
-			static void fs_NewBytes(uint8 *o_pBytes)
-			{
-				NSys::fg_Security_GenerateHighEntropyData(o_pBytes, 8);
-			}
+			static void fs_NewBytes(uint8 *o_pBytes);
 		};
+
+		void CNewBytesHighEntropy::fs_NewBytes(uint8 *o_pBytes)
+		{
+			NSys::fg_Security_GenerateHighEntropyData(o_pBytes, 8);
+		}
 
 		using CUniformIntDistributionSecure = TCUniformIntDistribution<8, CNewBytesSecure>;
 		using CUniformIntDistribution = TCUniformIntDistribution<4, CNewBytesRandom>;

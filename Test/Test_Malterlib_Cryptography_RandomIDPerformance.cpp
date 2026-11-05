@@ -22,173 +22,180 @@ namespace NMib::NCryptography
 
 		struct CRandomIDPerformance_Tests : public CTest
 		{
+			void f_TestShortIDs();
+			void f_TestLongIDs();
+			void f_TestCustomCharset();
+			void f_DoTests();
+
 		private:
 			template <typename tf_FGenerator>
-			inline_never void fp_MeasureGenerator(CTestPerformanceMeasure &_Measure, tf_FGenerator const &_fGenerator, umint _nIterations)
-			{
-				DMibTestScopeMeasure(_Measure, _nIterations);
-				for (umint iIteration = 0; iIteration < _nIterations; ++iIteration)
-					_fGenerator();
-			}
-
-		public:
-			void f_TestShortIDs()
-			{
-				DMibTestSuite("Short IDs (17 chars)")
-				{
-					CTestPerformance PerfTest(0.0); // No tolerance - just compare
-
-					CTestPerformanceMeasure FastMeasure("FastRandomID");
-					fp_MeasureGenerator
-						(
-							FastMeasure
-							, [] inline_always_lambda
-							{
-								return fg_FastRandomID(17);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_AddBaseline(FastMeasure);
-
-					CTestPerformanceMeasure SecureMeasure("RandomID (ChaCha20)");
-					fp_MeasureGenerator
-						(
-							SecureMeasure
-							, [] inline_always_lambda
-							{
-								return fg_RandomID(17);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_Add(SecureMeasure);
-
-					CTestPerformanceMeasure HighEntropyMeasure("HighEntropyRandomID (OS CSPRNG)");
-					fp_MeasureGenerator
-						(
-							HighEntropyMeasure
-							, [] inline_always_lambda
-							{
-								return fg_HighEntropyRandomID(17);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_Add(HighEntropyMeasure);
-
-					DMibExpectTrue(PerfTest);
-				};
-			}
-
-			void f_TestLongIDs()
-			{
-				DMibTestSuite("Long IDs (64 chars)")
-				{
-					CTestPerformance PerfTest(0.0);
-
-					CTestPerformanceMeasure FastMeasure("FastRandomID");
-					fp_MeasureGenerator
-						(
-							FastMeasure
-							, [] inline_always_lambda
-							{
-								return fg_FastRandomID(64);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_AddBaseline(FastMeasure);
-
-					CTestPerformanceMeasure SecureMeasure("RandomID (ChaCha20)");
-					fp_MeasureGenerator
-						(
-							SecureMeasure
-							, [] inline_always_lambda
-							{
-								return fg_RandomID(64);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_Add(SecureMeasure);
-
-					CTestPerformanceMeasure HighEntropyMeasure("HighEntropyRandomID (OS CSPRNG)");
-					fp_MeasureGenerator
-						(
-							HighEntropyMeasure
-							, [] inline_always_lambda
-							{
-								return fg_HighEntropyRandomID(64);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_Add(HighEntropyMeasure);
-
-					DMibExpectTrue(PerfTest);
-				};
-			}
-
-			void f_TestCustomCharset()
-			{
-				DMibTestSuite("Custom Charset (hex, 32 chars)")
-				{
-					CTestPerformance PerfTest(0.0);
-
-					CTestPerformanceMeasure FastMeasure("FastRandomID");
-					fp_MeasureGenerator
-						(
-							FastMeasure
-							, [] inline_always_lambda
-							{
-								return fg_FastRandomID("0123456789abcdef", 32);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_AddBaseline(FastMeasure);
-
-					CTestPerformanceMeasure SecureMeasure("RandomID (ChaCha20)");
-					fp_MeasureGenerator
-						(
-							SecureMeasure
-							, [] inline_always_lambda
-							{
-								return fg_RandomID("0123456789abcdef", 32);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_Add(SecureMeasure);
-
-					CTestPerformanceMeasure HighEntropyMeasure("HighEntropyRandomID (OS CSPRNG)");
-					fp_MeasureGenerator
-						(
-							HighEntropyMeasure
-							, [] inline_always_lambda
-							{
-								return fg_HighEntropyRandomID("0123456789abcdef", 32);
-							}
-							, gc_nIterations
-						)
-					;
-					PerfTest.f_Add(HighEntropyMeasure);
-
-					DMibExpectTrue(PerfTest);
-				};
-			}
-
-			void f_DoTests()
-			{
-				DMibTestCategory(CTestCategory("Performance") << CTestGroup("Performance"))
-				{
-					f_TestShortIDs();
-					f_TestLongIDs();
-					f_TestCustomCharset();
-				};
-			}
+			inline_never void fp_MeasureGenerator(CTestPerformanceMeasure &_Measure, tf_FGenerator const &_fGenerator, umint _nIterations);
 		};
+
+		void CRandomIDPerformance_Tests::f_TestShortIDs()
+		{
+			DMibTestSuite("Short IDs (17 chars)")
+			{
+				CTestPerformance PerfTest(0.0); // No tolerance - just compare
+
+				CTestPerformanceMeasure FastMeasure("FastRandomID");
+				fp_MeasureGenerator
+					(
+						FastMeasure
+						, [] inline_always_lambda
+						{
+							return fg_FastRandomID(17);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_AddBaseline(FastMeasure);
+
+				CTestPerformanceMeasure SecureMeasure("RandomID (ChaCha20)");
+				fp_MeasureGenerator
+					(
+						SecureMeasure
+						, [] inline_always_lambda
+						{
+							return fg_RandomID(17);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_Add(SecureMeasure);
+
+				CTestPerformanceMeasure HighEntropyMeasure("HighEntropyRandomID (OS CSPRNG)");
+				fp_MeasureGenerator
+					(
+						HighEntropyMeasure
+						, [] inline_always_lambda
+						{
+							return fg_HighEntropyRandomID(17);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_Add(HighEntropyMeasure);
+
+				DMibExpectTrue(PerfTest);
+			};
+		}
+
+		void CRandomIDPerformance_Tests::f_TestLongIDs()
+		{
+			DMibTestSuite("Long IDs (64 chars)")
+			{
+				CTestPerformance PerfTest(0.0);
+
+				CTestPerformanceMeasure FastMeasure("FastRandomID");
+				fp_MeasureGenerator
+					(
+						FastMeasure
+						, [] inline_always_lambda
+						{
+							return fg_FastRandomID(64);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_AddBaseline(FastMeasure);
+
+				CTestPerformanceMeasure SecureMeasure("RandomID (ChaCha20)");
+				fp_MeasureGenerator
+					(
+						SecureMeasure
+						, [] inline_always_lambda
+						{
+							return fg_RandomID(64);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_Add(SecureMeasure);
+
+				CTestPerformanceMeasure HighEntropyMeasure("HighEntropyRandomID (OS CSPRNG)");
+				fp_MeasureGenerator
+					(
+						HighEntropyMeasure
+						, [] inline_always_lambda
+						{
+							return fg_HighEntropyRandomID(64);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_Add(HighEntropyMeasure);
+
+				DMibExpectTrue(PerfTest);
+			};
+		}
+
+		void CRandomIDPerformance_Tests::f_TestCustomCharset()
+		{
+			DMibTestSuite("Custom Charset (hex, 32 chars)")
+			{
+				CTestPerformance PerfTest(0.0);
+
+				CTestPerformanceMeasure FastMeasure("FastRandomID");
+				fp_MeasureGenerator
+					(
+						FastMeasure
+						, [] inline_always_lambda
+						{
+							return fg_FastRandomID("0123456789abcdef", 32);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_AddBaseline(FastMeasure);
+
+				CTestPerformanceMeasure SecureMeasure("RandomID (ChaCha20)");
+				fp_MeasureGenerator
+					(
+						SecureMeasure
+						, [] inline_always_lambda
+						{
+							return fg_RandomID("0123456789abcdef", 32);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_Add(SecureMeasure);
+
+				CTestPerformanceMeasure HighEntropyMeasure("HighEntropyRandomID (OS CSPRNG)");
+				fp_MeasureGenerator
+					(
+						HighEntropyMeasure
+						, [] inline_always_lambda
+						{
+							return fg_HighEntropyRandomID("0123456789abcdef", 32);
+						}
+						, gc_nIterations
+					)
+				;
+				PerfTest.f_Add(HighEntropyMeasure);
+
+				DMibExpectTrue(PerfTest);
+			};
+		}
+
+		void CRandomIDPerformance_Tests::f_DoTests()
+		{
+			DMibTestCategory(CTestCategory("Performance") << CTestGroup("Performance"))
+			{
+				f_TestShortIDs();
+				f_TestLongIDs();
+				f_TestCustomCharset();
+			};
+		}
+
+		template <typename tf_FGenerator>
+		void CRandomIDPerformance_Tests::fp_MeasureGenerator(CTestPerformanceMeasure &_Measure, tf_FGenerator const &_fGenerator, umint _nIterations)
+		{
+			DMibTestScopeMeasure(_Measure, _nIterations);
+			for (umint iIteration = 0; iIteration < _nIterations; ++iIteration)
+				_fGenerator();
+		}
 
 		DMibTestRegister(CRandomIDPerformance_Tests, Malterlib::Cryptography);
 	}

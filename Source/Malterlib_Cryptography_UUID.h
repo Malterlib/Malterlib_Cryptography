@@ -21,13 +21,6 @@ namespace NMib::NCryptography
 
 	struct CUniversallyUniqueIdentifier
 	{
-		uint32 m_TimeLow = 0;
-		uint16 m_TimeMid = 0;
-		uint16 m_TimeHiAndVersion = 0;
-		uint8 m_ClockSequenceHiAndReserved = 0;
-		uint8 m_ClockSquenceLow = 0;
-		uint8 m_Node[6] = {0};
-
 		CUniversallyUniqueIdentifier
 			(
 				EUniversallyUniqueIdentifierGenerate _Generate
@@ -44,6 +37,13 @@ namespace NMib::NCryptography
 		static CUniversallyUniqueIdentifier fs_Empty();
 
 		auto operator <=> (CUniversallyUniqueIdentifier const &_Right) const noexcept = default;
+
+		uint32 m_TimeLow = 0;
+		uint16 m_TimeMid = 0;
+		uint16 m_TimeHiAndVersion = 0;
+		uint8 m_ClockSequenceHiAndReserved = 0;
+		uint8 m_ClockSquenceLow = 0;
+		uint8 m_Node[6] = {0};
 
 	private:
 		constexpr CUniversallyUniqueIdentifier();

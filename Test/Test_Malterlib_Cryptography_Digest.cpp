@@ -13,154 +13,157 @@ namespace
 	template <typename t_CHash, ch8 const t_pName[], ch8 const *t_pTests[], ch8 const *t_pTestDigests[], umint t_pTestRepeat[], umint t_nTests>
 	struct TCTestHash : public NMib::NTest::CTest
 	{
-		void f_DoTests()
+		void f_DoTests();
+	};
+
+	template <typename t_CHash, ch8 const t_pName[], ch8 const *t_pTests[], ch8 const *t_pTestDigests[], umint t_pTestRepeat[], umint t_nTests>
+	void TCTestHash<t_CHash, t_pName, t_pTests, t_pTestDigests, t_pTestRepeat, t_nTests>::f_DoTests()
+	{
+		DMibTestSuite("Digest")
 		{
-			DMibTestSuite("Digest")
+			using CHash = t_CHash;
+			using CHashDigest = typename t_CHash::CMessageDigest;
+
+			CHash Hash;
+			CHashDigest Digest;
+
+			for (umint iTest = 0; iTest < t_nTests; ++iTest)
 			{
-				using CHash = t_CHash;
-				using CHashDigest = typename t_CHash::CMessageDigest;
+				Hash.f_Reset();
+				umint Len = NMib::NStr::fg_StrLen(t_pTests[iTest]);
+				for (umint iRepeat = 0; iRepeat < t_pTestRepeat[iTest]; ++iRepeat)
+					Hash.f_AddData(t_pTests[iTest], Len);
 
-				CHash Hash;
-				CHashDigest Digest;
-
-				for (umint iTest = 0; iTest < t_nTests; ++iTest)
-				{
-					Hash.f_Reset();
-					umint Len = NMib::NStr::fg_StrLen(t_pTests[iTest]);
-					for (umint iRepeat = 0; iRepeat < t_pTestRepeat[iTest]; ++iRepeat)
-						Hash.f_AddData(t_pTests[iTest], Len);
-
-					Digest = CHashDigest(Hash);
-					NMib::NStr::CStr DigestString = Digest.f_GetString().f_LowerCase();
-					DMibExpect(DigestString, ==, t_pTestDigests[iTest])(ETestFlag_Aggregated);
-				}
+				Digest = CHashDigest(Hash);
+				NMib::NStr::CStr DigestString = Digest.f_GetString().f_LowerCase();
+				DMibExpect(DigestString, ==, t_pTestDigests[iTest])(ETestFlag_Aggregated);
+			}
 #if 0
+			{
+				int TestSize = 64; // 512 MB creation test
+
+				TCVector<uint8> Data;
+				Data.f_SetLen(TestSize);
+
+				for (int i = 0; i < TestSize / 4; ++i)
+					Data[i] = fg_GetRandomUnsigned();
+
+				int nTests = 256 * 1024;
+
+				NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
+
+				CHashDigest Digest2;
+
 				{
-					int TestSize = 64; // 512 MB creation test
-
-					TCVector<uint8> Data;
-					Data.f_SetLen(TestSize);
-
-					for (int i = 0; i < TestSize / 4; ++i)
-						Data[i] = fg_GetRandomUnsigned();
-
-					int nTests = 256 * 1024;
-
-					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
-
-					CHashDigest Digest2;
-
-					{
-						DMibScopePerfTimeMeasureMin(TimerAlloc);
-						for (int i = 0; i < nTests; ++i)
-						{
-							CHash Hash;
-							Hash.f_AddData(Data.f_GetArray(), TestSize);
-							Digest2 = fg_Move(Hash).f_GetDigest();
-						}
-					}
-					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
-
-					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
-					fp64 DigestsSec = (fp64(nTests) / TimerAlloc.f_GetTime());
-
-					DMibTrace("Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName, nTests, TimerAlloc.f_GetTime(), DigestsSec, MiBSec);
-				}
-				{
-					int TestSize = 64; // 512 MB creation test
-
-					TCVector<uint8> Data;
-					Data.f_SetLen(TestSize);
-
-					for (int i = 0; i < TestSize / 4; ++i)
-						Data[i] = fg_GetRandomUnsigned();
-
-					int nTests = 256 * 1024;
-
-					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
-
-					CHashDigest Digest2;
-
+					DMibScopePerfTimeMeasureMin(TimerAlloc);
+					for (int i = 0; i < nTests; ++i)
 					{
 						CHash Hash;
-						DMibScopePerfTimeMeasureMin(TimerAlloc);
-						for (int i = 0; i < nTests; ++i)
-						{
-							Hash.f_Reset();
-							Hash.f_AddData(Data.f_GetArray(), TestSize);
-							Digest2 = fg_Move(Hash).f_GetDigest();
-						}
+						Hash.f_AddData(Data.f_GetArray(), TestSize);
+						Digest2 = fg_Move(Hash).f_GetDigest();
 					}
-					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
-
-					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
-					fp64 DigestsSec = (fp64(nTests) / TimerAlloc.f_GetTime());
-
-					DMibTrace("Reset Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName, nTests, TimerAlloc.f_GetTime(), DigestsSec, MiBSec);
 				}
+				DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
+
+				fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
+				fp64 DigestsSec = (fp64(nTests) / TimerAlloc.f_GetTime());
+
+				DMibTrace("Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName, nTests, TimerAlloc.f_GetTime(), DigestsSec, MiBSec);
+			}
+			{
+				int TestSize = 64; // 512 MB creation test
+
+				TCVector<uint8> Data;
+				Data.f_SetLen(TestSize);
+
+				for (int i = 0; i < TestSize / 4; ++i)
+					Data[i] = fg_GetRandomUnsigned();
+
+				int nTests = 256 * 1024;
+
+				NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
+
+				CHashDigest Digest2;
 
 				{
-					int TestSize = 512 * 1024 * 1024; // 512 MB creation test
-
-					TCVector<uint8> Data;
-					Data.f_SetLen(TestSize);
-
-					for (int i = 0; i < TestSize / 4; ++i)
-						Data[i] = fg_GetRandomUnsigned();
-
-					int nTests = 1;
-
-					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
-					CHashDigest Digest2;
-
+					CHash Hash;
+					DMibScopePerfTimeMeasureMin(TimerAlloc);
+					for (int i = 0; i < nTests; ++i)
 					{
-						DMibScopePerfTimeMeasureMin(TimerAlloc);
 						Hash.f_Reset();
-						for (int i = 0; i < nTests; ++i)
-							Hash.f_AddData(Data.f_GetArray(), TestSize);
-						Digest2 = Hash;
+						Hash.f_AddData(Data.f_GetArray(), TestSize);
+						Digest2 = fg_Move(Hash).f_GetDigest();
 					}
-					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
-
-					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
-
-					DMibTrace("Malterlib{} of {} MiB of data in {} seconds: Performance {} MiB/second\n", t_pName, (TestSize*nTests) / (1024 * 1024), TimerAlloc.f_GetTime(), MiBSec);
 				}
+				DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
+
+				fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
+				fp64 DigestsSec = (fp64(nTests) / TimerAlloc.f_GetTime());
+
+				DMibTrace("Reset Malterlib{} of {} digests in {} seconds: Performance {} digests/second {} MiB/second\n", t_pName, nTests, TimerAlloc.f_GetTime(), DigestsSec, MiBSec);
+			}
+
+			{
+				int TestSize = 512 * 1024 * 1024; // 512 MB creation test
+
+				TCVector<uint8> Data;
+				Data.f_SetLen(TestSize);
+
+				for (int i = 0; i < TestSize / 4; ++i)
+					Data[i] = fg_GetRandomUnsigned();
+
+				int nTests = 1;
+
+				NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
+				CHashDigest Digest2;
 
 				{
-					int TestSize = 4 * 1024; // L1 cache test
-
-					TCVector<uint8> Data;
-					Data.f_SetLen(TestSize);
-
-					for (int i = 0; i < TestSize / 4; ++i)
-						Data[i] = fg_GetRandomUnsigned();
-
-					// Add to cache
+					DMibScopePerfTimeMeasureMin(TimerAlloc);
 					Hash.f_Reset();
-					Hash.f_AddData(Data.f_GetArray(), TestSize);
-					int nTests = 128 * 1024;
-
-					NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
-					CHashDigest Digest2;
-
-					{
-						DMibScopePerfTimeMeasureMin(TimerAlloc);
-						Hash.f_Reset();
-						for (int i = 0; i < nTests; ++i)
-							Hash.f_AddData(Data.f_GetArray(), TestSize);
-						Digest2 = Hash;
-					}
-					DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
-
-					fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
-
-					DMibTrace("Malterlib{} of {} MiB of cached data in {} seconds: Performance {} MiB/second\n", t_pName, (TestSize*nTests) / (1024 * 1024), TimerAlloc.f_GetTime(), MiBSec);
+					for (int i = 0; i < nTests; ++i)
+						Hash.f_AddData(Data.f_GetArray(), TestSize);
+					Digest2 = Hash;
 				}
+				DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
+
+				fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
+
+				DMibTrace("Malterlib{} of {} MiB of data in {} seconds: Performance {} MiB/second\n", t_pName, (TestSize*nTests) / (1024 * 1024), TimerAlloc.f_GetTime(), MiBSec);
+			}
+
+			{
+				int TestSize = 4 * 1024; // L1 cache test
+
+				TCVector<uint8> Data;
+				Data.f_SetLen(TestSize);
+
+				for (int i = 0; i < TestSize / 4; ++i)
+					Data[i] = fg_GetRandomUnsigned();
+
+				// Add to cache
+				Hash.f_Reset();
+				Hash.f_AddData(Data.f_GetArray(), TestSize);
+				int nTests = 128 * 1024;
+
+				NMib::NTime::CPerfTimeMeasureMin TimerAlloc;
+				CHashDigest Digest2;
+
+				{
+					DMibScopePerfTimeMeasureMin(TimerAlloc);
+					Hash.f_Reset();
+					for (int i = 0; i < nTests; ++i)
+						Hash.f_AddData(Data.f_GetArray(), TestSize);
+					Digest2 = Hash;
+				}
+				DMibTrace("Malterlib{}: {}\n", t_pName, Digest2.f_GetString());
+
+				fp64 MiBSec = (fp64(TestSize*nTests) / TimerAlloc.f_GetTime()) / (1024.0 * 1024.0);
+
+				DMibTrace("Malterlib{} of {} MiB of cached data in {} seconds: Performance {} MiB/second\n", t_pName, (TestSize*nTests) / (1024 * 1024), TimerAlloc.f_GetTime(), MiBSec);
+			}
 #endif
-			};
-		}
-	};
+		};
+	}
 
 	extern ch8 const g_NameMD5[];
 	extern ch8 const *g_TestsMD5[];

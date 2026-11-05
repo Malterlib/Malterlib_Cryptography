@@ -109,18 +109,20 @@ namespace NMib::NCryptography::NBoringSSL
 	{
 		struct CBoringSSLInit
 		{
-			CBoringSSLInit()
-			{
-				fg_RunProtectRegisters
-					(
-						[&]() -> decltype(auto)
-						{
-							SSL_library_init();
-						}
-					)
-				;
-			}
+			CBoringSSLInit();
 		};
+
+		CBoringSSLInit::CBoringSSLInit()
+		{
+			fg_RunProtectRegisters
+				(
+					[&]() -> decltype(auto)
+					{
+						SSL_library_init();
+					}
+				)
+			;
+		}
 
 		constinit NStorage::TCAggregate<CBoringSSLInit> g_SSLLowLevel = {DAggregateInit};
 	}
