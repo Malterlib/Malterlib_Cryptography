@@ -84,22 +84,22 @@ extern "C"
 		return pMem;
 	}
 #endif
-	void *OPENSSL_zalloc(size_t size)
+	void *OPENSSL_zalloc(size_t _Size)
 	{
-		void *pMemory = OPENSSL_malloc(size);
+		void *pMemory = OPENSSL_malloc(_Size);
 		if (pMemory != NULL)
-			memset(pMemory, 0, size);
+			memset(pMemory, 0, _Size);
 		return pMemory;
 	}
 
-	void *OPENSSL_calloc(size_t num, size_t size)
+	void *OPENSSL_calloc(size_t _nMembers, size_t _Size)
 	{
-		if (size != 0 && num > SIZE_MAX / size)
+		if (_Size != 0 && _nMembers > SIZE_MAX / _Size)
 		{
 			OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
 			return NULL;
 		}
-		return OPENSSL_zalloc(num * size);
+		return OPENSSL_zalloc(_nMembers * _Size);
 	}
 }
 
