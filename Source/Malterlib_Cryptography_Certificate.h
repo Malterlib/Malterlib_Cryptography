@@ -100,6 +100,7 @@ namespace NMib::NCryptography
 	{
 		NContainer::TCVector<CPublicKeySetting> m_AllowedLeafKeyTypes; // RSA entries specify a minimum bit length.
 		NContainer::TCVector<EDigestType> m_AllowedSignatureDigests;   // Applies to the leaf and every intermediate on the built path, not to the anchor's own signature.
+		bool m_bAllowPinnedTrustAnchor = false;                        // Trust a given CA without the CA bit as a pinned certificate instead of rejecting it as an issuer.
 	};
 
 	struct CCertificate
