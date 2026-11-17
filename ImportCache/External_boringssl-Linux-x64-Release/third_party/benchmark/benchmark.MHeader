@@ -15,6 +15,7 @@ Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeA
 			"HAVE_STD_REGEX",
 			"HAVE_STEADY_CLOCK",
 			"HAVE_THREAD_SAFETY_ATTRIBUTES",
+			"NDEBUG",
 			"_FILE_OFFSET_BITS=64",
 			"_LARGEFILE64_SOURCE",
 			"_LARGEFILE_SOURCE"
@@ -56,7 +57,7 @@ Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeA
 				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark.cc`
 				{
 					Compile.Type "C++"
-					Compile.PreprocessorDefines += [
+					Compile.PreprocessorDefines =+ [
 						"BENCHMARK_VERSION=\"v1.9.5\""
 					]
 				}
@@ -227,6 +228,7 @@ Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeA
 			"HAVE_STD_REGEX",
 			"HAVE_STEADY_CLOCK",
 			"HAVE_THREAD_SAFETY_ATTRIBUTES",
+			"NDEBUG",
 			"_FILE_OFFSET_BITS=64",
 			"_LARGEFILE64_SOURCE",
 			"_LARGEFILE_SOURCE"

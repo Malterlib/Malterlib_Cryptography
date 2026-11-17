@@ -24,7 +24,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/BuildSystem/SafeMib/Binaries/ctest.exe`->MakeAbsolute()->EscapeHost()) -DMODEL=Experimental -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `MToolCTest -DMODEL=Experimental -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -62,7 +62,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/BuildSystem/SafeMib/Binaries/ctest.exe`->MakeAbsolute()->EscapeHost()) -DMODEL=Nightly -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `MToolCTest -DMODEL=Nightly -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -100,7 +100,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/BuildSystem/SafeMib/Binaries/ctest.exe`->MakeAbsolute()->EscapeHost()) -DMODEL=Continuous -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `MToolCTest -DMODEL=Continuous -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -128,9 +128,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -182,9 +184,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_IMPLEMENTATION",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -218,9 +222,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_IMPLEMENTATION",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -580,6 +586,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519.cc`
 			{
 				Compile.Type "C++"
@@ -714,6 +724,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			{
 				Compile.Type "C++"
 			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_keccak.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_mldsa.cc`
 			{
 				Compile.Type "C++"
@@ -723,6 +737,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C++"
 			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_rsa.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_slhdsa.cc`
 			{
 				Compile.Type "C++"
 			}
@@ -1377,9 +1395,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_IMPLEMENTATION",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -1565,9 +1585,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_IMPLEMENTATION",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -1719,9 +1741,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_IMPLEMENTATION",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -1896,9 +1920,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -1974,22 +2000,27 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Com_BoringSSL_crypto_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_decrepit_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_pki_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_ssl_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_urandom_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 }
 %Target "Com_BoringSSL_urandom_test"
@@ -2006,9 +2037,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2045,9 +2078,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2157,6 +2192,14 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace_test.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519_test.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/ed25519_test.cc`
 			{
 				Compile.Type "C++"
@@ -2550,11 +2593,14 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
+	Target.CLanguage "C11"
 	Compile
 	{
 		!!Compile.Type "C"
@@ -2567,10 +2613,13 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
+		CLanguage "C11"
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -2626,9 +2675,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2719,9 +2770,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2896,9 +2949,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2931,9 +2986,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2968,9 +3025,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -3090,9 +3149,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -3186,9 +3247,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -3260,6 +3323,44 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 	}
 }
+%Target "Tool_BoringSSL_check_prefixed_symbols"
+{
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Compile.Disabled true
+	Target.Group "External/BoringSSL"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "Tool"
+	Target.BaseName "BoringSSL_check_prefixed_symbols"
+	Target.BaseFileName "check_prefixed_symbols"
+	%Group "Windows"
+	{
+		%Group "arm64"
+		{
+			%Group `@(FullConfiguration)`
+			{
+				%Group "CMakeFiles"
+				{
+					%File `@('.'->MakeAbsolute())/CMakeFiles/check_prefixed_symbols.rule`
+					{
+						Compile
+						{
+							Type "Custom"
+							Custom_CommandLine `MToolCMake -E echo "Running tests requires Go" && MToolCMake -E false`
+							AllowNonExisting true
+							Disabled false
+							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
+							Custom_Outputs []
+							Custom_Inputs []
+						}
+					}
+				}
+			}
+		}
+	}
+}
 %Target "Tool_BoringSSL_run_tests"
 {
 	Property.MalterlibTargetNameType "Normal"
@@ -3314,9 +3415,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"HAVE_STEADY_CLOCK",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -3355,7 +3458,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark.cc`
 				{
 					Compile.Type "C++"
-					Compile.PreprocessorDefines += [
+					Compile.PreprocessorDefines =+ [
 						"BENCHMARK_VERSION=\"v1.9.5\""
 					]
 				}
@@ -3527,9 +3630,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"HAVE_STEADY_CLOCK",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -3566,9 +3671,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"BORINGSSL_DISPATCH_TEST",
 			"NOMINMAX",
 			"OPENSSL_NO_ASM",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"

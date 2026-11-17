@@ -14,9 +14,11 @@ Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeA
 			"HAVE_STD_REGEX",
 			"HAVE_STEADY_CLOCK",
 			"NOMINMAX",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -55,7 +57,7 @@ Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeA
 				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark.cc`
 				{
 					Compile.Type "C++"
-					Compile.PreprocessorDefines += [
+					Compile.PreprocessorDefines =+ [
 						"BENCHMARK_VERSION=\"v1.9.5\""
 					]
 				}
@@ -226,9 +228,11 @@ Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeA
 			"HAVE_STD_REGEX",
 			"HAVE_STEADY_CLOCK",
 			"NOMINMAX",
+			"WIN32",
 			"WIN32_LEAN_AND_MEAN",
 			"_CRT_SECURE_NO_WARNINGS",
-			"_HAS_EXCEPTIONS=0"
+			"_HAS_EXCEPTIONS=0",
+			"_WINDOWS"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"

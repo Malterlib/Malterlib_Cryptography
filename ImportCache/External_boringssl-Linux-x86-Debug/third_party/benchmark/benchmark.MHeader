@@ -57,7 +57,7 @@ Property.CMakeOutputPath_benchmark: string = `@('../..'->MakeAbsolute())`->MakeA
 				%File `@('../../../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark.cc`
 				{
 					Compile.Type "C++"
-					Compile.PreprocessorDefines += [
+					Compile.PreprocessorDefines =+ [
 						"BENCHMARK_VERSION=\"v1.9.5\""
 					]
 				}

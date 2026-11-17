@@ -24,7 +24,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/macOS/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Experimental -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `MToolCTest -DMODEL=Experimental -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -62,7 +62,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/macOS/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Nightly -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `MToolCTest -DMODEL=Nightly -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -100,7 +100,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `@(`@('../../../..'->MakeAbsolute())/Binaries/Malterlib/macOS/arm64/ctest`->MakeAbsolute()->EscapeHost()) -DMODEL=Continuous -S CMakeFiles/CTestScript.cmake -V`
+							Custom_CommandLine `MToolCTest -DMODEL=Continuous -S CMakeFiles/CTestScript.cmake -V`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
@@ -124,7 +124,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googlemock`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -171,7 +173,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION"
+			"BORINGSSL_IMPLEMENTATION",
+			"NDEBUG"
 		]
 	}
 	Compile
@@ -181,7 +184,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION"
+			"BORINGSSL_IMPLEMENTATION",
+			"NDEBUG"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -619,7 +623,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION"
+			"BORINGSSL_IMPLEMENTATION",
+			"NDEBUG"
 		]
 	}
 	Compile
@@ -629,7 +634,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION"
+			"BORINGSSL_IMPLEMENTATION",
+			"NDEBUG"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -989,6 +995,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519.cc`
 			{
 				Compile.Type "C++"
@@ -1130,6 +1140,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			{
 				Compile.Type "C++"
 			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_keccak.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_mldsa.cc`
 			{
 				Compile.Type "C++"
@@ -1139,6 +1153,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C++"
 			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_rsa.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_slhdsa.cc`
 			{
 				Compile.Type "C++"
 			}
@@ -1893,7 +1911,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION"
+			"BORINGSSL_IMPLEMENTATION",
+			"NDEBUG"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2075,7 +2094,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION"
+			"BORINGSSL_IMPLEMENTATION",
+			"NDEBUG"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2223,7 +2243,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BORINGSSL_IMPLEMENTATION"
+			"BORINGSSL_IMPLEMENTATION",
+			"NDEBUG"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -2394,7 +2415,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Compile
 	{
@@ -2404,7 +2427,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -2517,22 +2542,27 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Com_BoringSSL_crypto_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_decrepit_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_pki_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_ssl_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Com_BoringSSL_urandom_test"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 }
 %Target "Com_BoringSSL_urandom_test"
@@ -2545,7 +2575,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -2577,7 +2609,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -2686,6 +2720,14 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace_test.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519_test.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/ed25519_test.cc`
 			{
 				Compile.Type "C++"
@@ -3075,8 +3117,11 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
+	Target.CLanguage "GNU11"
 	Compile
 	{
 		!!Compile.Type "C"
@@ -3085,7 +3130,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
+		CLanguage "GNU11"
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -3137,7 +3185,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -3223,7 +3273,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/googletest/googletest/include`->MakeAbsolute(),
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -3393,7 +3445,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		SearchPath += [
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -3421,7 +3475,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		SearchPath += [
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -3451,7 +3507,8 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			`@('../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/include`->MakeAbsolute()
 		]
 		PreprocessorDefines += [
-			"BENCHMARK_STATIC_DEFINE"
+			"BENCHMARK_STATIC_DEFINE",
+			"NDEBUG"
 		]
 	}
 	Property.MalterlibTargetNameType "Normal"
@@ -3567,7 +3624,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		SearchPath += [
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -3656,7 +3715,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		SearchPath += [
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
@@ -3714,7 +3775,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `MToolCMake -E echo && MToolCMake -E echo Checking\\ pregenerated\\ files && go run ./util/pregenerate -check && MToolCMake -E echo && MToolCMake -E echo Running\\ Go\\ tests && go test ./ssl/test/runner/hpke ./util/ar ./util/fipstools/acvp/acvptool/testmodulewrapper ./util/fipstools/delocate && MToolCMake -E echo && MToolCMake -E echo Running\\ unit\\ tests && go run util/all_tests.go -build-dir @(`@('.'->MakeAbsolute())`->MakeAbsolute()->EscapeHost())`
+							Custom_CommandLine `MToolCMake -E echo && MToolCMake -E echo Checking\\ pregenerated\\ files && go run ./util/pregenerate -check && MToolCMake -E echo && MToolCMake -E echo Running\\ Go\\ tests && go test ./ssl/test/runner/hpke ./util/ar ./util/fipstools/acvp/acvptool/testmodulewrapper ./util/fipstools/delocate ./util/fipstools/inject_hash && MToolCMake -E echo && MToolCMake -E echo Running\\ unit\\ tests && go run util/all_tests.go -build-dir @(`@('.'->MakeAbsolute())`->MakeAbsolute()->EscapeHost())`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('../../../../External/boringssl'->MakeAbsolute())`->MakeAbsolute()
@@ -3729,10 +3790,12 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Tool_BoringSSL_boringssl_all_tests"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Tool_BoringSSL_fips_specific_tests_if_any"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 }
 %Target "Tool_BoringSSL_run_tests"
@@ -3777,14 +3840,55 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Com_BoringSSL_bssl_shim"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Tool_BoringSSL_handshaker"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
 	}
 	%Dependency "Tool_BoringSSL_run_unit_tests"
 	{
 		Dependency.Link false
+		Dependency.Stage "Compile"
+	}
+}
+%Target "Tool_BoringSSL_check_prefixed_symbols"
+{
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Compile.Disabled true
+	Target.Group "External/BoringSSL"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "Tool"
+	Target.BaseName "BoringSSL_check_prefixed_symbols"
+	Target.BaseFileName "check_prefixed_symbols"
+	%Group "macOS"
+	{
+		%Group "arm64"
+		{
+			%Group `@(FullConfiguration)`
+			{
+				%Group "CMakeFiles"
+				{
+					%File `@('.'->MakeAbsolute())/CMakeFiles/check_prefixed_symbols.rule`
+					{
+						Compile
+						{
+							Type "Custom"
+							Custom_CommandLine `MToolCMake -E echo Symbol\\ prefixing\\ not\\ enabled && MToolCMake -E false`
+							AllowNonExisting true
+							Disabled false
+							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
+							Custom_Outputs []
+							Custom_Inputs []
+						}
+					}
+				}
+			}
+		}
 	}
 }
 %Target "Lib_benchmark_benchmark"
@@ -3801,6 +3905,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"HAVE_STD_REGEX",
 			"HAVE_STEADY_CLOCK",
 			"HAVE_THREAD_SAFETY_ATTRIBUTES",
+			"NDEBUG",
 			"_FILE_OFFSET_BITS=64",
 			"_LARGEFILE64_SOURCE",
 			"_LARGEFILE_SOURCE"
@@ -3842,7 +3947,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				%File `@('../../../../External/boringssl'->MakeAbsolute())/third_party/benchmark/src/benchmark.cc`
 				{
 					Compile.Type "C++"
-					Compile.PreprocessorDefines += [
+					Compile.PreprocessorDefines =+ [
 						"BENCHMARK_VERSION=\"v1.9.5\""
 					]
 				}
@@ -4012,6 +4117,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			"HAVE_STD_REGEX",
 			"HAVE_STEADY_CLOCK",
 			"HAVE_THREAD_SAFETY_ATTRIBUTES",
+			"NDEBUG",
 			"_FILE_OFFSET_BITS=64",
 			"_LARGEFILE64_SOURCE",
 			"_LARGEFILE_SOURCE"
@@ -4047,7 +4153,9 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		SearchPath += [
 			`@('../../../../External/boringssl'->MakeAbsolute())/include`->MakeAbsolute()
 		]
-		PreprocessorDefines += []
+		PreprocessorDefines += [
+			"NDEBUG"
+		]
 	}
 	Property.MalterlibTargetNameType "Normal"
 	Compile.AllowNonExisting true
