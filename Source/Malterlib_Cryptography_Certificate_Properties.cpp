@@ -843,6 +843,9 @@ namespace NMib::NCryptography
 					if (!_CACertificateData.f_IsEmpty() || fs_SystemStoreCertificatesAreAnchors())
 						X509_STORE_CTX_set_flags(pContext, X509_V_FLAG_PARTIAL_CHAIN);
 
+					if (_VerifyOptions.m_bAllowPinnedTrustAnchor)
+						X509_STORE_CTX_set_flags(pContext, X509_V_FLAG_PINNED_TRUST_ANCHOR);
+
 					// Apply the role to the rest of the path; the leaf-as-anchor case was checked directly.
 					if (_RequiredPurpose != EVerificationPurpose_Any)
 					{
@@ -861,56 +864,9 @@ namespace NMib::NCryptography
 						return false;
 					}
 
-					// BoringSSL skips the anchor's pathlen. Enforce it explicitly, excluding self-issued intermediates as required by the definition.
 					{
 						STACK_OF(X509) * pBuiltChain = X509_STORE_CTX_get0_chain(pContext);
 						size_t nChain = sk_X509_num(pBuiltChain);
-						if (nChain >= 2)
-						{
-							X509 *pAnchor = sk_X509_value(pBuiltChain, nChain - 1);
-
-							// BoringSSL skips anchor extensions; enforce critical and malformed-extension constraints explicitly (RFC 5937).
-							if (X509_get_extension_flags(pAnchor) & EXFLAG_CRITICAL)
-							{
-								o_Error = "Trust anchor contains an unsupported critical extension";
-								return false;
-							}
-
-							if (X509_get_extension_flags(pAnchor) & EXFLAG_INVALID)
-							{
-								o_Error = "Trust anchor contains an invalid extension";
-								return false;
-							}
-
-							long nIntermediates = 0;
-							for (size_t iCertificate = 1; iCertificate + 1 < nChain; ++iCertificate)
-							{
-								if (!(X509_get_extension_flags(sk_X509_value(pBuiltChain, iCertificate)) & EXFLAG_SI))
-									++nIntermediates;
-							}
-
-							long AnchorPathLen = X509_get_pathlen(pAnchor);
-							if (AnchorPathLen >= 0 && nIntermediates > AnchorPathLen)
-							{
-								o_Error = "Certificate chain is longer than the trust anchor's path length constraint allows";
-								return false;
-							}
-
-							// BoringSSL leaves the anchor's extended key usage unchecked too; an intermediate handed
-							// over as the trust anchor keeps the restriction it carries on the full path. Only the
-							// usage is checked: an anchor is trusted as such without basic constraints
-							if (_RequiredPurpose != EVerificationPurpose_Any)
-							{
-								uint32 AnchorUsage = X509_get_extended_key_usage(pAnchor);
-								uint32 RequiredUsage = _RequiredPurpose == EVerificationPurpose_ServerAuth ? XKU_SSL_SERVER : XKU_SSL_CLIENT;
-								if (AnchorUsage != TCLimitsInt<uint32>::mc_Max && !(AnchorUsage & RequiredUsage))
-								{
-									o_Error = "Trust anchor is not valid for the verification purpose";
-									return false;
-								}
-							}
-						}
-
 						// The leaf was checked before the path was built; the intermediates the path uses answer to the same
 						// restriction. The anchor's own signature vouches for nothing and is left out
 						if (!_VerifyOptions.m_AllowedSignatureDigests.f_IsEmpty())

@@ -108,7 +108,10 @@ void CCertificate_Tests::f_DoTests()
 	{
 		CPublicKeySetting TestKeySetting = CPublicKeySettings_EC_Secp256r1{};
 
-		// An explicitly pinned anchor needs no CA:TRUE extension for path building.
+		// An explicitly pinned anchor needs no CA:TRUE extension for path building, when the verification allows it.
+		CCertificateVerifyOptions PinnedAnchor;
+		PinnedAnchor.m_bAllowPinnedTrustAnchor = true;
+
 		CByteVector AuthorityCertificateData;
 		CSecureByteVector AuthorityPrivateKeyData;
 		CCertificateOptions AuthorityOptions;
@@ -139,7 +142,7 @@ void CCertificate_Tests::f_DoTests()
 					, AuthorityCertificateData
 					, false
 					, EVerificationPurpose_Any
-					, {}
+					, PinnedAnchor
 					, &VerifiedChain
 					, Error
 				)
@@ -154,6 +157,56 @@ void CCertificate_Tests::f_DoTests()
 		}
 
 		{
+			DMibTestPath("Pinned Anchor Needs Option");
+
+			NStr::CStr Error;
+			bool bValid = CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), AuthorityCertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error);
+
+			DMibExpectFalse(bValid);
+			DMibExpect(Error, ==, CStr("invalid CA certificate"));
+		}
+
+		{
+			DMibTestPath("Pinned Anchor Extended Key Usage");
+
+			CByteVector ServerOnlyCertificateData;
+			CSecureByteVector ServerOnlyPrivateKeyData;
+			CCertificateOptions ServerOnlyOptions;
+			ServerOnlyOptions.m_CommonName = "Server Only Anchor";
+			ServerOnlyOptions.m_KeySetting = TestKeySetting;
+			ServerOnlyOptions.m_Extensions["2.5.29.37"].f_Insert().m_Value = "serverAuth";
+			CCertificate::fs_GenerateSelfSignedCertAndKey(ServerOnlyOptions, ServerOnlyCertificateData, ServerOnlyPrivateKeyData);
+
+			CByteVector LeafCertificateData;
+			{
+				CCertificateOptions LeafOptions;
+				LeafOptions.m_CommonName = "Leaf Under Server Only Anchor";
+				LeafOptions.m_KeySetting = TestKeySetting;
+
+				CByteVector CertificateRequestData;
+				CSecureByteVector LeafPrivateKeyData;
+				CCertificate::fs_GenerateClientCertificateRequest(LeafOptions, CertificateRequestData, LeafPrivateKeyData);
+				CCertificate::fs_SignClientCertificate(ServerOnlyCertificateData, ServerOnlyPrivateKeyData, CertificateRequestData, LeafCertificateData);
+			}
+
+			NStr::CStr Error;
+			bool bValid = CCertificate::fs_VerifyCertificateChain
+				(
+					fg_CreateVector(LeafCertificateData)
+					, ServerOnlyCertificateData
+					, false
+					, EVerificationPurpose_ClientAuth
+					, PinnedAnchor
+					, nullptr
+					, Error
+				)
+			;
+
+			DMibExpectFalse(bValid);
+			DMibExpect(Error, ==, CStr("unsupported certificate purpose"));
+		}
+
+		{
 			DMibTestPath("Wrong CA");
 
 			CByteVector OtherCACertificateData;
@@ -164,7 +217,17 @@ void CCertificate_Tests::f_DoTests()
 			CCertificate::fs_GenerateSelfSignedCertAndKey(OtherCAOptions, OtherCACertificateData, OtherCAPrivateKeyData);
 
 			NStr::CStr Error;
-			bool bValid = CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), OtherCACertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error);
+			bool bValid = CCertificate::fs_VerifyCertificateChain
+				(
+					fg_CreateVector(ClientCertificateData)
+					, OtherCACertificateData
+					, false
+					, EVerificationPurpose_Any
+					, PinnedAnchor
+					, nullptr
+					, Error
+				)
+			;
 
 			DMibExpectFalse(bValid);
 			DMibExpectFalse(Error.f_IsEmpty());
@@ -174,7 +237,7 @@ void CCertificate_Tests::f_DoTests()
 			DMibTestPath("Empty Chain");
 
 			NStr::CStr Error;
-			bool bValid = CCertificate::fs_VerifyCertificateChain({}, AuthorityCertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error);
+			bool bValid = CCertificate::fs_VerifyCertificateChain({}, AuthorityCertificateData, false, EVerificationPurpose_Any, PinnedAnchor, nullptr, Error);
 
 			DMibExpectFalse(bValid);
 			DMibExpectFalse(Error.f_IsEmpty());
@@ -197,12 +260,30 @@ void CCertificate_Tests::f_DoTests()
 
 			DMibExpectTrue
 				(
-					CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), AuthorityCertificateData, false, EVerificationPurpose_ServerAuth, {}, nullptr, Error)
+					CCertificate::fs_VerifyCertificateChain
+					(
+						fg_CreateVector(ClientCertificateData)
+						, AuthorityCertificateData
+						, false
+						, EVerificationPurpose_ServerAuth
+						, PinnedAnchor
+						, nullptr
+						, Error
+					)
 				)
 			;
 			DMibExpectTrue
 				(
-					CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientCertificateData), AuthorityCertificateData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
+					CCertificate::fs_VerifyCertificateChain
+					(
+						fg_CreateVector(ClientCertificateData)
+						, AuthorityCertificateData
+						, false
+						, EVerificationPurpose_ClientAuth
+						, PinnedAnchor
+						, nullptr
+						, Error
+					)
 				)
 			;
 
@@ -227,12 +308,30 @@ void CCertificate_Tests::f_DoTests()
 
 			DMibExpectTrue
 				(
-					CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientAuthCertificateData), AuthorityCertificateData, false, EVerificationPurpose_ClientAuth, {}, nullptr, Error)
+					CCertificate::fs_VerifyCertificateChain
+					(
+						fg_CreateVector(ClientAuthCertificateData)
+						, AuthorityCertificateData
+						, false
+						, EVerificationPurpose_ClientAuth
+						, PinnedAnchor
+						, nullptr
+						, Error
+					)
 				)
 			;
 			DMibExpectTrue
 				(
-					CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ClientAuthCertificateData), AuthorityCertificateData, false, EVerificationPurpose_Any, {}, nullptr, Error)
+					CCertificate::fs_VerifyCertificateChain
+					(
+						fg_CreateVector(ClientAuthCertificateData)
+						, AuthorityCertificateData
+						, false
+						, EVerificationPurpose_Any
+						, PinnedAnchor
+						, nullptr
+						, Error
+					)
 				)
 			;
 
@@ -242,7 +341,7 @@ void CCertificate_Tests::f_DoTests()
 					, AuthorityCertificateData
 					, false
 					, EVerificationPurpose_ServerAuth
-					, {}
+					, PinnedAnchor
 					, nullptr
 					, Error
 				)
@@ -346,7 +445,7 @@ void CCertificate_Tests::f_DoTests()
 
 				bool bPathLenValid = CCertificate::fs_VerifyCertificateChain(fg_CreateVector(LeafData, IntermediateData), RootData, false, EVerificationPurpose_Any, {}, nullptr, Error);
 				DMibExpectFalse(bPathLenValid);
-				DMibExpect(Error, ==, CStr("Certificate chain is longer than the trust anchor's path length constraint allows"));
+				DMibExpect(Error, ==, CStr("path length constraint exceeded"));
 
 				fMintChain(1, LeafData, IntermediateData, RootData);
 				DMibExpectTrue(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(LeafData, IntermediateData), RootData, false, EVerificationPurpose_Any, {}, nullptr, Error));
@@ -465,11 +564,11 @@ void CCertificate_Tests::f_DoTests()
 			fMint(true, LeafData, RootData);
 
 			NStr::CStr Error;
-			DMibExpectFalse(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(LeafData), RootData, false, EVerificationPurpose_Any, {}, nullptr, Error));
-			DMibExpect(Error, ==, CStr("Trust anchor contains an unsupported critical extension"));
+			DMibExpectFalse(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(LeafData), RootData, false, EVerificationPurpose_Any, PinnedAnchor, nullptr, Error));
+			DMibExpect(Error, ==, CStr("unhandled critical extension"));
 
 			fMint(false, LeafData, RootData);
-			DMibExpectTrue(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(LeafData), RootData, false, EVerificationPurpose_Any, {}, nullptr, Error));
+			DMibExpectTrue(CCertificate::fs_VerifyCertificateChain(fg_CreateVector(LeafData), RootData, false, EVerificationPurpose_Any, PinnedAnchor, nullptr, Error));
 		}
 
 		{
@@ -625,7 +724,7 @@ void CCertificate_Tests::f_DoTests()
 			// Handing the intermediate over as the anchor must not shed its restriction
 			bool bValidFromIntermediate = CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ServerData), IntermediateData, false, EVerificationPurpose_ServerAuth, {}, nullptr, Error);
 			DMibExpectFalse(bValidFromIntermediate);
-			DMibExpect(Error, ==, CStr("Trust anchor is not valid for the verification purpose"));
+			DMibExpect(Error, ==, CStr("unsupported certificate purpose"));
 
 			bool bValidForAny = CCertificate::fs_VerifyCertificateChain(fg_CreateVector(ServerData), IntermediateData, false, EVerificationPurpose_Any, {}, nullptr, Error);
 			DMibExpectTrue(bValidForAny);
@@ -691,6 +790,7 @@ void CCertificate_Tests::f_DoTests()
 			DMibTestPath("Key Type And Digest Whitelist");
 
 			CCertificateVerifyOptions MatchingOptions;
+			MatchingOptions.m_bAllowPinnedTrustAnchor = true;
 			MatchingOptions.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_Secp256r1{});
 			MatchingOptions.m_AllowedSignatureDigests.f_Insert(EDigestType_SHA256);
 
@@ -711,6 +811,7 @@ void CCertificate_Tests::f_DoTests()
 			;
 
 			CCertificateVerifyOptions WrongKeyType;
+			WrongKeyType.m_bAllowPinnedTrustAnchor = true;
 			WrongKeyType.m_AllowedLeafKeyTypes.f_Insert(CPublicKeySettings_EC_Secp521r1{});
 			DMibExpectFalse
 				(
@@ -720,6 +821,7 @@ void CCertificate_Tests::f_DoTests()
 			DMibExpect(Error, ==, CStr("Certificate public key type is not allowed"));
 
 			CCertificateVerifyOptions WrongDigest;
+			WrongDigest.m_bAllowPinnedTrustAnchor = true;
 			WrongDigest.m_AllowedSignatureDigests.f_Insert(EDigestType_SHA512);
 			DMibExpectFalse
 				(
@@ -750,7 +852,7 @@ void CCertificate_Tests::f_DoTests()
 					, AuthorityCertificateData
 					, false
 					, EVerificationPurpose_Any
-					, {}
+					, PinnedAnchor
 					, &VerifiedChain
 					, Error
 				)
