@@ -64,7 +64,7 @@ UpdateType: git
 
 # Compiler info
 Compiler: ../../../../Binaries/MalterlibLLVM/Windows/x64/bin/clang-cl.exe
-CompilerVersion: 22.1.8
+CompilerVersion: 23.1.5
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 

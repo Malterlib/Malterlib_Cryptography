@@ -1,5 +1,6 @@
 CMakeFiles/Continuous.rule
 CMakeFiles/Experimental.rule
 CMakeFiles/Nightly.rule
+CMakeFiles/check_prefixed_symbols.rule
 CMakeFiles/run_tests.rule
 CMakeFiles/run_unit_tests.rule

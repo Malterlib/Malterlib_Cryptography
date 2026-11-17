@@ -712,6 +712,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519.cc`
 			{
 				Compile.Type "C++"
@@ -846,6 +850,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			{
 				Compile.Type "C++"
 			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_keccak.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_mldsa.cc`
 			{
 				Compile.Type "C++"
@@ -855,6 +863,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C++"
 			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_rsa.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_slhdsa.cc`
 			{
 				Compile.Type "C++"
 			}
@@ -2333,6 +2345,14 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace_test.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519_test.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/ed25519_test.cc`
 			{
 				Compile.Type "C++"
@@ -3401,6 +3421,44 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				%Group "CMakeFiles"
 				{
 					%File `@('.'->MakeAbsolute())/CMakeFiles/run_unit_tests.rule`
+					{
+						Compile
+						{
+							Type "Custom"
+							Custom_CommandLine `MToolCMake -E echo "Running tests requires Go" && MToolCMake -E false`
+							AllowNonExisting true
+							Disabled false
+							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
+							Custom_Outputs []
+							Custom_Inputs []
+						}
+					}
+				}
+			}
+		}
+	}
+}
+%Target "Tool_BoringSSL_check_prefixed_symbols"
+{
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Compile.Disabled true
+	Target.Group "External/BoringSSL"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "Tool"
+	Target.BaseName "BoringSSL_check_prefixed_symbols"
+	Target.BaseFileName "check_prefixed_symbols"
+	%Group "Windows"
+	{
+		%Group "x64"
+		{
+			%Group `@(FullConfiguration)`
+			{
+				%Group "CMakeFiles"
+				{
+					%File `@('.'->MakeAbsolute())/CMakeFiles/check_prefixed_symbols.rule`
 					{
 						Compile
 						{

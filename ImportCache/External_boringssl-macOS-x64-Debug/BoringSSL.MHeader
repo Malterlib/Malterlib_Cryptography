@@ -995,6 +995,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519.cc`
 			{
 				Compile.Type "C++"
@@ -1136,6 +1140,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 			{
 				Compile.Type "C++"
 			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_keccak.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_mldsa.cc`
 			{
 				Compile.Type "C++"
@@ -1145,6 +1153,10 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 				Compile.Type "C++"
 			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_rsa.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/evp/p_slhdsa.cc`
 			{
 				Compile.Type "C++"
 			}
@@ -2703,6 +2715,14 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 		}
 		%Group "curve25519"
 		{
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/cpace_test.cc`
+			{
+				Compile.Type "C++"
+			}
+			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/curve25519_test.cc`
+			{
+				Compile.Type "C++"
+			}
 			%File `@('../../../../External/boringssl'->MakeAbsolute())/crypto/curve25519/ed25519_test.cc`
 			{
 				Compile.Type "C++"
@@ -3748,7 +3768,7 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 						Compile
 						{
 							Type "Custom"
-							Custom_CommandLine `MToolCMake -E echo && MToolCMake -E echo Checking\\ pregenerated\\ files && go run ./util/pregenerate -check && MToolCMake -E echo && MToolCMake -E echo Running\\ Go\\ tests && go test ./ssl/test/runner/hpke ./util/ar ./util/fipstools/acvp/acvptool/testmodulewrapper ./util/fipstools/delocate && MToolCMake -E echo && MToolCMake -E echo Running\\ unit\\ tests && go run util/all_tests.go -build-dir @(`@('.'->MakeAbsolute())`->MakeAbsolute()->EscapeHost())`
+							Custom_CommandLine `MToolCMake -E echo && MToolCMake -E echo Checking\\ pregenerated\\ files && go run ./util/pregenerate -check && MToolCMake -E echo && MToolCMake -E echo Running\\ Go\\ tests && go test ./ssl/test/runner/hpke ./util/ar ./util/fipstools/acvp/acvptool/testmodulewrapper ./util/fipstools/delocate ./util/fipstools/inject_hash && MToolCMake -E echo && MToolCMake -E echo Running\\ unit\\ tests && go run util/all_tests.go -build-dir @(`@('.'->MakeAbsolute())`->MakeAbsolute()->EscapeHost())`
 							AllowNonExisting true
 							Disabled false
 							Custom_WorkingDirectory `@('../../../../External/boringssl'->MakeAbsolute())`->MakeAbsolute()
@@ -3819,6 +3839,44 @@ Property.CMakeOutputPath_BoringSSL: string = `@('.'->MakeAbsolute())`->MakeAbsol
 	%Dependency "Tool_BoringSSL_run_unit_tests"
 	{
 		Dependency.Link false
+	}
+}
+%Target "Tool_BoringSSL_check_prefixed_symbols"
+{
+	Property.MalterlibTargetNameType "Normal"
+	Compile.AllowNonExisting true
+	Compile.Disabled true
+	Target.Group "External/BoringSSL"
+	{
+		!!Target.Group undefined
+	}
+	Target.Type "Tool"
+	Target.BaseName "BoringSSL_check_prefixed_symbols"
+	Target.BaseFileName "check_prefixed_symbols"
+	%Group "macOS"
+	{
+		%Group "x64"
+		{
+			%Group `@(FullConfiguration)`
+			{
+				%Group "CMakeFiles"
+				{
+					%File `@('.'->MakeAbsolute())/CMakeFiles/check_prefixed_symbols.rule`
+					{
+						Compile
+						{
+							Type "Custom"
+							Custom_CommandLine `MToolCMake -E echo Symbol\\ prefixing\\ not\\ enabled && MToolCMake -E false`
+							AllowNonExisting true
+							Disabled false
+							Custom_WorkingDirectory `@('.'->MakeAbsolute())`->MakeAbsolute()
+							Custom_Outputs []
+							Custom_Inputs []
+						}
+					}
+				}
+			}
+		}
 	}
 }
 %Target "Lib_benchmark_benchmark"
