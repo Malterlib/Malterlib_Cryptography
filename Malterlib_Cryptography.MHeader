@@ -372,6 +372,8 @@ Import
 		, "OpenSSL_FOUND=TRUE"
 		, "DISABLE_OPENSSL_WINDOWS=TRUE"
 	]
+	// The fork of CMake takes OpenSSL from the variables above instead of searching for it
+	CMake_Variables =+ "OPENSSL_PROVIDED=TRUE"
 }
 
 %Group "{Malterlib}/{Lib_Malterlib_Cryptography}"
