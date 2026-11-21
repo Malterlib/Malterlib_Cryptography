@@ -42,7 +42,8 @@ extern "C"
 			ToCopy = OldSize;
 
 		memcpy(pMem, _pPtr, ToCopy);
-		NMib::NMemory::CAllocator_NonTrackedHeap::f_Free(_pPtr, OldSize);
+		// The old block can hold key material, which OPENSSL_free wipes as for any block that BoringSSL frees
+		OPENSSL_free(_pPtr);
 
 		return pMem;
 	}
@@ -79,7 +80,8 @@ extern "C"
 			ToCopy = OldSize;
 
 		memcpy(pMem, _pPtr, ToCopy);
-		NMib::NMemory::fg_Free(_pPtr, OldSize);
+		// The old block can hold key material, which OPENSSL_free wipes as for any block that BoringSSL frees
+		OPENSSL_free(_pPtr);
 
 		return pMem;
 	}
