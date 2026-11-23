@@ -207,11 +207,11 @@ Import "../Core/Lib_Malterlib.MTarget"
 		IndentWidth 2
 		TabWidth 2
 		UsesTabs false
-
+	}
+	Compile
+	{
+		!!CompileDialect "C"
 		PreprocessorDefines += "OPENSSL_ALLOW_MALFORMED_X509_VERSION"
-		{
-			!!CompileDialect "C"
-		}
 	}
 	Compile
 	{

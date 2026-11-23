@@ -8,6 +8,7 @@
 #include <Mib/Cryptography/SymmetricCrypto>
 #include <Mib/Cryptography/PublicCrypto>
 #include <Mib/Cryptography/BoringSSL>
+#include <Mib/Encoding/Base64>
 
 using namespace NMib;
 using namespace NMib::NStr;
@@ -21,6 +22,53 @@ struct CCertificate_Tests : public NMib::NTest::CTest
 
 void CCertificate_Tests::f_DoTests()
 {
+	DMibTestSuite("MalformedVersion")
+	{
+		// BoringSSL is built to read a certificate whose version field is 3, which is no version, as version 3, whose field is 2,
+		// as certificates in use have it (OPENSSL_ALLOW_MALFORMED_X509_VERSION)
+		CByteVector CertificateData;
+		CSecureByteVector PrivateKeyData;
+		CCertificateOptions Options;
+		Options.m_CommonName = "malformed";
+		Options.m_Hostnames = fg_CreateVector<CStr>("malformed1");
+		Options.m_KeySetting = CPublicKeySettings_EC_Secp256r1{};
+		CCertificate::fs_GenerateSelfSignedCertAndKey(Options, CertificateData, PrivateKeyData);
+
+		X509 *pCertificate = NBoringSSL::fg_LoadCertificate(CertificateData);
+		auto Cleanup = g_OnScopeExit / [&]
+			{
+				X509_free(pCertificate);
+			}
+		;
+		uint8_t *pDer = nullptr;
+		int DerLength = i2d_X509(pCertificate, &pDer);
+		DMibAssert(DerLength, >, 0);
+		CByteVector Der;
+		Der.f_Insert(pDer, DerLength);
+		OPENSSL_free(pDer);
+
+		// The explicitly tagged version of the TBSCertificate: [0] { INTEGER 2 }
+		uint8_t const VersionField[] = {0xA0, 0x03, 0x02, 0x01, 0x02};
+		umint iVersion = 0;
+		for (; iVersion + sizeof(VersionField) <= Der.f_GetLen(); ++iVersion)
+		{
+			if (NMemory::fg_MemCmp(Der.f_GetArray() + iVersion, VersionField, sizeof(VersionField)) == 0)
+				break;
+		}
+		DMibAssert(iVersion + sizeof(VersionField), <=, Der.f_GetLen());
+		Der[iVersion + sizeof(VersionField) - 1] = 0x03;
+
+		CStr Base64 = NEncoding::fg_Base64Encode(Der);
+		CStr Pem = "-----BEGIN CERTIFICATE-----\n";
+		for (umint iLine = 0; iLine < Base64.f_GetLen(); iLine += 64)
+			Pem += "{}\n"_f << Base64.f_Extract(iLine, 64);
+		Pem += "-----END CERTIFICATE-----\n";
+		CByteVector MalformedData;
+		MalformedData.f_Insert((uint8 const *)Pem.f_GetStr(), Pem.f_GetLen());
+
+		DMibExpect(CCertificate::fs_GetCertificateHostnames(MalformedData, false), ==, fg_CreateVector<CStr>("malformed1"));
+	};
+
 	DMibTestSuite("Properties")
 	{
 		CCertificate::fs_RegisterExtension("1.3.6.1.4.1.47722.1.2", "MalterlibTest", "Malterlib Test");
