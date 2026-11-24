@@ -645,7 +645,8 @@ namespace
 
 					size_t Produced = 0;
 					size_t Consumed = 0;
-					DMibExpect(int(SSL_open_app_datav(Pair.m_pClient, &OutFragment, 1, &Produced, &Consumed, &InFragment, 1)), ==, int(ssl_open_v_success));
+					// Told apart from an incomplete record, which also opens nothing
+					DMibExpect(int(SSL_open_app_datav(Pair.m_pClient, &OutFragment, 1, &Produced, &Consumed, &InFragment, 1)), ==, int(ssl_open_v_need_output));
 					DMibExpect(Produced, ==, umint(0));
 					DMibExpect(Consumed, ==, umint(0));
 				}
